@@ -67,6 +67,27 @@ SAVE_MEASUREMENT_SCHEMA = vol.Schema(
 # No fields needed for reset — schema is intentionally empty.
 RESET_SIMULATION_SCHEMA = vol.Schema({})
 
+# ── Canonical 4-period definition ─────────────────────────────────────────────
+
+DEFAULT_PERIODS = [
+    {"period_id": "period_1", "label": "Meting 1 (start)",  "date": "2026-01-01"},
+    {"period_id": "period_2", "label": "Meting 2 (2 mnd)",  "date": "2026-03-01"},
+    {"period_id": "period_3", "label": "Meting 3 (4 mnd)",  "date": "2026-05-01"},
+    {"period_id": "period_4", "label": "Meting 4 (6 mnd)",  "date": "2026-07-01"},
+]
+
+
+def _ensure_default_periods(state: SimulationState) -> None:
+    """Create the 4 canonical periods if any of them are missing."""
+    for p in DEFAULT_PERIODS:
+        if p["period_id"] not in state.periods:
+            state.switch_period(
+                p["period_id"], label=p["label"], date=p["date"]
+            )
+    # Restore active period to period_1 only when nothing was active yet.
+    if state.active_period_id is None:
+        state.active_period_id = "period_1"
+
 
 # ── Integration entry-point ────────────────────────────────────────────────────
 
@@ -78,6 +99,9 @@ async def async_setup(hass: HomeAssistant, _config: dict) -> bool:
     state: SimulationState = (
         SimulationState.from_storage_dict(raw) if raw else SimulationState()
     )
+
+    # Always guarantee all 4 periods exist (safe no-op when already present).
+    _ensure_default_periods(state)
 
     # Stash references so helpers defined below can share them.
     hass.data.setdefault(DOMAIN, {})
@@ -143,6 +167,8 @@ async def async_setup(hass: HomeAssistant, _config: dict) -> bool:
     async def handle_reset_simulation(call: ServiceCall) -> None:
         """Wipe all period data and reset the active-period pointer to None."""
         state.reset()
+        # Re-create the 4 canonical empty periods so the card always shows them.
+        _ensure_default_periods(state)
         await _commit()
         _LOGGER.info("Simulation state has been fully reset.")
 

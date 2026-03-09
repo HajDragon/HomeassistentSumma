@@ -166,178 +166,74 @@ views:
 
           **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5
 
-      # ══ ROW 5 — Grafieken (2×2 grid, apexcharts-card via HACS) ════════
-      # Vereist: HACS → Frontend → "ApexCharts Card" installeren
-      # X-as = simulatiedatum (jan/mrt/mei/jul)  |  Y-as = meetwaarde
+      # ══ ROW 5 — Grafieken (native statistics-graph, geen HACS) ═══════
+      # Gebruikt ingebouwde HA statistics-graph kaarten.
+      # X-as = kalendermaand (maandgemiddelde per meting).
+      # Alle 4 perioden (Meting 1–4) komen overeen met resp.
+      # jan / mrt / mei / jul 2026 — zie legenda hieronder.
+      # Lijn verbindt alle ingevoerde meetpunten; resets wissen data.
+
       - type: grid
         columns: 2
         square: false
         cards:
 
-          - type: custom:apexcharts-card
-            header:
-              title: "Gewicht (kg)"
-              show: true
-            apex_config:
-              chart:
-                type: line
-                height: 280
-              stroke:
-                curve: smooth
-                width: 3
-              markers:
-                size: 6
-              xaxis:
-                type: datetime
-                labels:
-                  datetimeUTC: false
-                  format: "MMM yyyy"
-            yaxis:
-              - min: 60
-                max: 90
-                decimals: 1
-            series:
-              - entity: sensor.simulation_manager
-                name: "Gewicht"
-                data_generator: |
-                  const BASE = [
-                    [new Date('2026-01-01T12:00:00').getTime(), 70.0],
-                    [new Date('2026-03-01T12:00:00').getTime(), 72.0],
-                    [new Date('2026-05-01T12:00:00').getTime(), 74.5],
-                    [new Date('2026-07-01T12:00:00').getTime(), 77.0],
-                  ];
-                  const IDS = ['period_1','period_2','period_3','period_4'];
-                  const p = entity.attributes.periods ?? {};
-                  return BASE.map(([t, def], i) => {
-                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
-                    return [t, m ? parseFloat(m.gewicht) : def];
-                  });
+          # ── Gewicht ──────────────────────────────────────────────────
+          - type: statistics-graph
+            title: "① ② ③ ④  Gewicht (kg) — Meting 1 t/m 4"
+            chart_type: line
+            period: month
+            days_to_show: 365
+            stat_types:
+              - mean
+            entities:
+              - entity: input_number.goedheid_gewicht
+                name: "Gewicht (kg)"
             card_mod:
               style: |
-                ha-card { height: 350px; margin: 8px; }
+                ha-card { height: 340px; margin: 8px; }
 
-          - type: custom:apexcharts-card
-            header:
-              title: "Spiermassa (kg)"
-              show: true
-            apex_config:
-              chart:
-                type: line
-                height: 280
-              stroke:
-                curve: smooth
-                width: 3
-              markers:
-                size: 6
-              xaxis:
-                type: datetime
-                labels:
-                  datetimeUTC: false
-                  format: "MMM yyyy"
-            yaxis:
-              - min: 25
-                max: 35
-                decimals: 1
-            series:
-              - entity: sensor.simulation_manager
-                name: "Spiermassa"
-                data_generator: |
-                  const BASE = [
-                    [new Date('2026-01-01T12:00:00').getTime(), 29.5],
-                    [new Date('2026-03-01T12:00:00').getTime(), 29.3],
-                    [new Date('2026-05-01T12:00:00').getTime(), 29.0],
-                    [new Date('2026-07-01T12:00:00').getTime(), 28.8],
-                  ];
-                  const IDS = ['period_1','period_2','period_3','period_4'];
-                  const p = entity.attributes.periods ?? {};
-                  return BASE.map(([t, def], i) => {
-                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
-                    return [t, m ? parseFloat(m.spiermassa) : def];
-                  });
+          # ── Spiermassa ───────────────────────────────────────────────
+          - type: statistics-graph
+            title: "① ② ③ ④  Spiermassa (kg) — Meting 1 t/m 4"
+            chart_type: line
+            period: month
+            days_to_show: 365
+            stat_types:
+              - mean
+            entities:
+              - entity: input_number.goedheid_spiermassa
+                name: "Spiermassa (kg)"
             card_mod:
               style: |
-                ha-card { height: 350px; margin: 8px; }
+                ha-card { height: 340px; margin: 8px; }
 
-          - type: custom:apexcharts-card
-            header:
-              title: "Vetmassa (kg)"
-              show: true
-            apex_config:
-              chart:
-                type: line
-                height: 280
-              stroke:
-                curve: smooth
-                width: 3
-              markers:
-                size: 6
-              xaxis:
-                type: datetime
-                labels:
-                  datetimeUTC: false
-                  format: "MMM yyyy"
-            yaxis:
-              - min: 20
-                max: 35
-                decimals: 1
-            series:
-              - entity: sensor.simulation_manager
-                name: "Vetmassa"
-                data_generator: |
-                  const BASE = [
-                    [new Date('2026-01-01T12:00:00').getTime(), 24.0],
-                    [new Date('2026-03-01T12:00:00').getTime(), 25.5],
-                    [new Date('2026-05-01T12:00:00').getTime(), 27.0],
-                    [new Date('2026-07-01T12:00:00').getTime(), 28.5],
-                  ];
-                  const IDS = ['period_1','period_2','period_3','period_4'];
-                  const p = entity.attributes.periods ?? {};
-                  return BASE.map(([t, def], i) => {
-                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
-                    return [t, m ? parseFloat(m.vetmassa) : def];
-                  });
+          # ── Vetmassa ─────────────────────────────────────────────────
+          - type: statistics-graph
+            title: "① ② ③ ④  Vetmassa (kg) — Meting 1 t/m 4"
+            chart_type: line
+            period: month
+            days_to_show: 365
+            stat_types:
+              - mean
+            entities:
+              - entity: input_number.goedheid_vetmassa
+                name: "Vetmassa (kg)"
             card_mod:
               style: |
-                ha-card { height: 350px; margin: 8px; }
+                ha-card { height: 340px; margin: 8px; }
 
-          - type: custom:apexcharts-card
-            header:
-              title: "BMI (kg/m²)"
-              show: true
-            apex_config:
-              chart:
-                type: line
-                height: 280
-              stroke:
-                curve: smooth
-                width: 3
-              markers:
-                size: 6
-              xaxis:
-                type: datetime
-                labels:
-                  datetimeUTC: false
-                  format: "MMM yyyy"
-            yaxis:
-              - min: 20
-                max: 32
-                decimals: 1
-            series:
-              - entity: sensor.simulation_manager
-                name: "BMI"
-                data_generator: |
-                  const BASE = [
-                    [new Date('2026-01-01T12:00:00').getTime(), 24.8],
-                    [new Date('2026-03-01T12:00:00').getTime(), 25.5],
-                    [new Date('2026-05-01T12:00:00').getTime(), 26.4],
-                    [new Date('2026-07-01T12:00:00').getTime(), 27.3],
-                  ];
-                  const IDS = ['period_1','period_2','period_3','period_4'];
-                  const p = entity.attributes.periods ?? {};
-                  return BASE.map(([t, def], i) => {
-                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
-                    return [t, m ? parseFloat(m.bmi) : def];
-                  });
+          # ── BMI ──────────────────────────────────────────────────────
+          - type: statistics-graph
+            title: "① ② ③ ④  BMI (kg/m²) — Meting 1 t/m 4"
+            chart_type: line
+            period: month
+            days_to_show: 365
+            stat_types:
+              - mean
+            entities:
+              - entity: input_number.goedheid_bmi
+                name: "BMI (kg/m²)"
             card_mod:
               style: |
-                ha-card { height: 350px; margin: 8px; }
+                ha-card { height: 340px; margin: 8px; }
