@@ -1,0 +1,161 @@
+views:
+  - title: Simulatie Mevrouw Goedheid
+    path: simulatie-goedheid
+    icon: mdi:scale-bathroom
+    cards:
+
+      # ── Reset + Fase selector ────────────────────────────
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: button
+            name: Reset Simulatie
+            icon: mdi:restart
+            icon_height: 40px
+            tap_action:
+              action: call-service
+              service: script.reset_goedheid_simulatie
+            style: |
+              ha-card {
+                --paper-item-icon-color: red;
+              }
+
+          - type: entities
+            title: Tijdlijn
+            entities:
+              - entity: input_select.data_bron_weegschaal
+                name: Data Source
+              - entity: input_select.simulatiefase_goedheid
+                name: Simulatiefase
+              - entity: input_datetime.goedheid_meetdatum
+                name: Datum van Meting
+              - entity: input_number.goedheid_lengte
+                name: Lichaamslengte (m)
+
+      # ── Huidige meetwaarden ──────────────────────────────
+      - type: entities
+        title: Huidige Meetwaarden — Mevrouw Goedheid
+        entities:
+          - entity: sensor.display_gewicht
+            name: Totaal Gewicht
+            icon: mdi:scale-bathroom
+          - entity: sensor.display_spiermassa
+            name: Spiermassa
+            icon: mdi:arm-flex
+          - entity: sensor.display_vetmassa
+            name: Vetmassa
+            icon: mdi:food-drumstick
+          - entity: sensor.display_bmi
+            name: BMI
+            icon: mdi:human
+
+      # ── NEW: Simulation Period Card (dictionary-based, reactive) ─
+      # Reads from sensor.simulation_manager (custom integration).
+      # Requires: custom_components/simulation_manager/ + www/ card file.
+      - type: custom:simulation-period-card
+        title: "Mevrouw Goedheid — Lichaamssamenstelling per Periode"
+        columns:
+          - timestamp
+          - gewicht
+          - spiermassa
+          - vetmassa
+          - bmi
+        column_labels:
+          timestamp:  "Datum"
+          gewicht:    "Gewicht (kg)"
+          spiermassa: "Spiermassa (kg)"
+          vetmassa:   "Vetmassa (kg)"
+          bmi:        "BMI (kg/m²)"
+
+      # ── Quick switch buttons — call simulation_manager services ──
+      - type: grid
+        columns: 4
+        square: false
+        cards:
+          - type: button
+            name: "Meting 1 (start)"
+            icon: mdi:numeric-1-circle
+            tap_action:
+              action: call-service
+              service: simulation_manager.switch_period
+              service_data:
+                period_id: "period_1"
+                label: "Meting 1 (start)"
+                date: "2026-01-01"
+          - type: button
+            name: "Meting 2 (2 mnd)"
+            icon: mdi:numeric-2-circle
+            tap_action:
+              action: call-service
+              service: simulation_manager.switch_period
+              service_data:
+                period_id: "period_2"
+                label: "Meting 2 (2 mnd)"
+                date: "2026-03-01"
+          - type: button
+            name: "Meting 3 (4 mnd)"
+            icon: mdi:numeric-3-circle
+            tap_action:
+              action: call-service
+              service: simulation_manager.switch_period
+              service_data:
+                period_id: "period_3"
+                label: "Meting 3 (4 mnd)"
+                date: "2026-05-01"
+          - type: button
+            name: "Meting 4 (6 mnd)"
+            icon: mdi:numeric-4-circle
+            tap_action:
+              action: call-service
+              service: simulation_manager.switch_period
+              service_data:
+                period_id: "period_4"
+                label: "Meting 4 (6 mnd)"
+                date: "2026-07-01"
+
+      # ── Static reference table (kept for PESDIE context) ─────────
+      - type: markdown
+        title: "6-maanden Trend — Mevrouw Goedheid"
+        content: |
+          | Meting | Datum | Gewicht | BMI | Spiermassa | Vetmassa |
+          |--------|-------|--------:|----:|-----------:|---------:|
+          | Meting 1 (start) | 1 jan 2026 | 70,0 kg | 24,8 | 29,5 kg | 24,0 kg |
+          | Meting 2 (2 mnd) | 1 mrt 2026 | 72,0 kg | 25,5 | 29,3 kg | 25,5 kg |
+          | Meting 3 (4 mnd) | 1 mei 2026 | 74,5 kg | 26,4 | 29,0 kg | 27,0 kg |
+          | Meting 4 (6 mnd) | 1 jul 2026 | 77,0 kg | 27,3 | 28,8 kg | 28,5 kg |
+
+          **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5
+
+      # ── Grafieken 2x2 grid: Gewicht, BMI, Spiermassa, Vetmassa ──
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: history-graph
+            title: Totaal Gewicht (kg)
+            hours_to_show: 720
+            entities:
+              - entity: sensor.display_gewicht
+                name: Gewicht
+
+          - type: history-graph
+            title: BMI (kg/m2)
+            hours_to_show: 720
+            entities:
+              - entity: sensor.display_bmi
+                name: BMI
+
+          - type: history-graph
+            title: Spiermassa (kg)
+            hours_to_show: 720
+            entities:
+              - entity: sensor.display_spiermassa
+                name: Spiermassa
+
+          - type: history-graph
+            title: Vetmassa (kg)
+            hours_to_show: 720
+            entities:
+              - entity: sensor.display_vetmassa
+                name: Vetmassa

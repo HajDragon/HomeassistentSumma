@@ -1,0 +1,14 @@
+# ============================================================
+# Package: goedheid_display_package.yaml
+# Purpose: Real/Sim switch for Mevrouw Goedheid simulation
+# Install: place this file in your packages/ folder and ensure
+#          homeassistant: packages: !include_dir_named packages
+#          is set in configuration.yaml, then restart HA.
+# ============================================================
+
+# ── NOTE ────────────────────────────────────────────────────
+# input_select.data_bron_weegschaal and all display_* template
+# sensors are defined in mevrouw_goedheid_simulation.yaml.
+# This file is intentionally left without those blocks to avoid
+# duplicate-key errors in HA package loading.
+# ────────────────────────────────────────────────────────────

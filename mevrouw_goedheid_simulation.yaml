@@ -1,0 +1,326 @@
+# ============================================================
+# Mevrouw Goedheid - Body Scan Simulatie (6-maanden trend)
+# Lesplan: Zorg en technologie - Body scan slimme weegschaal
+# ============================================================
+
+# ── Helpers ────────────────────────────────────────────────
+
+input_select:
+  simulatiefase_goedheid:
+    name: "Simulatiefase Mevrouw Goedheid"
+    options:
+      - "Reset / Startklaar"
+      - "Meting 1 (start)"
+      - "Meting 2 (2 mnd)"
+      - "Meting 3 (4 mnd)"
+      - "Meting 4 (6 mnd)"
+    initial: "Reset / Startklaar"
+    icon: mdi:timeline-clock
+
+  data_bron_weegschaal:
+    name: "Data Source"
+    options:
+      - "Simulatie (Mevrouw Goedheid)"
+      - "Live Data (Echte Weegschaal)"
+    initial: "Simulatie (Mevrouw Goedheid)"
+    icon: mdi:database-switch
+
+input_datetime:
+  goedheid_meetdatum:
+    name: "Datum van Huidige Meting"
+    has_date: true
+    has_time: false
+    icon: mdi:calendar-clock
+
+input_number:
+  goedheid_spiermassa:
+    name: "Spiermassa"
+    min: 0
+    max: 100
+    step: 0.1
+    unit_of_measurement: "kg"
+    icon: mdi:arm-flex
+
+  goedheid_vetmassa:
+    name: "Vetmassa"
+    min: 0
+    max: 120
+    step: 0.1
+    unit_of_measurement: "kg"
+    icon: mdi:food-drumstick
+
+  goedheid_gewicht:
+    name: "Totaal Gewicht"
+    min: 0
+    max: 200
+    step: 0.1
+    unit_of_measurement: "kg"
+    icon: mdi:scale-bathroom
+
+  goedheid_bmi:
+    name: "BMI"
+    min: 0
+    max: 60
+    step: 0.1
+    unit_of_measurement: "kg/m2"
+    icon: mdi:human
+
+  goedheid_lengte:
+    name: "Lichaamslengte (m)"
+    min: 1.0
+    max: 2.5
+    step: 0.01
+    unit_of_measurement: "m"
+    icon: mdi:human-male-height
+    initial: 1.65
+
+# ── Template Sensors (middleman: Simulatie ↔ Live) ─────────
+# Switch the input_select.data_bron_weegschaal dropdown to
+# toggle between simulated and real sensor data on the dashboard.
+template:
+  - sensor:
+      - name: "display_gewicht"
+        unique_id: display_gewicht
+        unit_of_measurement: "kg"
+        device_class: weight
+        state_class: measurement
+        state: >
+          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
+            {{ states('input_number.goedheid_gewicht') }}
+          {% else %}
+            {{ states('sensor.withings_gewicht') }}
+          {% endif %}
+        icon: mdi:scale-bathroom
+
+      - name: "display_bmi"
+        unique_id: display_bmi
+        unit_of_measurement: "kg/m²"
+        state_class: measurement
+        state: >
+          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
+            {{ states('input_number.goedheid_bmi') }}
+          {% else %}
+            {% set w = states('sensor.withings_gewicht') | float(0) %}
+            {% set h = states('input_number.goedheid_lengte') | float(1.65) %}
+            {{ (w / (h * h)) | round(1) if h > 0 else 'unknown' }}
+          {% endif %}
+        icon: mdi:human
+
+      - name: "display_spiermassa"
+        unique_id: display_spiermassa
+        unit_of_measurement: "kg"
+        device_class: weight
+        state_class: measurement
+        state: >
+          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
+            {{ states('input_number.goedheid_spiermassa') }}
+          {% else %}
+            {{ states('sensor.withings_spiermassa') }}
+          {% endif %}
+        icon: mdi:arm-flex
+
+      - name: "display_vetmassa"
+        unique_id: display_vetmassa
+        unit_of_measurement: "kg"
+        device_class: weight
+        state_class: measurement
+        state: >
+          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
+            {{ states('input_number.goedheid_vetmassa') }}
+          {% else %}
+            {{ states('sensor.withings_vetmassa') }}
+          {% endif %}
+        icon: mdi:food-drumstick
+
+script:
+  reset_goedheid_simulatie:
+    alias: "Reset Simulatie Mevrouw Goedheid"
+    icon: mdi:restart
+    sequence:
+      - service: input_select.select_option
+        target:
+          entity_id: input_select.simulatiefase_goedheid
+        data:
+          option: "Reset / Startklaar"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_spiermassa
+        data:
+          value: 0
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_vetmassa
+        data:
+          value: 0
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_gewicht
+        data:
+          value: 0
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_bmi
+        data:
+          value: 0
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.goedheid_meetdatum
+        data:
+          date: "{{ now().strftime('%Y-%m-%d') }}"
+
+# ── Automation ─────────────────────────────────────────────
+
+automation goedheid:
+  - id: goedheid_simulatie_fase_wissel
+    alias: "Goedheid - Update metingen bij fasewissel"
+    description: >
+      Werkt datum, spiermassa, vetmassa, gewicht en BMI bij
+      zodra de simulatiefase verandert.
+    trigger:
+      - platform: state
+        entity_id: input_select.simulatiefase_goedheid
+    action:
+      - choose:
+
+          # ── Reset / Startklaar ────────────────────────
+          - conditions:
+              - condition: state
+                entity_id: input_select.simulatiefase_goedheid
+                state: "Reset / Startklaar"
+            sequence:
+              - service: script.reset_goedheid_simulatie
+
+          # ── Meting 1 (start) — 1 januari 2026 ─────────
+          - conditions:
+              - condition: state
+                entity_id: input_select.simulatiefase_goedheid
+                state: "Meting 1 (start)"
+            sequence:
+              - service: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.goedheid_meetdatum
+                data:
+                  date: "2026-01-01"
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_spiermassa
+                data:
+                  value: 29.5
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_vetmassa
+                data:
+                  value: 24.0
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_gewicht
+                data:
+                  value: 70.0
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_bmi
+                data:
+                  value: 24.8
+
+          # ── Meting 2 (2 mnd) — 1 maart 2026 ──────────
+          - conditions:
+              - condition: state
+                entity_id: input_select.simulatiefase_goedheid
+                state: "Meting 2 (2 mnd)"
+            sequence:
+              - service: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.goedheid_meetdatum
+                data:
+                  date: "2026-03-01"
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_spiermassa
+                data:
+                  value: 29.3
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_vetmassa
+                data:
+                  value: 25.5
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_gewicht
+                data:
+                  value: 72.0
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_bmi
+                data:
+                  value: 25.5
+
+          # ── Meting 3 (4 mnd) — 1 mei 2026 ────────────
+          - conditions:
+              - condition: state
+                entity_id: input_select.simulatiefase_goedheid
+                state: "Meting 3 (4 mnd)"
+            sequence:
+              - service: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.goedheid_meetdatum
+                data:
+                  date: "2026-05-01"
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_spiermassa
+                data:
+                  value: 29.0
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_vetmassa
+                data:
+                  value: 27.0
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_gewicht
+                data:
+                  value: 74.5
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_bmi
+                data:
+                  value: 26.4
+
+          # ── Meting 4 (6 mnd) — 1 juli 2026 ───────────
+          - conditions:
+              - condition: state
+                entity_id: input_select.simulatiefase_goedheid
+                state: "Meting 4 (6 mnd)"
+            sequence:
+              - service: input_datetime.set_datetime
+                target:
+                  entity_id: input_datetime.goedheid_meetdatum
+                data:
+                  date: "2026-07-01"
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_spiermassa
+                data:
+                  value: 28.8
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_vetmassa
+                data:
+                  value: 28.5
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_gewicht
+                data:
+                  value: 77.0
+              - service: input_number.set_value
+                target:
+                  entity_id: input_number.goedheid_bmi
+                data:
+                  value: 27.3
+
+        default:
+          - service: system_log.write
+            data:
+              message: "Goedheid simulatie: onbekende fase geselecteerd"
+              level: warning
+
