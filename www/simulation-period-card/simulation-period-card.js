@@ -361,6 +361,115 @@ class SimulationPeriodCard extends HTMLElement {
     this._callService("reset_simulation");
   }
 
+  // ── SVG line chart ──────────────────────────────────────────────────────────
+  _renderSvgChart() {
+    // 4-period timeline anchored to plan.md dates
+    const TIMELINE = [
+      { id: 'period_1', shortLabel: "jan '26" },
+      { id: 'period_2', shortLabel: "mrt '26" },
+      { id: 'period_3', shortLabel: "mei '26" },
+      { id: 'period_4', shortLabel: "jul '26" },
+    ];
+    // Baseline values from plan.md — shown at 40% opacity until a live
+    // measurement overwrites them (full opacity, bold labels).
+    const FALLBACK = [
+      { gewicht: 70.0, spiermassa: 29.5, vetmassa: 24.0, bmi: 24.8 },
+      { gewicht: 72.0, spiermassa: 29.3, vetmassa: 25.5, bmi: 25.5 },
+      { gewicht: 74.5, spiermassa: 29.0, vetmassa: 27.0, bmi: 26.4 },
+      { gewicht: 77.0, spiermassa: 28.8, vetmassa: 28.5, bmi: 27.3 },
+    ];
+    const METRICS = [
+      { key: 'gewicht',    label: 'Gewicht (kg)',    color: '#1976d2' },
+      { key: 'spiermassa', label: 'Spiermassa (kg)', color: '#388e3c' },
+      { key: 'vetmassa',   label: 'Vetmassa (kg)',   color: '#f57c00' },
+      { key: 'bmi',        label: 'BMI',             color: '#7b1fa2' },
+    ];
+
+    // Merge live sensor data with fallback values
+    const points = TIMELINE.map((t, i) => {
+      const p = this._periods[t.id];
+      const m = p?.measurements?.length ? p.measurements[p.measurements.length - 1] : null;
+      return {
+        shortLabel: t.shortLabel,
+        live: !!m,
+        gewicht:    parseFloat(m?.gewicht    ?? FALLBACK[i].gewicht),
+        spiermassa: parseFloat(m?.spiermassa ?? FALLBACK[i].spiermassa),
+        vetmassa:   parseFloat(m?.vetmassa   ?? FALLBACK[i].vetmassa),
+        bmi:        parseFloat(m?.bmi        ?? FALLBACK[i].bmi),
+      };
+    });
+
+    const W = 560, H = 210;
+    const pad = { top: 30, right: 16, bottom: 38, left: 8 };
+    const cW = W - pad.left - pad.right;
+    const cH = H - pad.top - pad.bottom;
+    const xPos = (i) => pad.left + (i / (TIMELINE.length - 1)) * cW;
+
+    // Per-metric Y scale with 25% margin so lines don't hug edges
+    const yScale = {};
+    METRICS.forEach(({ key }) => {
+      const vals = points.map(p => p[key]);
+      const lo = Math.min(...vals), hi = Math.max(...vals);
+      const mg = (hi - lo) * 0.25 || 1;
+      yScale[key] = { lo: lo - mg, hi: hi + mg };
+    });
+    const yPos = (val, key) => {
+      const { lo, hi } = yScale[key];
+      return pad.top + cH - ((val - lo) / (hi - lo)) * cH;
+    };
+
+    let s = '';
+
+    // Horizontal grid lines
+    for (let i = 0; i <= 4; i++) {
+      const y = (pad.top + (i / 4) * cH).toFixed(1);
+      s += `<line x1="${pad.left}" y1="${y}" x2="${(pad.left + cW).toFixed(1)}" y2="${y}" stroke="#e0e0e0" stroke-width="0.8"/>`;
+    }
+
+    // Vertical guides + date labels
+    TIMELINE.forEach((t, i) => {
+      const x = xPos(i).toFixed(1);
+      if (i > 0) s += `<line x1="${x}" y1="${pad.top}" x2="${x}" y2="${(pad.top + cH).toFixed(1)}" stroke="#e0e0e0" stroke-width="0.8" stroke-dasharray="3,3"/>`;
+      s += `<text x="${x}" y="${(pad.top + cH + 14).toFixed(1)}" text-anchor="middle" font-size="10" fill="#757575">${_esc(t.shortLabel)}</text>`;
+      s += `<text x="${x}" y="${(pad.top + cH + 26).toFixed(1)}" text-anchor="middle" font-size="9" fill="#aaa">M${i + 1}</text>`;
+    });
+
+    // X-axis baseline
+    s += `<line x1="${pad.left}" y1="${(pad.top + cH).toFixed(1)}" x2="${(pad.left + cW).toFixed(1)}" y2="${(pad.top + cH).toFixed(1)}" stroke="#bdbdbd" stroke-width="1.5"/>`;
+
+    // Legend row
+    const lSpacing = Math.floor(cW / 4);
+    METRICS.forEach(({ label, color }, mi) => {
+      const lx = pad.left + mi * lSpacing;
+      s += `<rect x="${lx}" y="6" width="10" height="10" fill="${color}" rx="2"/>`;
+      s += `<text x="${lx + 13}" y="15" font-size="9.5" fill="#424242">${_esc(label)}</text>`;
+    });
+
+    // Lines + dots for each metric
+    METRICS.forEach(({ key, color }) => {
+      const coords = points.map((p, i) => `${xPos(i).toFixed(1)},${yPos(p[key], key).toFixed(1)}`).join(' ');
+      s += `<polyline points="${coords}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+      points.forEach((p, i) => {
+        const cx = xPos(i).toFixed(1);
+        const cy = yPos(p[key], key);
+        const op = p.live ? '1' : '0.4';
+        s += `<circle cx="${cx}" cy="${cy.toFixed(1)}" r="${p.live ? 5 : 4}" fill="${color}" stroke="white" stroke-width="2" opacity="${op}"/>`;
+        const labelY = cy > pad.top + 18 ? cy - 8 : cy + 17;
+        s += `<text x="${cx}" y="${labelY.toFixed(1)}" text-anchor="middle" font-size="9" fill="${color}" font-weight="${p.live ? 700 : 400}" opacity="${op}">${p[key].toFixed(1)}</text>`;
+      });
+    });
+
+    return `
+    <div style="overflow-x:auto;margin:0 0 12px;border:1px solid var(--divider-color,#e0e0e0);border-radius:8px;padding:6px 6px 0;background:var(--card-background-color);">
+      <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;font-family:var(--primary-font-family,sans-serif);">
+        ${s}
+      </svg>
+      <div style="font-size:0.72rem;color:var(--secondary-text-color);text-align:right;padding:2px 6px 4px;">
+        Lichte punten = standaard simulatiewaarden (plan.md) &nbsp;·&nbsp; Volle punten = live opgeslagen meting
+      </div>
+    </div>`;
+  }
+
   // ── Render ──────────────────────────────────────────────────────────────────
 
   _render() {
@@ -381,37 +490,33 @@ class SimulationPeriodCard extends HTMLElement {
           return `<button class="${cls}" data-period-id="${_esc(pid)}">${_esc(label)}</button>`;
         }).join("");
 
-    // ── Period header ─────────────────────────────────────────────────────────
-    const periodHeaderHtml = activePeriod
-      ? `<div class="period-header">
-           <span class="period-label">${_esc(activePeriod.label ?? this._activePeriodId)}</span>
-           ${activePeriod.date ? `<span class="period-date">${_esc(activePeriod.date)}</span>` : ""}
-         </div>`
-      : "";
+    // ── All-periods overview table (one summary row per period) ─────────────
+    const columns      = cfg.columns;
+    const columnLabels = cfg.column_labels;
+    const periodHeaderHtml = "";
 
-    // ── Table ─────────────────────────────────────────────────────────────────
-    const columns       = cfg.columns;
-    const columnLabels  = cfg.column_labels;
-    const measurements  = activePeriod?.measurements ?? [];
+    // Skip raw timestamp column — period date is shown in its own column.
+    const overviewCols = columns.filter(c => c !== "timestamp");
 
-    const theadHtml = `<thead><tr>${
-      columns.map((col) => `<th>${_esc(columnLabels[col] ?? col)}</th>`).join("")
-    }</tr></thead>`;
+    const theadHtml = `<thead><tr>
+      <th>Periode</th><th>Datum</th>${overviewCols.map(col => `<th>${_esc(columnLabels[col] ?? col)}</th>`).join("")}
+    </tr></thead>`;
 
-    const tbodyHtml = measurements.length === 0
-      ? `<tbody><tr><td colspan="${columns.length}" style="padding:10px 12px;color:var(--secondary-text-color);font-style:italic;">
-           Geen metingen voor deze periode.
+    const tbodyHtml = this._periodOrder.length === 0
+      ? `<tbody><tr><td colspan="${overviewCols.length + 2}" style="padding:10px 12px;color:var(--secondary-text-color);font-style:italic;">
+           Geen perioden. Klik op een Meting-knop om te starten.
          </td></tr></tbody>`
-      : `<tbody>${measurements.map((m) => `<tr>${
-          columns.map((col) => {
-            let val = m[col] ?? "";
-            if (col === "timestamp" && val) {
-              // Show "YYYY-MM-DD HH:MM" trimmed from ISO string.
-              val = String(val).slice(0, 16).replace("T", " ");
-            }
-            return `<td>${_esc(String(val))}</td>`;
-          }).join("")
-        }</tr>`).join("")}</tbody>`;
+      : `<tbody>${this._periodOrder.map(pid => {
+          const p    = this._periods[pid] ?? {};
+          const last = p.measurements?.length ? p.measurements[p.measurements.length - 1] : null;
+          const act  = pid === this._activePeriodId;
+          const sty  = act ? ' style="font-weight:700;background:rgba(var(--rgb-primary-color,25,118,210),0.1)"' : '';
+          return `<tr${sty}>
+            <td>${_esc(p.label ?? pid)}${act ? " ◀" : ""}</td>
+            <td>${_esc(p.date ?? "—")}</td>
+            ${overviewCols.map(col => `<td>${last ? _esc(String(last[col] ?? "—")) : "—"}</td>`).join("")}
+          </tr>`;
+        }).join("")}</tbody>`;
 
     const tableHtml = `
       <div class="table-wrapper">
@@ -440,14 +545,18 @@ class SimulationPeriodCard extends HTMLElement {
       </details>`;
 
     // ── Footer ────────────────────────────────────────────────────────────────
+    const totalMeasurements = this._periodOrder.reduce(
+      (sum, pid) => sum + (this._periods[pid]?.measurements?.length ?? 0), 0
+    );
     const footerHtml = `
       <div class="card-footer">
         <span class="stat-badge">${this._totalPeriods} periode(n)</span>
-        <span class="stat-badge">${measurements.length} meting(en)</span>
+        <span class="stat-badge">${totalMeasurements} meting(en)</span>
         <button class="btn btn-danger" id="btn-reset">Reset simulatie</button>
       </div>`;
 
     // ── Compose & inject ──────────────────────────────────────────────────────
+    const chartHtml = this._renderSvgChart();
     this._container.innerHTML = `
       <ha-card>
         <div class="card-header">
@@ -458,8 +567,8 @@ class SimulationPeriodCard extends HTMLElement {
         </div>
         <div class="card-content">
           <div class="tabs" id="tabs-container">${tabsHtml}</div>
-          ${periodHeaderHtml}
-          ${activePeriod ? tableHtml : ""}
+          ${chartHtml}
+          ${tableHtml}
           ${activePeriod ? formHtml : ""}
         </div>
         ${footerHtml}
@@ -514,7 +623,7 @@ window.customCards.push({
 });
 
 console.info(
-  "%c SIMULATION-PERIOD-CARD %c v1.0.0 ",
+  "%c SIMULATION-PERIOD-CARD %c v1.1.0 ",
   "color:#fff;background:#1976d2;font-weight:700;padding:2px 4px;border-radius:3px 0 0 3px",
   "color:#1976d2;background:#e3f2fd;font-weight:700;padding:2px 4px;border-radius:0 3px 3px 0"
 );

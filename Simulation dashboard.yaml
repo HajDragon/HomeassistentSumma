@@ -2,57 +2,142 @@ views:
   - title: Simulatie Mevrouw Goedheid
     path: simulatie-goedheid
     icon: mdi:scale-bathroom
+    # Equal masonry grid — all top-level cards are the same column width
+    type: masonry
     cards:
 
-      # ── Reset + Fase selector ────────────────────────────
+      # ══ ROW 1 — Controls (2 equal columns) ══════════════════════════
       - type: grid
         columns: 2
         square: false
         cards:
-          - type: button
-            name: Reset Simulatie
-            icon: mdi:restart
-            icon_height: 40px
-            tap_action:
-              action: call-service
-              service: script.reset_goedheid_simulatie
-            style: |
-              ha-card {
-                --paper-item-icon-color: red;
-              }
 
+          # Col 1 — Databron + Simulatiefase knoppen
           - type: entities
-            title: Tijdlijn
+            title: "Databron & Tijdlijn"
+            card_mod:
+              style: |
+                ha-card { margin: 8px; }
             entities:
               - entity: input_select.data_bron_weegschaal
-                name: Data Source
+                name: Databron
               - entity: input_select.simulatiefase_goedheid
-                name: Simulatiefase
+                name: Simulatiefase (legacy)
               - entity: input_datetime.goedheid_meetdatum
                 name: Datum van Meting
+
+          # Col 2 — Reset button + period quick-switch (2×2 inside)
+          - type: vertical-stack
+            card_mod:
+              style: |
+                :host { display: block; margin: 8px; }
+            cards:
+              - type: button
+                name: Reset Simulatie
+                icon: mdi:restart
+                icon_height: 36px
+                tap_action:
+                  action: call-service
+                  service: simulation_manager.reset_simulation
+                card_mod:
+                  style: |
+                    ha-card { --primary-color: var(--error-color, #db4437); }
+              - type: grid
+                columns: 2
+                square: false
+                cards:
+                  - type: button
+                    name: "Meting 1"
+                    icon: mdi:numeric-1-circle
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      service_data:
+                        entity_id: input_select.simulatiefase_goedheid
+                        option: "Meting 1 (start)"
+                  - type: button
+                    name: "Meting 2"
+                    icon: mdi:numeric-2-circle
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      service_data:
+                        entity_id: input_select.simulatiefase_goedheid
+                        option: "Meting 2 (2 mnd)"
+                  - type: button
+                    name: "Meting 3"
+                    icon: mdi:numeric-3-circle
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      service_data:
+                        entity_id: input_select.simulatiefase_goedheid
+                        option: "Meting 3 (4 mnd)"
+                  - type: button
+                    name: "Meting 4"
+                    icon: mdi:numeric-4-circle
+                    tap_action:
+                      action: call-service
+                      service: input_select.select_option
+                      service_data:
+                        entity_id: input_select.simulatiefase_goedheid
+                        option: "Meting 4 (6 mnd)"
+
+      # ══ ROW 2 — Huidige Meetwaarden (2 equal columns) ═══════════════
+      # Left:  read-only display sensors (reflects live OR simulatie data)
+      # Right: editable input_number sliders (active only in Simulatie mode)
+      #        Changing a slider instantly updates the display sensor via
+      #        the template sensor middleman in mevrouw_goedheid_simulation.yaml
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+
+          - type: entities
+            title: "Huidige Meetwaarden — Mevrouw Goedheid"
+            card_mod:
+              style: |
+                ha-card { margin: 8px; }
+            entities:
+              - entity: sensor.display_gewicht
+                name: Totaal Gewicht
+                icon: mdi:scale-bathroom
+              - entity: sensor.display_spiermassa
+                name: Spiermassa
+                icon: mdi:arm-flex
+              - entity: sensor.display_vetmassa
+                name: Vetmassa
+                icon: mdi:food-drumstick
+              - entity: sensor.display_bmi
+                name: BMI
+                icon: mdi:human
               - entity: input_number.goedheid_lengte
                 name: Lichaamslengte (m)
+                icon: mdi:human-male-height
 
-      # ── Huidige meetwaarden ──────────────────────────────
-      - type: entities
-        title: Huidige Meetwaarden — Mevrouw Goedheid
-        entities:
-          - entity: sensor.display_gewicht
-            name: Totaal Gewicht
-            icon: mdi:scale-bathroom
-          - entity: sensor.display_spiermassa
-            name: Spiermassa
-            icon: mdi:arm-flex
-          - entity: sensor.display_vetmassa
-            name: Vetmassa
-            icon: mdi:food-drumstick
-          - entity: sensor.display_bmi
-            name: BMI
-            icon: mdi:human
+          - type: entities
+            title: "Simulatie Invoer (aanpasbaar)"
+            card_mod:
+              style: |
+                ha-card { margin: 8px; }
+            entities:
+              - entity: input_number.goedheid_gewicht
+                name: Gewicht (kg)
+                icon: mdi:scale-bathroom
+              - entity: input_number.goedheid_spiermassa
+                name: Spiermassa (kg)
+                icon: mdi:arm-flex
+              - entity: input_number.goedheid_vetmassa
+                name: Vetmassa (kg)
+                icon: mdi:food-drumstick
+              - entity: input_number.goedheid_bmi
+                name: BMI
+                icon: mdi:human
+              - entity: input_number.goedheid_lengte
+                name: Lichaamslengte (m)
+                icon: mdi:human-male-height
 
-      # ── NEW: Simulation Period Card (dictionary-based, reactive) ─
-      # Reads from sensor.simulation_manager (custom integration).
-      # Requires: custom_components/simulation_manager/ + www/ card file.
+      # ══ ROW 3 — Simulation Period Card (full width) ══════════════════
       - type: custom:simulation-period-card
         title: "Mevrouw Goedheid — Lichaamssamenstelling per Periode"
         columns:
@@ -68,53 +153,7 @@ views:
           vetmassa:   "Vetmassa (kg)"
           bmi:        "BMI (kg/m²)"
 
-      # ── Quick switch buttons — call simulation_manager services ──
-      - type: grid
-        columns: 4
-        square: false
-        cards:
-          - type: button
-            name: "Meting 1 (start)"
-            icon: mdi:numeric-1-circle
-            tap_action:
-              action: call-service
-              service: simulation_manager.switch_period
-              service_data:
-                period_id: "period_1"
-                label: "Meting 1 (start)"
-                date: "2026-01-01"
-          - type: button
-            name: "Meting 2 (2 mnd)"
-            icon: mdi:numeric-2-circle
-            tap_action:
-              action: call-service
-              service: simulation_manager.switch_period
-              service_data:
-                period_id: "period_2"
-                label: "Meting 2 (2 mnd)"
-                date: "2026-03-01"
-          - type: button
-            name: "Meting 3 (4 mnd)"
-            icon: mdi:numeric-3-circle
-            tap_action:
-              action: call-service
-              service: simulation_manager.switch_period
-              service_data:
-                period_id: "period_3"
-                label: "Meting 3 (4 mnd)"
-                date: "2026-05-01"
-          - type: button
-            name: "Meting 4 (6 mnd)"
-            icon: mdi:numeric-4-circle
-            tap_action:
-              action: call-service
-              service: simulation_manager.switch_period
-              service_data:
-                period_id: "period_4"
-                label: "Meting 4 (6 mnd)"
-                date: "2026-07-01"
-
-      # ── Static reference table (kept for PESDIE context) ─────────
+      # ══ ROW 4 — Referentietabel (full width) ════════════════════════
       - type: markdown
         title: "6-maanden Trend — Mevrouw Goedheid"
         content: |
@@ -127,35 +166,178 @@ views:
 
           **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5
 
-      # ── Grafieken 2x2 grid: Gewicht, BMI, Spiermassa, Vetmassa ──
+      # ══ ROW 5 — Grafieken (2×2 grid, apexcharts-card via HACS) ════════
+      # Vereist: HACS → Frontend → "ApexCharts Card" installeren
+      # X-as = simulatiedatum (jan/mrt/mei/jul)  |  Y-as = meetwaarde
       - type: grid
         columns: 2
         square: false
         cards:
-          - type: history-graph
-            title: Totaal Gewicht (kg)
-            hours_to_show: 720
-            entities:
-              - entity: sensor.display_gewicht
-                name: Gewicht
 
-          - type: history-graph
-            title: BMI (kg/m2)
-            hours_to_show: 720
-            entities:
-              - entity: sensor.display_bmi
-                name: BMI
+          - type: custom:apexcharts-card
+            header:
+              title: "Gewicht (kg)"
+              show: true
+            apex_config:
+              chart:
+                type: line
+                height: 280
+              stroke:
+                curve: smooth
+                width: 3
+              markers:
+                size: 6
+              xaxis:
+                type: datetime
+                labels:
+                  datetimeUTC: false
+                  format: "MMM yyyy"
+            yaxis:
+              - min: 60
+                max: 90
+                decimals: 1
+            series:
+              - entity: sensor.simulation_manager
+                name: "Gewicht"
+                data_generator: |
+                  const BASE = [
+                    [new Date('2026-01-01T12:00:00').getTime(), 70.0],
+                    [new Date('2026-03-01T12:00:00').getTime(), 72.0],
+                    [new Date('2026-05-01T12:00:00').getTime(), 74.5],
+                    [new Date('2026-07-01T12:00:00').getTime(), 77.0],
+                  ];
+                  const IDS = ['period_1','period_2','period_3','period_4'];
+                  const p = entity.attributes.periods ?? {};
+                  return BASE.map(([t, def], i) => {
+                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
+                    return [t, m ? parseFloat(m.gewicht) : def];
+                  });
+            card_mod:
+              style: |
+                ha-card { height: 350px; margin: 8px; }
 
-          - type: history-graph
-            title: Spiermassa (kg)
-            hours_to_show: 720
-            entities:
-              - entity: sensor.display_spiermassa
-                name: Spiermassa
+          - type: custom:apexcharts-card
+            header:
+              title: "Spiermassa (kg)"
+              show: true
+            apex_config:
+              chart:
+                type: line
+                height: 280
+              stroke:
+                curve: smooth
+                width: 3
+              markers:
+                size: 6
+              xaxis:
+                type: datetime
+                labels:
+                  datetimeUTC: false
+                  format: "MMM yyyy"
+            yaxis:
+              - min: 25
+                max: 35
+                decimals: 1
+            series:
+              - entity: sensor.simulation_manager
+                name: "Spiermassa"
+                data_generator: |
+                  const BASE = [
+                    [new Date('2026-01-01T12:00:00').getTime(), 29.5],
+                    [new Date('2026-03-01T12:00:00').getTime(), 29.3],
+                    [new Date('2026-05-01T12:00:00').getTime(), 29.0],
+                    [new Date('2026-07-01T12:00:00').getTime(), 28.8],
+                  ];
+                  const IDS = ['period_1','period_2','period_3','period_4'];
+                  const p = entity.attributes.periods ?? {};
+                  return BASE.map(([t, def], i) => {
+                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
+                    return [t, m ? parseFloat(m.spiermassa) : def];
+                  });
+            card_mod:
+              style: |
+                ha-card { height: 350px; margin: 8px; }
 
-          - type: history-graph
-            title: Vetmassa (kg)
-            hours_to_show: 720
-            entities:
-              - entity: sensor.display_vetmassa
-                name: Vetmassa
+          - type: custom:apexcharts-card
+            header:
+              title: "Vetmassa (kg)"
+              show: true
+            apex_config:
+              chart:
+                type: line
+                height: 280
+              stroke:
+                curve: smooth
+                width: 3
+              markers:
+                size: 6
+              xaxis:
+                type: datetime
+                labels:
+                  datetimeUTC: false
+                  format: "MMM yyyy"
+            yaxis:
+              - min: 20
+                max: 35
+                decimals: 1
+            series:
+              - entity: sensor.simulation_manager
+                name: "Vetmassa"
+                data_generator: |
+                  const BASE = [
+                    [new Date('2026-01-01T12:00:00').getTime(), 24.0],
+                    [new Date('2026-03-01T12:00:00').getTime(), 25.5],
+                    [new Date('2026-05-01T12:00:00').getTime(), 27.0],
+                    [new Date('2026-07-01T12:00:00').getTime(), 28.5],
+                  ];
+                  const IDS = ['period_1','period_2','period_3','period_4'];
+                  const p = entity.attributes.periods ?? {};
+                  return BASE.map(([t, def], i) => {
+                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
+                    return [t, m ? parseFloat(m.vetmassa) : def];
+                  });
+            card_mod:
+              style: |
+                ha-card { height: 350px; margin: 8px; }
+
+          - type: custom:apexcharts-card
+            header:
+              title: "BMI (kg/m²)"
+              show: true
+            apex_config:
+              chart:
+                type: line
+                height: 280
+              stroke:
+                curve: smooth
+                width: 3
+              markers:
+                size: 6
+              xaxis:
+                type: datetime
+                labels:
+                  datetimeUTC: false
+                  format: "MMM yyyy"
+            yaxis:
+              - min: 20
+                max: 32
+                decimals: 1
+            series:
+              - entity: sensor.simulation_manager
+                name: "BMI"
+                data_generator: |
+                  const BASE = [
+                    [new Date('2026-01-01T12:00:00').getTime(), 24.8],
+                    [new Date('2026-03-01T12:00:00').getTime(), 25.5],
+                    [new Date('2026-05-01T12:00:00').getTime(), 26.4],
+                    [new Date('2026-07-01T12:00:00').getTime(), 27.3],
+                  ];
+                  const IDS = ['period_1','period_2','period_3','period_4'];
+                  const p = entity.attributes.periods ?? {};
+                  return BASE.map(([t, def], i) => {
+                    const m = p[IDS[i]]?.measurements?.slice(-1)[0];
+                    return [t, m ? parseFloat(m.bmi) : def];
+                  });
+            card_mod:
+              style: |
+                ha-card { height: 350px; margin: 8px; }
