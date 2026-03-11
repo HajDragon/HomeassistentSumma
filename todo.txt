@@ -1,2 +1,0 @@
-1: adding SQL LITE to save the data of measurement and then use it to show the history of the measurements.
-2:Fixing the order of measurement periods appearing in the panel because the order is priod 2 and then period 1, it should be the other way around.
