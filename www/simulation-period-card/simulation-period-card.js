@@ -240,6 +240,29 @@ const STYLES = `
     border: 1px solid var(--primary-color);
   }
 
+  /* ── Live-preview row (shown while slider debounce is pending) ── */
+  .live-preview td {
+    font-style: italic;
+    color: var(--warning-color, #f57c00);
+  }
+  .live-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 8px;
+    background: var(--warning-color, #f57c00);
+    color: #fff;
+    margin-left: 5px;
+    vertical-align: middle;
+    letter-spacing: 0.02em;
+    animation: live-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes live-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+  }
+
   /* ── Footer ── */
   .card-footer {
     display: flex;
@@ -278,6 +301,15 @@ class SimulationPeriodCard extends HTMLElement {
           vetmassa:   "Vetmassa (kg)",
           bmi:        "BMI (kg/m²)",
         },
+        // Optional map of metric-key → HA entity_id for live slider preview.
+        // When set, the card shows a pulsing amber row with unsaved slider
+        // values while the 1-second debounce automation is pending.
+        // Example:  live_input_entities:
+        //              gewicht:    input_number.goedheid_gewicht
+        //              spiermassa: input_number.goedheid_spiermassa
+        //              vetmassa:   input_number.goedheid_vetmassa
+        //              bmi:        input_number.goedheid_bmi
+        live_input_entities: null,
       },
       config
     );
@@ -319,7 +351,29 @@ class SimulationPeriodCard extends HTMLElement {
     const newState = hass.states[ENTITY_ID];
     const newJson  = JSON.stringify(newState);
 
-    if (newJson === this._lastStateJson) return; // Nothing changed — skip render.
+    // ── Live entity tracking ──────────────────────────────────────────────
+    // When live_input_entities is configured, snapshot the current slider
+    // states on every hass update.  A change in live values forces a re-render
+    // even if sensor.simulation_manager hasn't changed yet (i.e. while the 1s
+    // debounce automation is counting down).
+    let liveChanged = false;
+    const liveCfg = this._config?.live_input_entities;
+    if (liveCfg && typeof liveCfg === "object") {
+      const snapshot = {};
+      Object.entries(liveCfg).forEach(([key, entityId]) => {
+        snapshot[key] = parseFloat(hass.states[entityId]?.state ?? 0) || 0;
+      });
+      const liveJson = JSON.stringify(snapshot);
+      if (liveJson !== this._lastLiveJson) {
+        this._lastLiveJson = liveJson;
+        this._liveValues   = snapshot;  // stored for _render()
+        liveChanged = true;
+      }
+    } else {
+      this._liveValues = null;
+    }
+
+    if (newJson === this._lastStateJson && !liveChanged) return; // nothing to do
     this._lastStateJson = newJson;
 
     this._activePeriodId = newState?.attributes?.active_period_id ?? null;
@@ -545,7 +599,34 @@ class SimulationPeriodCard extends HTMLElement {
           const last = p.measurements?.length ? p.measurements[p.measurements.length - 1] : null;
           const act  = pid === this._activePeriodId;
           const sty  = act ? ' style="font-weight:700;background:rgba(var(--rgb-primary-color,25,118,210),0.1)"' : '';
-          return `<tr${sty}>
+
+          // ── Live preview for the active period ──────────────────────────
+          // While the 1 s debounce automation is pending, _liveValues holds
+          // the current slider states.  When any live value differs from the
+          // last saved measurement by more than the step size (0.05), we show
+          // a pulsing amber row so the teacher sees their edit immediately —
+          // before the automation actually writes to simulation_manager.
+          let liveRowHtml = "";
+          if (act && this._liveValues) {
+            const lv = this._liveValues;
+            const hasDiff = overviewCols.some((col) => {
+              if (!(col in lv)) return false;
+              const lastVal = last ? parseFloat(last[col] ?? 0) : 0;
+              return Math.abs((lv[col] ?? 0) - lastVal) > 0.05;
+            });
+            if (hasDiff) {
+              liveRowHtml = `<tr class="live-preview">
+                <td>${_esc(p.label ?? pid)} <span class="live-badge">◎ actueel</span></td>
+                <td>${_esc(p.date ?? "—")}</td>
+                ${overviewCols.map(col => {
+                  const v = col in lv ? lv[col].toFixed(1) : (last ? _esc(String(last[col] ?? "—")) : "—");
+                  return `<td>${v}</td>`;
+                }).join("")}
+              </tr>`;
+            }
+          }
+
+          return liveRowHtml + `<tr${sty}>
             <td>${_esc(p.label ?? pid)}${act ? " ◀" : ""}</td>
             <td>${_esc(p.date ?? "—")}</td>
             ${overviewCols.map(col => `<td>${last ? _esc(String(last[col] ?? "—")) : "—"}</td>`).join("")}
@@ -702,7 +783,7 @@ window.customCards.push({
 });
 
 console.info(
-  "%c SIMULATION-PERIOD-CARD %c v1.4.0 ",
+  "%c SIMULATION-PERIOD-CARD %c v1.5.0 ",
   "color:#fff;background:#1976d2;font-weight:700;padding:2px 4px;border-radius:3px 0 0 3px",
   "color:#1976d2;background:#e3f2fd;font-weight:700;padding:2px 4px;border-radius:0 3px 3px 0"
 );

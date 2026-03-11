@@ -151,8 +151,15 @@ views:
           gewicht:    "Gewicht (kg)"
           spiermassa: "Spiermassa (kg)"
           vetmassa:   "Vetmassa (kg)"
-          bmi:        "BMI (kg/m²)"
-
+          bmi:        "BMI (kg/m²)"        # Live preview — maps each metric key to the input_number entity that
+        # the teacher edits on the left panel.  When the slider value differs
+        # from the last saved measurement, a pulsing amber row appears
+        # immediately (before the 1-second debounce automation saves the data).
+        live_input_entities:
+          gewicht:    input_number.goedheid_gewicht
+          spiermassa: input_number.goedheid_spiermassa
+          vetmassa:   input_number.goedheid_vetmassa
+          bmi:        input_number.goedheid_bmi
       # ══ ROW 4 — Referentietabel (full width) ════════════════════════
       - type: markdown
         title: "6-maanden Trend — Mevrouw Goedheid"
