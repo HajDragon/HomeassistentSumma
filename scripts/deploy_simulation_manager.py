@@ -88,6 +88,7 @@ Run the following commands from within HA (or via SCP from this machine):
   cp custom_components/simulation_manager/manifest.json /config/custom_components/simulation_manager/
   cp custom_components/simulation_manager/const.py      /config/custom_components/simulation_manager/
   cp custom_components/simulation_manager/models.py     /config/custom_components/simulation_manager/
+  cp custom_components/simulation_manager/sensor.py     /config/custom_components/simulation_manager/
   cp custom_components/simulation_manager/services.yaml /config/custom_components/simulation_manager/
 
   # Copy Lovelace card
