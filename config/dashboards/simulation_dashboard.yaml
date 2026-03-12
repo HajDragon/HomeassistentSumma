@@ -21,6 +21,12 @@ views:
             entities:
               - entity: input_select.data_bron_weegschaal
                 name: Databron
+                card_mod:
+                  style: |
+                    ha-select {
+                      width: 130px !important;
+                      min-width: unset !important;
+                    }
               - entity: input_select.simulatiefase_goedheid
                 name: Simulatiefase (legacy)
               - entity: input_datetime.goedheid_meetdatum
@@ -136,6 +142,10 @@ views:
               - entity: input_number.goedheid_lengte
                 name: Lichaamslengte (m)
                 icon: mdi:human-male-height
+              - type: divider
+              - entity: script.sync_display_naar_simulatie_invoer
+                name: "Sync meetwaarden → invoer"
+                icon: mdi:sync-circle
 
       # ══ ROW 3 — Simulation Period Card (full width) ══════════════════
       - type: custom:simulation-period-card

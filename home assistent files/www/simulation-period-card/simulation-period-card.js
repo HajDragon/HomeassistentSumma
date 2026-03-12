@@ -263,6 +263,30 @@ const STYLES = `
     50%       { opacity: 0.45; }
   }
 
+  /* ── Chart filter buttons ── */
+  .chart-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .chart-filter-btn {
+    padding: 3px 10px;
+    border: 1.5px solid var(--divider-color, #e0e0e0);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--secondary-text-color);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+  }
+  .chart-filter-btn.active {
+    background: var(--primary-color);
+    color: var(--text-primary-color, #fff);
+    border-color: var(--primary-color);
+  }
+
   /* ── Footer ── */
   .card-footer {
     display: flex;
@@ -313,6 +337,9 @@ class SimulationPeriodCard extends HTMLElement {
       },
       config
     );
+
+    // Preserve chart filter across re-renders; null = show all metrics.
+    if (this._chartFilter === undefined) this._chartFilter = null;
 
     // Build shadow root once.
     if (!this.shadowRoot) {
@@ -463,16 +490,22 @@ class SimulationPeriodCard extends HTMLElement {
       return row;
     });
 
-    // Only render metrics that have at least one real recorded value.
-    const activeMetrics = METRICS.filter(({ key }) =>
+    // All metrics with at least one data point — drives filter buttons + empty-state check.
+    const allActiveMetrics = METRICS.filter(({ key }) =>
       points.some((p) => p[key] !== null)
     );
 
-    if (activeMetrics.length === 0) {
+    if (allActiveMetrics.length === 0) {
       return `<div style="margin:0 0 12px;padding:20px 14px;border:1px solid var(--divider-color,#e0e0e0);border-radius:8px;background:var(--secondary-background-color,#f5f5f5);color:var(--secondary-text-color);font-size:0.85rem;text-align:center;">
         Nog geen metingen opgeslagen &#8212; de grafiek verschijnt zodra je de eerste meting toevoegt.
       </div>`;
     }
+
+    // Narrow to the selected metric; fall back to all when the filter no longer matches any data.
+    const filtered = this._chartFilter
+      ? allActiveMetrics.filter(({ key }) => key === this._chartFilter)
+      : allActiveMetrics;
+    const activeMetrics = filtered.length > 0 ? filtered : allActiveMetrics;
 
     const n   = points.length;
     const W   = 680, H = 300;
@@ -544,18 +577,60 @@ class SimulationPeriodCard extends HTMLElement {
         const cx     = xPos(i).toFixed(1);
         const cy     = yPos(val, key);
         const period = points[i].label;
-        s += `<circle cx="${cx}" cy="${cy.toFixed(1)}" r="6" fill="${color}" stroke="white" stroke-width="2" class="chart-dot" style="cursor:crosshair" data-metric="${_esc(label)}" data-val="${val.toFixed(2)}" data-unit="${_esc(unit)}" data-period="${_esc(period)}"/>`;
+        s += `<circle cx="${cx}" cy="${cy.toFixed(1)}" r="6" fill="${color}" stroke="white" stroke-width="2" class="chart-dot" data-metric="${_esc(label)}" data-val="${val.toFixed(2)}" data-unit="${_esc(unit)}" data-period="${_esc(period)}"/>`;
         const labelY = cy > pad.top + 20 ? cy - 10 : cy + 20;
         s += `<text x="${cx}" y="${labelY.toFixed(1)}" text-anchor="middle" font-size="10" fill="${color}" font-weight="700">${val.toFixed(1)}</text>`;
       });
     });
 
+    // ── Invisible hit strips — one per period column, drawn last (topmost) ────
+    // Because SVG has no true z-index, the last element in DOM order receives
+    // mouse events first.  By drawing these transparent <rect>s after all
+    // dots and lines, they sit on top and catch every hover regardless of
+    // which metric dot is visually on top.
+    // Each strip encodes ALL metrics at that period as JSON so the tooltip
+    // handler can aggregate them into one panel — solving the overlap problem.
+    const colSpacing = n > 1 ? cW / (n - 1) : cW;
+    const stripHalfW = Math.max(18, colSpacing / 2);
+    points.forEach((pt, i) => {
+      const metricsAtPoint = activeMetrics
+        .filter(({ key }) => pt[key] !== null)
+        .map(({ key, label, unit, color }) => ({
+          label, unit, color, val: pt[key].toFixed(2),
+        }));
+      if (metricsAtPoint.length === 0) return;
+      const x = xPos(i);
+      s += `<rect class="chart-strip"
+        x="${(x - stripHalfW).toFixed(1)}" y="${pad.top}"
+        width="${(stripHalfW * 2).toFixed(1)}" height="${cH}"
+        fill="transparent"
+        data-period="${_esc(pt.label)}"
+        data-date="${_esc(pt.date)}"
+        data-metrics="${_esc(JSON.stringify(metricsAtPoint))}"
+        style="cursor:crosshair"/>`;
+    });
+
+    // ── Per-metric filter buttons ─────────────────────────────────────────────
+    const filterHtml = allActiveMetrics.length >= 1 ? `
+      <div class="chart-filters">
+        <button class="chart-filter-btn${!this._chartFilter ? ' active' : ''}" data-filter="">Alle</button>
+        ${allActiveMetrics.map(({ key, label, color }) => {
+          const isActive = this._chartFilter === key;
+          return `<button class="chart-filter-btn" data-filter="${_esc(key)}" style="${
+            isActive
+              ? `background:${color};color:#fff;border-color:${color}`
+              : `border-color:${color};color:${color}`
+          }">${_esc(label)}</button>`;
+        }).join('')}
+      </div>` : '';
+
     return `
-    <div style="overflow-x:auto;margin:0 0 12px;border:1px solid var(--divider-color,#e0e0e0);border-radius:8px;padding:8px 8px 0;background:var(--card-background-color);">
-      <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;font-family:var(--primary-font-family,sans-serif);min-width:360px;min-height:220px;">
-        ${s}
-      </svg>
-    </div>`;
+      ${filterHtml}
+      <div style="overflow-x:auto;margin:0 0 12px;border:1px solid var(--divider-color,#e0e0e0);border-radius:8px;padding:8px 8px 0;background:var(--card-background-color);">
+        <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;font-family:var(--primary-font-family,sans-serif);min-width:360px;min-height:220px;">
+          ${s}
+        </svg>
+      </div>`;
   }
 
   // ── Render ──────────────────────────────────────────────────────────────────
@@ -694,30 +769,58 @@ class SimulationPeriodCard extends HTMLElement {
       btn.addEventListener("click", () => this._switchPeriod(btn.dataset.periodId));
     });
 
+    // Chart metric filter buttons
+    this._container.querySelectorAll(".chart-filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        this._chartFilter = btn.dataset.filter || null;
+        this._render();
+      });
+    });
+
     const saveBtn  = this._container.querySelector("#btn-save");
     const resetBtn = this._container.querySelector("#btn-reset");
     if (saveBtn)  saveBtn.addEventListener("click",  () => this._saveMeasurement());
     if (resetBtn) resetBtn.addEventListener("click", () => this._resetSimulation());
 
-    // ── Tooltip bindings (SVG chart dots) ─────────────────────────────────────
+    // ── Tooltip bindings (SVG hit strips — one per period column) ─────────────
+    // Each strip covers the full chart height for its period and carries all
+    // metrics as JSON in data-metrics.  This means hovering anywhere in the
+    // column — even where multiple dots overlap at the same pixel — always
+    // shows every variable's value in one aggregated tooltip.
     if (this._tooltip) {
       const tip = this._tooltip;
-      this._container.querySelectorAll("circle[data-metric]").forEach((dot) => {
-        dot.addEventListener("mouseenter", () => {
-          const strong = document.createElement("strong");
-          strong.textContent = `${dot.dataset.metric}: ${dot.dataset.val}\u00a0${dot.dataset.unit}`;
-          const period = document.createTextNode(dot.dataset.period);
+      this._container.querySelectorAll(".chart-strip").forEach((strip) => {
+        strip.addEventListener("mouseenter", () => {
+          let metrics;
+          try { metrics = JSON.parse(strip.dataset.metrics || "[]"); }
+          catch { metrics = []; }
           tip.innerHTML = "";
-          tip.appendChild(strong);
-          tip.appendChild(document.createElement("br"));
-          tip.appendChild(period);
+          // Period / date header row
+          const header = document.createElement("div");
+          header.style.cssText = "font-weight:700;margin-bottom:4px;padding-bottom:3px;border-bottom:1px solid rgba(255,255,255,0.3)";
+          header.textContent = strip.dataset.period +
+            (strip.dataset.date ? "\u00a0\u00b7\u00a0" + strip.dataset.date.slice(0, 7) : "");
+          tip.appendChild(header);
+          // One row per metric with a colour swatch
+          metrics.forEach((m) => {
+            const row = document.createElement("div");
+            row.style.cssText = "display:flex;align-items:center;gap:6px;margin-top:2px";
+            const swatch = document.createElement("span");
+            swatch.style.cssText =
+              `display:inline-block;width:8px;height:8px;border-radius:50%;background:${m.color};flex-shrink:0`;
+            const text = document.createElement("span");
+            text.textContent = `${m.label}: ${m.val}\u00a0${m.unit}`;
+            row.appendChild(swatch);
+            row.appendChild(text);
+            tip.appendChild(row);
+          });
           tip.style.display = "block";
         });
-        dot.addEventListener("mousemove", (e) => {
+        strip.addEventListener("mousemove", (e) => {
           tip.style.left = (e.clientX + 14) + "px";
           tip.style.top  = (e.clientY - 44) + "px";
         });
-        dot.addEventListener("mouseleave", () => {
+        strip.addEventListener("mouseleave", () => {
           tip.style.display = "none";
         });
       });
@@ -783,7 +886,7 @@ window.customCards.push({
 });
 
 console.info(
-  "%c SIMULATION-PERIOD-CARD %c v1.5.0 ",
+  "%c SIMULATION-PERIOD-CARD %c v1.7.0 "
   "color:#fff;background:#1976d2;font-weight:700;padding:2px 4px;border-radius:3px 0 0 3px",
   "color:#1976d2;background:#e3f2fd;font-weight:700;padding:2px 4px;border-radius:0 3px 3px 0"
 );

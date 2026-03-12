@@ -1,0 +1,95 @@
+title: Morning
+views:
+  - title: Morning
+    path: morning
+    icon: mdi:weather-sunrise
+    # var(--background-image) is set by the iOS theme (HACS).
+    # Requires "Backend-selected" theme in your HA profile and
+    # frontend: themes: !include_dir_merge_named themes in configuration.yaml.
+    background: var(--background-image)
+    cards:
+      - type: markdown
+        content: >-
+          ## 💙 Health & Body Metrics
+
+          *This data syncs automatically from your Withings devices (BPM
+          Connect, BeamO, Body Scan, ScanWatch 2). Tap on any metric to see your
+          historical graph.*
+
+      - type: entities
+        title: ❤️ Vitals
+        entities:
+          - entity: sensor.withings_hartslag
+            name: Heart Rate
+            icon: mdi:heart-pulse
+          - entity: sensor.withings_hartslag_2
+            name: 'Heart Rate #2'
+            icon: mdi:heart-pulse
+          - type: divider
+          - entity: sensor.withings_systolische_bloeddruk
+            name: Blood Pressure (Sys)
+            icon: mdi:blood-bag
+          - entity: sensor.withings_diastolische_bloeddruk
+            name: Blood Pressure (Dia)
+            icon: mdi:blood-bag
+          - type: divider
+          - entity: sensor.withings_spo2
+            name: SpO2
+            icon: mdi:oxygen-cylinder
+          - entity: sensor.withings_spo2_2
+            name: 'SpO2 #2'
+            icon: mdi:oxygen-cylinder
+          - type: divider
+          - entity: sensor.withings_gewicht
+            name: Weight
+            icon: mdi:scale-bathroom
+          - entity: sensor.withings_lichaamstemperatuur
+            name: Body Temperature
+            icon: mdi:thermometer
+          - entity: sensor.withings_huidtemperatuur
+            name: Skin Temperature
+            icon: mdi:thermometer-lines
+          - entity: sensor.withings_temperatuur
+            name: Ambient Temperature
+            icon: mdi:thermometer
+
+      - type: entities
+        title: 🏃 Activity — ScanWatch 2
+        entities:
+          - entity: sensor.withings_stappen_vandaag_2
+            name: Steps Today
+            icon: mdi:shoe-print
+          - entity: sensor.withings_stap_doelstelling_2
+            name: Step Goal
+            icon: mdi:flag-checkered
+          - entity: sensor.withings_vandaag_afgelegde_afstand_2
+            name: Distance Today
+            icon: mdi:map-marker-distance
+          - entity: sensor.withings_hoogteverschil_vandaag_2
+            name: Altitude Change
+            icon: mdi:elevation-rise
+          - entity: sensor.withings_actief_gespendeerde_tijd_vandaag_2
+            name: Active Time
+            icon: mdi:timer
+          - entity: sensor.withings_actieve_calorieen_vandaag_verbrand_2
+            name: Active Calories
+            icon: mdi:fire
+          - entity: sensor.withings_totale_calorieen_vandaag_verbrand_2
+            name: Total Calories
+            icon: mdi:fire-circle
+
+      - type: entities
+        title: 🔋 Device Status
+        entities:
+          - entity: sensor.beamo_batterij
+            name: BeamO Battery
+            icon: mdi:battery
+          - entity: sensor.body_scan_batterij
+            name: Body Scan Battery
+            icon: mdi:battery
+          - entity: sensor.bpm_connect_batterij
+            name: BPM Connect Battery
+            icon: mdi:battery
+          - entity: sensor.scanwatch_2_batterij
+            name: ScanWatch 2 Battery
+            icon: mdi:battery

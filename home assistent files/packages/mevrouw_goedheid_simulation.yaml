@@ -18,11 +18,11 @@ input_select:
     icon: mdi:timeline-clock
 
   data_bron_weegschaal:
-    name: "Data Source"
+    name: "Databron"
     options:
-      - "Simulatie (Mevrouw Goedheid)"
+      - "Simulatie"
       - "Live Data (Echte Weegschaal)"
-    initial: "Simulatie (Mevrouw Goedheid)"
+    initial: "Simulatie"
     icon: mdi:database-switch
 
 input_datetime:
@@ -74,9 +74,6 @@ input_number:
     icon: mdi:human-male-height
     initial: 1.65
 
-# ── Template Sensors (middleman: Simulatie ↔ Live) ─────────
-# Switch the input_select.data_bron_weegschaal dropdown to
-# toggle between simulated and real sensor data on the dashboard.
 template:
   - sensor:
       - name: "display_gewicht"
@@ -85,11 +82,11 @@ template:
         device_class: weight
         state_class: measurement
         state: >
-          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
-            {{ states('input_number.goedheid_gewicht') }}
-          {% else %}
-            {{ states('sensor.withings_gewicht') }}
-          {% endif %}
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_gewicht") }}
+          {%- else %}
+            {{ states("sensor.withings_gewicht") }}
+          {%- endif %}
         icon: mdi:scale-bathroom
 
       - name: "display_bmi"
@@ -97,13 +94,13 @@ template:
         unit_of_measurement: "kg/m²"
         state_class: measurement
         state: >
-          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
-            {{ states('input_number.goedheid_bmi') }}
-          {% else %}
-            {% set w = states('sensor.withings_gewicht') | float(0) %}
-            {% set h = states('input_number.goedheid_lengte') | float(1.65) %}
-            {{ (w / (h * h)) | round(1) if h > 0 else 'unknown' }}
-          {% endif %}
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_bmi") }}
+          {%- else %}
+            {%- set w = states("sensor.withings_gewicht") | float(0) %}
+            {%- set h = states("input_number.goedheid_lengte") | float(1.65) %}
+            {{ (w / (h * h)) | round(1) if h > 0 else "unknown" }}
+          {%- endif %}
         icon: mdi:human
 
       - name: "display_spiermassa"
@@ -112,11 +109,11 @@ template:
         device_class: weight
         state_class: measurement
         state: >
-          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
-            {{ states('input_number.goedheid_spiermassa') }}
-          {% else %}
-            {{ states('sensor.withings_spiermassa') }}
-          {% endif %}
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_spiermassa") }}
+          {%- else %}
+            {{ states("sensor.withings_spiermassa") }}
+          {%- endif %}
         icon: mdi:arm-flex
 
       - name: "display_vetmassa"
@@ -125,11 +122,11 @@ template:
         device_class: weight
         state_class: measurement
         state: >
-          {% if is_state('input_select.data_bron_weegschaal', 'Simulatie (Mevrouw Goedheid)') %}
-            {{ states('input_number.goedheid_vetmassa') }}
-          {% else %}
-            {{ states('sensor.withings_vetmassa') }}
-          {% endif %}
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_vetmassa") }}
+          {%- else %}
+            {{ states("sensor.withings_vetmassa") }}
+          {%- endif %}
         icon: mdi:food-drumstick
 
 script:
@@ -168,29 +165,45 @@ script:
         data:
           date: "{{ now().strftime('%Y-%m-%d') }}"
 
-# ── Automation ─────────────────────────────────────────────
+  sync_display_naar_simulatie_invoer:
+    alias: "Sync Meetwaarden naar Simulatie Invoer"
+    icon: mdi:sync-circle
+    sequence:
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_gewicht
+        data:
+          value: "{{ states('sensor.display_gewicht') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_spiermassa
+        data:
+          value: "{{ states('sensor.display_spiermassa') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_vetmassa
+        data:
+          value: "{{ states('sensor.display_vetmassa') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_bmi
+        data:
+          value: "{{ states('sensor.display_bmi') | float(0) }}"
 
 automation goedheid:
   - id: goedheid_simulatie_fase_wissel
     alias: "Goedheid - Update metingen bij fasewissel"
-    description: >
-      Werkt datum, spiermassa, vetmassa, gewicht en BMI bij
-      zodra de simulatiefase verandert.
     trigger:
       - platform: state
         entity_id: input_select.simulatiefase_goedheid
     action:
       - choose:
-
-          # ── Reset / Startklaar ────────────────────────
           - conditions:
               - condition: state
                 entity_id: input_select.simulatiefase_goedheid
                 state: "Reset / Startklaar"
             sequence:
               - service: script.reset_goedheid_simulatie
-
-          # ── Meting 1 (start) — 1 januari 2026 ─────────
           - conditions:
               - condition: state
                 entity_id: input_select.simulatiefase_goedheid
@@ -221,8 +234,18 @@ automation goedheid:
                   entity_id: input_number.goedheid_bmi
                 data:
                   value: 24.8
-
-          # ── Meting 2 (2 mnd) — 1 maart 2026 ──────────
+              - service: simulation_manager.switch_period
+                data:
+                  period_id: "period_1"
+                  label: "Meting 1 (start)"
+                  date: "2026-01-01"
+              - service: simulation_manager.save_measurement
+                data:
+                  gewicht: 70.0
+                  spiermassa: 29.5
+                  vetmassa: 24.0
+                  bmi: 24.8
+                  timestamp: "2026-01-01T00:00:00+00:00"
           - conditions:
               - condition: state
                 entity_id: input_select.simulatiefase_goedheid
@@ -253,8 +276,18 @@ automation goedheid:
                   entity_id: input_number.goedheid_bmi
                 data:
                   value: 25.5
-
-          # ── Meting 3 (4 mnd) — 1 mei 2026 ────────────
+              - service: simulation_manager.switch_period
+                data:
+                  period_id: "period_2"
+                  label: "Meting 2 (2 mnd)"
+                  date: "2026-03-01"
+              - service: simulation_manager.save_measurement
+                data:
+                  gewicht: 72.0
+                  spiermassa: 29.3
+                  vetmassa: 25.5
+                  bmi: 25.5
+                  timestamp: "2026-03-01T00:00:00+00:00"
           - conditions:
               - condition: state
                 entity_id: input_select.simulatiefase_goedheid
@@ -285,8 +318,18 @@ automation goedheid:
                   entity_id: input_number.goedheid_bmi
                 data:
                   value: 26.4
-
-          # ── Meting 4 (6 mnd) — 1 juli 2026 ───────────
+              - service: simulation_manager.switch_period
+                data:
+                  period_id: "period_3"
+                  label: "Meting 3 (4 mnd)"
+                  date: "2026-05-01"
+              - service: simulation_manager.save_measurement
+                data:
+                  gewicht: 74.5
+                  spiermassa: 29.0
+                  vetmassa: 27.0
+                  bmi: 26.4
+                  timestamp: "2026-05-01T00:00:00+00:00"
           - conditions:
               - condition: state
                 entity_id: input_select.simulatiefase_goedheid
@@ -317,32 +360,26 @@ automation goedheid:
                   entity_id: input_number.goedheid_bmi
                 data:
                   value: 27.3
-
+              - service: simulation_manager.switch_period
+                data:
+                  period_id: "period_4"
+                  label: "Meting 4 (6 mnd)"
+                  date: "2026-07-01"
+              - service: simulation_manager.save_measurement
+                data:
+                  gewicht: 77.0
+                  spiermassa: 28.8
+                  vetmassa: 28.5
+                  bmi: 27.3
+                  timestamp: "2026-07-01T00:00:00+00:00"
         default:
           - service: system_log.write
             data:
               message: "Goedheid simulatie: onbekende fase geselecteerd"
               level: warning
 
-  # ── #2: Reverse bridge — JS card period-tab → simulatiefase dropdown ─────────
-  # When a teacher clicks a tab inside the custom JS card, that calls
-  # simulation_manager.switch_period which changes sensor.simulation_manager's
-  # state value (= active_period_id).  This automation mirrors that change back
-  # to input_select.simulatiefase_goedheid so the left-panel dropdown stays in
-  # sync.
-  #
-  # Loop-safety: after this sets the selector, goedheid_simulatie_fase_wissel
-  # fires and calls switch_period again — but because the sensor state is
-  # already the target period_id, no state-change event fires and the loop
-  # terminates naturally.
-  #
-  # Guard — skip when sensor is in the intermediate "none" state that occurs
-  # briefly during a reset, preventing a spurious "Meting 1" selection.
   - id: goedheid_period_naar_fase_sync
-    alias: "Goedheid - simulation_manager periode → simulatiefase bridge"
-    description: >
-      Mirrors an active-period change in the JS card back to the simulatiefase
-      dropdown so both controls always agree on which Meting is selected.
+    alias: "Goedheid - simulation_manager periode naar simulatiefase bridge"
     trigger:
       - platform: state
         entity_id: sensor.simulation_manager
@@ -395,32 +432,8 @@ automation goedheid:
                 data:
                   option: "Meting 4 (6 mnd)"
 
-  # ── #3: Forward bridge — sliders → simulation_manager.save_measurement ───────
-  # Raw problem: when a teacher manually drags a slider (e.g. Gewicht from
-  # 70 → 71.5 kg), the input_number state changes — but nothing propagates that
-  # change to sensor.simulation_manager, so the JS card chart never updates.
-  #
-  # Solution: trigger on any of the four body-scan input_numbers, wait 1 second
-  # (mode: restart collapses all rapid drag events into one call), then snapshot
-  # all four sliders and persist them via simulation_manager.save_measurement.
-  # This fires _commit() in the integration which pushes a fresh attribute
-  # snapshot to sensor.simulation_manager over WebSocket — the JS card re-renders
-  # within milliseconds of the save.
-  #
-  # Design decisions:
-  #   • mode: restart  — each new slider event resets the 1 s timer, so rapid
-  #     drags produce exactly one save instead of many.
-  #   • Condition blocks saving when phase = "Reset / Startklaar" so the
-  #     zero-value writes during reset_goedheid_simulatie never reach the store.
-  #   • Jinja2 templates for all values — zero hardcoding.
-  #   • timestamp from input_datetime.goedheid_meetdatum keeps the chart
-  #     x-axis aligned with the lesson scenario date.
   - id: goedheid_slider_naar_measurement_sync
-    alias: "Goedheid - Sliders → save_measurement bridge (gedebounced)"
-    description: >
-      Propagates manual slider edits to simulation_manager (and therefore to the
-      JS card chart) with a 1-second debounce so rapid drag events are collapsed
-      into a single service call.
+    alias: "Goedheid - Sliders naar save_measurement bridge (gedebounced)"
     mode: restart
     trigger:
       - platform: state
@@ -430,14 +443,13 @@ automation goedheid:
           - input_number.goedheid_vetmassa
           - input_number.goedheid_bmi
     condition:
-      # Only save when a real Meting is active — not during/after a reset.
       - condition: not
         conditions:
           - condition: state
             entity_id: input_select.simulatiefase_goedheid
             state: "Reset / Startklaar"
     action:
-      - delay: "00:00:01"   # absorb rapid drag events into one write
+      - delay: "00:00:01"
       - service: simulation_manager.save_measurement
         data:
           gewicht:    "{{ states('input_number.goedheid_gewicht')    | float(0) }}"
@@ -445,4 +457,3 @@ automation goedheid:
           vetmassa:   "{{ states('input_number.goedheid_vetmassa')   | float(0) }}"
           bmi:        "{{ states('input_number.goedheid_bmi')        | float(0) }}"
           timestamp:  "{{ states('input_datetime.goedheid_meetdatum') }}"
-
