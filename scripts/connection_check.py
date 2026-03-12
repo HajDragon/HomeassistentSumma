@@ -1,12 +1,24 @@
+import os
+import sys
 import requests
 import json
 from datetime import datetime
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+HA_BASE_URL = os.getenv("HA_BASE_URL", "http://homeassistant.local:8123").rstrip("/")
+HA_TOKEN    = os.getenv("HA_TOKEN")
+if not HA_TOKEN:
+    sys.exit("Error: HA_TOKEN not set — copy .env.example to .env and fill in your token.")
+
+
 def check_homeassistant_heartbeat():
     """Check Home Assistant heartbeat and system status"""
-    
-    base_url = "http://homeassistant.local:8123"
-    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhN2Y5ZWYwMzdhYzU0NDZkODU3MzYyYWY2ZGIyMDViNSIsImlhdCI6MTc3MjYzODQwMCwiZXhwIjoyMDg3OTk4NDAwfQ.c_EYV8TB3j6vdVt7FVN1_z_gFAuIl44mhm-4XD6cZXA"
+
+    base_url = HA_BASE_URL
+    token    = HA_TOKEN
     
     headers = {
         "Authorization": f"Bearer {token}",
