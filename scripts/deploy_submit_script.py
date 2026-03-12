@@ -12,17 +12,24 @@ Run on the developer machine:
 import json
 import os
 import sys
+import urllib.parse
 import urllib.request
 import urllib.error
 
-HA_HOST  = "homeassistant.local"
-HA_PORT  = 8123
-HA_TOKEN = os.getenv("HA_TOKEN", (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
-    "eyJpc3MiOiJhN2Y5ZWYwMzdhYzU0NDZkODU3MzYyYWY2ZGIyMDViNSIs"
-    "ImlhdCI6MTc3MjYzODQwMCwiZXhwIjoyMDg3OTk4NDAwfQ."
-    "c_EYV8TB3j6vdVt7FVN1_z_gFAuIl44mhm-4XD6cZXA"
-))
+from dotenv import load_dotenv
+
+load_dotenv()
+
+HA_BASE_URL = os.getenv("HA_BASE_URL", "http://homeassistant.local:8123").rstrip("/")
+HA_TOKEN    = os.getenv("HA_TOKEN")
+if not HA_TOKEN:
+    print("Error: HA_TOKEN not set — copy .env.example to .env and fill in your token.", file=sys.stderr)
+    sys.exit(1)
+
+_parsed  = urllib.parse.urlparse(HA_BASE_URL)
+_HA_HOST = _parsed.hostname or "homeassistant.local"
+_HA_PORT = _parsed.port or 8123
+_HA_SCHEME = _parsed.scheme or "http"
 
 HEADERS = {
     "Authorization": f"Bearer {HA_TOKEN}",
@@ -31,15 +38,15 @@ HEADERS = {
 
 
 def _resolve_ha_url() -> str:
-    """Resolve homeassistant.local once to avoid mDNS flakiness on Windows."""
+    """Resolve the HA host once to avoid mDNS flakiness on Windows."""
     import socket
     try:
-        ip = socket.gethostbyname(HA_HOST)
-        print(f"  Resolved {HA_HOST} → {ip}")
-        return f"http://{ip}:{HA_PORT}"
+        ip = socket.gethostbyname(_HA_HOST)
+        print(f"  Resolved {_HA_HOST} → {ip}")
+        return f"{_HA_SCHEME}://{ip}:{_HA_PORT}"
     except OSError:
         print(f"  DNS lookup failed; falling back to hostname")
-        return f"http://{HA_HOST}:{HA_PORT}"
+        return HA_BASE_URL
 
 
 HA_URL = _resolve_ha_url()

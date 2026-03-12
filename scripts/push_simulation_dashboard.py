@@ -16,17 +16,21 @@ Message-ID plan
 """
 import json
 import os
+import sys
 import time
 import yaml
 import websocket  # pip install websocket-client
 
-WS_URL = "ws://homeassistant.local:8123/api/websocket"
-TOKEN  = (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-    ".eyJpc3MiOiJhN2Y5ZWYwMzdhYzU0NDZkODU3MzYyYWY2ZGIyMDViNSIsImlhdCI"
-    "6MTc3MjYzODQwMCwiZXhwIjoyMDg3OTk4NDAwfQ"
-    ".c_EYV8TB3j6vdVt7FVN1_z_gFAuIl44mhm-4XD6cZXA"
-)
+from dotenv import load_dotenv
+
+load_dotenv()
+
+_HA_BASE_URL = os.getenv("HA_BASE_URL", "http://homeassistant.local:8123").rstrip("/")
+TOKEN        = os.getenv("HA_TOKEN")
+if not TOKEN:
+    sys.exit("Error: HA_TOKEN not set — copy .env.example to .env and fill in your token.")
+
+WS_URL = _HA_BASE_URL.replace("http://", "ws://").replace("https://", "wss://") + "/api/websocket"
 
 SIMULATIE_URL_PATH = "simulatie-goedheid"
 

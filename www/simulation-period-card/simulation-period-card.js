@@ -35,273 +35,11 @@
 const DOMAIN     = "simulation_manager";
 const ENTITY_ID  = `sensor.${DOMAIN}`;
 
-// ── Stylesheet (injected once into the shadow root) ───────────────────────────
-const STYLES = `
-  :host {
-    display: block;
-    font-family: var(--primary-font-family, sans-serif);
-  }
-  ha-card {
-    padding: 0;
-    overflow: hidden;
-  }
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 16px 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary-text-color);
-  }
-  .card-header .title-icon {
-    margin-right: 8px;
-  }
-  .card-content {
-    padding: 12px 16px 16px;
-  }
+// ── External stylesheet path (served from HA's `/local/` → `www/`) ─────────
+const CSS_PATH = "/local/simulation-period-card/simulation-period-card.css";
 
-  /* ── Period tabs ── */
-  .tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-  .tab {
-    padding: 5px 12px;
-    border: 1px solid var(--divider-color, #e0e0e0);
-    border-radius: 20px;
-    background: var(--card-background-color, #fff);
-    color: var(--primary-text-color);
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    white-space: nowrap;
-  }
-  .tab:hover {
-    background: var(--primary-color);
-    color: var(--text-primary-color, #fff);
-    border-color: var(--primary-color);
-  }
-  .tab.active {
-    background: var(--primary-color);
-    color: var(--text-primary-color, #fff);
-    border-color: var(--primary-color);
-    font-weight: 600;
-  }
-  .no-periods {
-    color: var(--secondary-text-color);
-    font-style: italic;
-    font-size: 0.9rem;
-    padding: 8px 0;
-  }
-
-  /* ── Period header ── */
-  .period-header {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
-  .period-label {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary-text-color);
-  }
-  .period-date {
-    font-size: 0.8rem;
-    color: var(--secondary-text-color);
-  }
-
-  /* ── Measurements table ── */
-  .table-wrapper {
-    overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid var(--divider-color, #e0e0e0);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-  }
-  thead tr {
-    background: var(--table-row-background-color, var(--primary-color));
-    color: var(--text-primary-color, #fff);
-  }
-  th {
-    padding: 8px 12px;
-    text-align: left;
-    font-weight: 600;
-    white-space: nowrap;
-  }
-  tbody tr:nth-child(odd) {
-    background: var(--table-row-background-color, transparent);
-  }
-  tbody tr:nth-child(even) {
-    background: var(--table-row-alternative-background-color, rgba(0,0,0,0.04));
-  }
-  td {
-    padding: 7px 12px;
-    color: var(--primary-text-color);
-    white-space: nowrap;
-  }
-  .empty-msg {
-    color: var(--secondary-text-color);
-    font-style: italic;
-    padding: 10px 0;
-    font-size: 0.88rem;
-  }
-
-  /* ── Add measurement form ── */
-  details {
-    margin-top: 14px;
-    border: 1px solid var(--divider-color, #e0e0e0);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  summary {
-    padding: 9px 14px;
-    background: var(--secondary-background-color, #f5f5f5);
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--primary-text-color);
-    user-select: none;
-    list-style: none;
-  }
-  summary::before {
-    content: "＋ ";
-  }
-  details[open] summary::before {
-    content: "－ ";
-  }
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    padding: 12px 14px;
-  }
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-  .form-group label {
-    font-size: 0.75rem;
-    color: var(--secondary-text-color);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-  .form-group input {
-    padding: 6px 8px;
-    border: 1px solid var(--divider-color, #ccc);
-    border-radius: 6px;
-    font-size: 0.9rem;
-    background: var(--card-background-color, #fff);
-    color: var(--primary-text-color);
-    width: 100%;
-    box-sizing: border-box;
-  }
-  .form-group input:focus {
-    outline: 2px solid var(--primary-color);
-    border-color: transparent;
-  }
-  .form-actions {
-    padding: 0 14px 12px;
-    display: flex;
-    gap: 8px;
-  }
-
-  /* ── Buttons ── */
-  .btn {
-    padding: 7px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .btn:hover { opacity: 0.85; }
-  .btn:active { opacity: 0.70; }
-  .btn-primary {
-    background: var(--primary-color);
-    color: var(--text-primary-color, #fff);
-  }
-  .btn-danger {
-    background: var(--error-color, #db4437);
-    color: #fff;
-  }
-  .btn-outlined {
-    background: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-  }
-
-  /* ── Live-preview row (shown while slider debounce is pending) ── */
-  .live-preview td {
-    font-style: italic;
-    color: var(--warning-color, #f57c00);
-  }
-  .live-badge {
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 8px;
-    background: var(--warning-color, #f57c00);
-    color: #fff;
-    margin-left: 5px;
-    vertical-align: middle;
-    letter-spacing: 0.02em;
-    animation: live-pulse 1.2s ease-in-out infinite;
-  }
-  @keyframes live-pulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.45; }
-  }
-
-  /* ── Chart filter buttons ── */
-  .chart-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-  .chart-filter-btn {
-    padding: 3px 10px;
-    border: 1.5px solid var(--divider-color, #e0e0e0);
-    border-radius: 12px;
-    background: transparent;
-    color: var(--secondary-text-color);
-    font-size: 0.78rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.12s, color 0.12s, border-color 0.12s;
-  }
-  .chart-filter-btn.active {
-    background: var(--primary-color);
-    color: var(--text-primary-color, #fff);
-    border-color: var(--primary-color);
-  }
-
-  /* ── Footer ── */
-  .card-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0 16px 14px;
-    gap: 8px;
-  }
-  .stat-badge {
-    font-size: 0.75rem;
-    color: var(--secondary-text-color);
-    padding: 4px 10px;
-    border-radius: 12px;
-    background: var(--secondary-background-color, #f0f0f0);
-  }
-`;
+// Minimal fallback styles used only if the external CSS fails to load.
+const FALLBACK_STYLES = `:host{display:block;font-family:var(--primary-font-family,sans-serif)}.card-content{padding:12px 16px 16px}`;
 
 // ── Card definition ───────────────────────────────────────────────────────────
 
@@ -341,14 +79,38 @@ class SimulationPeriodCard extends HTMLElement {
     // Preserve chart filter across re-renders; null = show all metrics.
     if (this._chartFilter === undefined) this._chartFilter = null;
 
-    // Build shadow root once.
+    // Build shadow root once and load external stylesheet from `/local/`.
     if (!this.shadowRoot) {
       this.attachShadow({ mode: "open" });
-      const style = document.createElement("style");
-      style.textContent = STYLES;
-      this.shadowRoot.appendChild(style);
+
+      // Attempt to fetch the external CSS served from HA's `www/` folder
+      // (available at /local/). If that fails, fall back to a tiny embedded
+      // stylesheet so the card remains usable.
+      try {
+        fetch(CSS_PATH)
+          .then((r) => {
+            if (!r.ok) throw new Error("CSS fetch failed");
+            return r.text();
+          })
+          .then((css) => {
+            const style = document.createElement("style");
+            style.textContent = css;
+            this.shadowRoot.appendChild(style);
+          })
+          .catch(() => {
+            const style = document.createElement("style");
+            style.textContent = FALLBACK_STYLES;
+            this.shadowRoot.appendChild(style);
+          });
+      } catch (e) {
+        const style = document.createElement("style");
+        style.textContent = FALLBACK_STYLES;
+        this.shadowRoot.appendChild(style);
+      }
+
       this._container = document.createElement("div");
       this.shadowRoot.appendChild(this._container);
+
       // Tooltip overlay — position:fixed so it escapes any overflow:hidden ancestor.
       this._tooltip = document.createElement("div");
       this._tooltip.style.cssText = [

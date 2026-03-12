@@ -1,0 +1,7 @@
+# Developer-machine dependencies for the scripts/ utilities.
+# Install with:  pip install -r requirements.txt
+
+python-dotenv
+requests
+websocket-client
+pyyaml
