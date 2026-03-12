@@ -134,6 +134,7 @@ script:
     alias: "Reset Simulatie Mevrouw Goedheid"
     icon: mdi:restart
     sequence:
+      - service: simulation_manager.reset_simulation
       - service: input_select.select_option
         target:
           entity_id: input_select.simulatiefase_goedheid

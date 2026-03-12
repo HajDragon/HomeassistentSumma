@@ -1,21 +1,32 @@
+import sys
+
 import requests
 import json
 from collections import defaultdict
+from dotenv import load_dotenv
+import os
 
 def list_homeassistant_devices():
     """Fetch and display all Home Assistant devices and entities grouped by type"""
-    
-    base_url = "http://homeassistant.local:8123"
-    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhN2Y5ZWYwMzdhYzU0NDZkODU3MzYyYWY2ZGIyMDViNSIsImlhdCI6MTc3MjYzODQwMCwiZXhwIjoyMDg3OTk4NDAwfQ.c_EYV8TB3j6vdVt7FVN1_z_gFAuIl44mhm-4XD6cZXA"
+        
+    load_dotenv()
+
+    _HA_BASE_URL = os.getenv("HA_BASE_URL", "http://homeassistant.local:8123").rstrip("/")
+    TOKEN        = os.getenv("HA_TOKEN")
+    if not TOKEN:
+        sys.exit("Error: HA_TOKEN not set — copy .env.example to .env and fill in your token.")
+
+    WS_URL = _HA_BASE_URL.replace("http://", "ws://").replace("https://", "wss://") + "/api/websocket"
+
     
     headers = {
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"Bearer {TOKEN}",
         "Content-Type": "application/json"
     }
     
     try:
         # Fetch all states/entities
-        response = requests.get(f"{base_url}/api/states", headers=headers, timeout=10)
+        response = requests.get(f"{_HA_BASE_URL}/api/states", headers=headers, timeout=10)
         
         if response.status_code != 200:
             print(f"Error: Failed to fetch entities (Status {response.status_code})")

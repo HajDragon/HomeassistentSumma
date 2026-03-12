@@ -5,7 +5,7 @@ views:
     type: masonry
     cards:
 
-      # ══ ROW 1 — Controls + Stappenplan ══════════════════════════════
+      # ══ ROW 1 — Controls + Stappenplan ════════════════════════════════
       - type: vertical-stack
         cards:
           - type: grid
@@ -151,7 +151,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Laadt de beginwaarden van Mevrouw Goedheid: januari 2026. Gebruik dit als startpunt van de simulatie.";
+                              content: "Schakelt naar Periode 1 (januari 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -192,7 +192,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Laadt de meting na 2 maanden: maart 2026. Gewicht en vetmassa zijn licht gestegen.";
+                              content: "Schakelt naar Periode 2 (maart 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -233,7 +233,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Laadt de meting na 4 maanden: mei 2026. De trend van gewichtstoename zet door.";
+                              content: "Schakelt naar Periode 3 (mei 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -274,7 +274,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Eindmeting na 6 maanden: juli 2026. Totaal +7 kg gewicht, spiermassa licht gedaald. Bespreek mogelijke oorzaken met de klas.";
+                              content: "Schakelt naar Periode 4 (juli 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -286,6 +286,48 @@ views:
                             }
                             ha-state-icon:hover::before { opacity: 1; }
                             ha-state-icon:hover::after { opacity: 1; }
+                  - type: button
+                    name: "Sla Meting Op"
+                    icon: mdi:content-save-check
+                    icon_height: 36px
+                    tap_action:
+                      action: call-service
+                      service: script.goedheid_sla_meting_op
+                    card_mod:
+                      style: |
+                        :host {
+                          --primary-color: #43a047;
+                          position: relative; z-index: 1;
+                        }
+                        :host(:hover) { z-index: 100; }
+                        ha-card { position: relative; overflow: visible !important; }
+                        ha-state-icon {
+                          position: static !important;
+                          pointer-events: none;
+                        }
+                        ha-state-icon::before {
+                          content: "?";
+                          pointer-events: auto;
+                          position: absolute; top: 6px; right: 6px;
+                          width: 20px; height: 20px;
+                          background: rgba(255,255,255,0.5); color: white; border-radius: 50%;
+                          font-size: 11px; font-weight: bold; font-family: sans-serif;
+                          line-height: 20px; text-align: center;
+                          cursor: help; opacity: 0.9; z-index: 10;
+                        }
+                        ha-state-icon::after {
+                          content: "Sla de huidige sliderwaarden op in de actieve periode. Druk op deze knop nadat je de waarden hebt ingesteld.";
+                          pointer-events: none;
+                          position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+                          background: rgba(20,20,20,0.95); color: #fff;
+                          padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
+                          min-width: 200px; max-width: 260px; text-align: left;
+                          opacity: 0; transition: opacity 0.15s ease;
+                          z-index: 999; white-space: normal;
+                          box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+                        }
+                        ha-state-icon:hover::before { opacity: 1; }
+                        ha-state-icon:hover::after { opacity: 1; }
 
           # Stappenplan — spans full width
           - type: markdown
@@ -297,23 +339,25 @@ views:
               **Stap 1 — Controleer de databron**
               Zorg dat bovenaan **Simulatie** is geselecteerd, niet "Live Data".
 
-              **Stap 2 — Start op Meting 1**
-              Druk op de knop **Meting 1** (rechts). De beginwaarden van Mevrouw Goedheid verschijnen automatisch.
+              **Stap 2 — Navigeer naar Meting 1**
+              Druk op de knop **Meting 1** (rechts). De actieve periode wisselt naar januari 2026.
 
-              **Stap 3 — Bespreek met de klas**
-              Bekijk de waarden op het scherm: gewicht, BMI, spiermassa en vetmassa.
-              Vraag de studenten: *"Wat valt op?"*
+              **Stap 3 — Voer de waarden in en sla op**
+              Stel de sliders in op de gewenste meetwaarden. Druk daarna op de groene knop **Sla Meting Op** om de waarden op te slaan in deze periode.
 
-              **Stap 4 — Ga door naar Meting 2, 3 en 4**
-              Druk telkens op de volgende meetknop. Vergelijk de veranderingen en bespreek mogelijke oorzaken.
+              **Stap 4 — Bespreek met de klas**
+              Bekijk de opgeslagen waarden in de tabel. Vraag de studenten: *"Wat valt op?"*
 
-              **Stap 5 — Afsluiten**
+              **Stap 5 — Ga door naar Meting 2, 3 en 4**
+              Druk op de volgende meetknop, pas de sliders aan, en sla weer op met **Sla Meting Op**. Vergelijk de veranderingen.
+
+              **Stap 6 — Afsluiten**
               Druk op de rode knop **Reset Simulatie** en bevestig. Het systeem is klaar voor de volgende les.
 
               ---
-              💡 *Zie een oranje knipperende rij in de tabel? Wacht even — de waarde wordt automatisch opgeslagen.*
+              💡 *Oranje knipperende rij in de tabel = nog niet opgeslagen. Druk op **Sla Meting Op** om te bevestigen.*
 
-      # ══ ROW 2 — Huidige Meetwaarden ═══════════════════════════════
+      # ══ ROW 2 — Huidige Meetwaarden ══════════════════════════════════
       - type: grid
         columns: 2
         square: false
@@ -438,7 +482,7 @@ views:
                 name: "Sync meetwaarden → invoer"
                 icon: mdi:sync-circle
 
-      # ══ ROW 3 — Simulation Period Card ══════════════════════════════════
+      # ══ ROW 3 — Simulation Period Card ════════════════════════════════
       - type: custom:simulation-period-card
         title: "Mevrouw Goedheid — Lichaamssamenstelling per Periode"
         card_mod:
@@ -498,7 +542,7 @@ views:
           vetmassa:   input_number.goedheid_vetmassa
           bmi:        input_number.goedheid_bmi
 
-      # ══ ROW 4 — Referentietabel ════════════════════════════════════
+      # ══ ROW 4 — Referentietabel ══════════════════════════════════════
       - type: markdown
         title: "6-maanden Trend — Mevrouw Goedheid"
         card_mod:

@@ -611,6 +611,9 @@ class SimulationPeriodCard extends HTMLElement {
     });
 
     // ── Per-metric filter buttons ─────────────────────────────────────────────
+    // Only shown when 2+ metrics have data.  Each metric button is coloured
+    // with that metric's chart colour so the button visually matches its line.
+    // The "Alle" button uses the HA primary colour (via .active CSS class).
     const filterHtml = allActiveMetrics.length >= 1 ? `
       <div class="chart-filters">
         <button class="chart-filter-btn${!this._chartFilter ? ' active' : ''}" data-filter="">Alle</button>
@@ -886,7 +889,7 @@ window.customCards.push({
 });
 
 console.info(
-  "%c SIMULATION-PERIOD-CARD %c v1.7.0 "
+  "%c SIMULATION-PERIOD-CARD %c v1.7.0 ",
   "color:#fff;background:#1976d2;font-weight:700;padding:2px 4px;border-radius:3px 0 0 3px",
   "color:#1976d2;background:#e3f2fd;font-weight:700;padding:2px 4px;border-radius:0 3px 3px 0"
 );

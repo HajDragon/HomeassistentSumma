@@ -16,22 +16,26 @@ All filters honour the same rules:
 ─────────────────────────────────────────────────────────────────────────────
 """
 
+import os
 import re
 import json
+import sys
 import requests
 from typing import Optional
+from dotenv import load_dotenv
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIG  — shared with the rest of your project
 # ─────────────────────────────────────────────────────────────────────────────
 
-BASE_URL = "http://homeassistant.local:8123"
-TOKEN = (
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
-    ".eyJpc3MiOiJhN2Y5ZWYwMzdhYzU0NDZkODU3MzYyYWY2ZGIyMDViNSIsImlhdCI"
-    "6MTc3MjYzODQwMCwiZXhwIjoyMDg3OTk4NDAwfQ"
-    ".c_EYV8TB3j6vdVt7FVN1_z_gFAuIl44mhm-4XD6cZXA"
-)
+load_dotenv()
+
+_HA_BASE_URL = os.getenv("HA_BASE_URL", "http://homeassistant.local:8123").rstrip("/")
+TOKEN        = os.getenv("HA_TOKEN")
+if not TOKEN:
+    sys.exit("Error: HA_TOKEN not set — copy .env.example to .env and fill in your token.")
+
+WS_URL = _HA_BASE_URL.replace("http://", "ws://").replace("https://", "wss://") + "/api/websocket"
 
 HEADERS = {
     "Authorization": f"Bearer {TOKEN}",
@@ -48,7 +52,7 @@ DEAD_STATES = {"unavailable", "unknown", "none", ""}
 
 def fetch_all_states() -> list[dict]:
     """Return every entity state object from /api/states."""
-    resp = requests.get(f"{BASE_URL}/api/states", headers=HEADERS, timeout=10)
+    resp = requests.get(f"{_HA_BASE_URL}/api/states", headers=HEADERS, timeout=10)
     resp.raise_for_status()
     return resp.json()
 
@@ -130,7 +134,7 @@ def scan_entities_python(
 def render_template(template: str) -> str:
     """POST a Jinja2 template to /api/template and return the rendered string."""
     resp = requests.post(
-        f"{BASE_URL}/api/template",
+        f"{_HA_BASE_URL}/api/template",
         headers=HEADERS,
         json={"template": template},
         timeout=10,
