@@ -30,26 +30,26 @@ def heading(icon, title, subtitle=""):
 # SECTION 1 — QUICK STATUS BAR
 # ─────────────────────────────────────────────
 quick_status_note = md(
-    "## 🔴 Security Overview\n"
-    "*This row shows your most critical live states at a glance. "
-    "Any badge highlighted in red requires immediate attention.*"
+    "## 🔴 Beveiligingsoverzicht\n"
+    "*Deze rij toont de meest kritieke live-statussen in één oogopslag. "
+    "Elke badge die rood oplicht vereist onmiddellijke aandacht.*"
 )
 
 quick_status_glance = {
     "type": "glance",
-    "title": "Live Security Status",
+    "title": "Live Beveiligingsstatus",
     "show_name": True,
     "show_icon": True,
     "show_state": True,
     "entities": [
-        {"entity": "binary_sensor.front_door_beweging",  "name": "Front Door Motion", "icon": "mdi:motion-sensor"},
-        {"entity": "binary_sensor.backside_beweging",    "name": "Backside Motion",   "icon": "mdi:motion-sensor"},
-        {"entity": "binary_sensor.front_door_persoon",  "name": "Person (Front)",    "icon": "mdi:account-alert"},
-        {"entity": "binary_sensor.backside_persoon",    "name": "Person (Back)",     "icon": "mdi:account-alert"},
+        {"entity": "binary_sensor.front_door_beweging",  "name": "Voordeur Beweging",  "icon": "mdi:motion-sensor"},
+        {"entity": "binary_sensor.backside_beweging",    "name": "Achterkant Beweging","icon": "mdi:motion-sensor"},
+        {"entity": "binary_sensor.front_door_persoon",  "name": "Persoon (Voor)",     "icon": "mdi:account-alert"},
+        {"entity": "binary_sensor.backside_persoon",    "name": "Persoon (Achter)",   "icon": "mdi:account-alert"},
         {"entity": "binary_sensor.rt_ax57_02b8_wan_status", "name": "Internet WAN",  "icon": "mdi:wan"},
-        {"entity": "binary_sensor.deur_detection",      "name": "Door Sensor",       "icon": "mdi:door-open"},
-        {"entity": "binary_sensor.rookmelder",          "name": "Smoke Detector",    "icon": "mdi:smoke-detector"},
-        {"entity": "binary_sensor.sos_wall_button",     "name": "SOS Wall Button",   "icon": "mdi:alert-circle"},
+        {"entity": "binary_sensor.deur_detection",      "name": "Deursensor",         "icon": "mdi:door-open"},
+        {"entity": "binary_sensor.rookmelder",          "name": "Rookmelder",         "icon": "mdi:smoke-detector"},
+        {"entity": "binary_sensor.sos_wall_button",     "name": "SOS Wandknop",       "icon": "mdi:alert-circle"},
     ],
 }
 
@@ -70,16 +70,16 @@ def camera_live_card(prefix, label):
 def camera_detection_glance(prefix):
     return {
         "type": "glance",
-        "title": "Live Detection",
+        "title": "Live Detectie",
         "show_name": True,
         "show_icon": True,
         "show_state": True,
         "entities": [
-            {"entity": f"binary_sensor.{prefix}_beweging", "name": "Motion",    "icon": "mdi:motion-sensor"},
-            {"entity": f"binary_sensor.{prefix}_persoon",  "name": "Person",    "icon": "mdi:account-alert"},
-            {"entity": f"binary_sensor.{prefix}_dier",     "name": "Pet",       "icon": "mdi:paw"},
-            {"entity": f"binary_sensor.{prefix}_baby_huilt","name": "Baby Cry", "icon": "mdi:baby-face"},
-            {"entity": f"sensor.{prefix}_dag_nacht_status", "name": "Day/Night", "icon": "mdi:weather-sunset"},
+            {"entity": f"binary_sensor.{prefix}_beweging", "name": "Beweging",     "icon": "mdi:motion-sensor"},
+            {"entity": f"binary_sensor.{prefix}_persoon",  "name": "Persoon",      "icon": "mdi:account-alert"},
+            {"entity": f"binary_sensor.{prefix}_dier",     "name": "Huisdier",     "icon": "mdi:paw"},
+            {"entity": f"binary_sensor.{prefix}_baby_huilt","name": "Baby Huilt",  "icon": "mdi:baby-face"},
+            {"entity": f"sensor.{prefix}_dag_nacht_status", "name": "Dag/Nacht",   "icon": "mdi:weather-sunset"},
         ],
     }
 
@@ -120,31 +120,31 @@ def ptz_grid(prefix):
 def camera_toggles(prefix, label):
     return {
         "type": "entities",
-        "title": f"{label} — Toggles & Settings",
+        "title": f"{label} — Schakelaars & Instellingen",
         "entities": [
-            {"entity": f"switch.{prefix}_opnemen",               "name": "Recording"},
-            {"entity": f"switch.{prefix}_geluid_opnemen",        "name": "Record Audio"},
-            {"entity": f"switch.{prefix}_privacymodus",          "name": "Privacy Mode"},
-            {"entity": f"switch.{prefix}_automatisch_volgen",    "name": "Auto-Track"},
-            {"entity": f"switch.{prefix}_push_notificaties",     "name": "Push Notifications"},
-            {"entity": f"switch.{prefix}_e_mail_bij_gebeurtenis","name": "Email on Event"},
-            {"entity": f"switch.{prefix}_ftp_uploaden",          "name": "FTP Upload"},
-            {"entity": f"switch.{prefix}_infrared_lights_in_night_mode", "name": "Night IR Lights"},
-            {"entity": f"switch.{prefix}_sirene_bij_gebeurtenis","name": "Siren on Event"},
-            {"entity": f"switch.{prefix}_bewaak_punt_terugkeren","name": "Return to Guard Point"},
-            {"entity": f"select.{prefix}_dag_nacht_modus",       "name": "Day/Night Mode"},
-            {"entity": f"number.{prefix}_ai_persoon_gevoeligheid","name": "Person AI Sensitivity"},
-            {"entity": f"number.{prefix}_ai_huisdier_gevoeligheid","name": "Pet AI Sensitivity"},
-            {"entity": f"number.{prefix}_beweging_gevoeligheid", "name": "Motion Sensitivity"},
+            {"entity": f"switch.{prefix}_opnemen",               "name": "Opname"},
+            {"entity": f"switch.{prefix}_geluid_opnemen",        "name": "Audio Opnemen"},
+            {"entity": f"switch.{prefix}_privacymodus",          "name": "Privacymodus"},
+            {"entity": f"switch.{prefix}_automatisch_volgen",    "name": "Automatisch Volgen"},
+            {"entity": f"switch.{prefix}_push_notificaties",     "name": "Pushmeldingen"},
+            {"entity": f"switch.{prefix}_e_mail_bij_gebeurtenis","name": "E-mail bij Gebeurtenis"},
+            {"entity": f"switch.{prefix}_ftp_uploaden",          "name": "FTP Uploaden"},
+            {"entity": f"switch.{prefix}_infrared_lights_in_night_mode", "name": "Nachtzicht IR Lichten"},
+            {"entity": f"switch.{prefix}_sirene_bij_gebeurtenis","name": "Sirene bij Gebeurtenis"},
+            {"entity": f"switch.{prefix}_bewaak_punt_terugkeren","name": "Terug naar Bewakingspunt"},
+            {"entity": f"select.{prefix}_dag_nacht_modus",       "name": "Dag/Nachtmodus"},
+            {"entity": f"number.{prefix}_ai_persoon_gevoeligheid","name": "Persoon AI Gevoeligheid"},
+            {"entity": f"number.{prefix}_ai_huisdier_gevoeligheid","name": "Huisdier AI Gevoeligheid"},
+            {"entity": f"number.{prefix}_beweging_gevoeligheid", "name": "Bewegingsgevoeligheid"},
             {"entity": f"number.{prefix}_volume",                "name": "Volume"},
-            {"entity": f"number.{prefix}_baby_cry_sensitivity",  "name": "Baby Cry Sensitivity"},
-            {"entity": f"number.{prefix}_bewaak_punt_terugkeertijd","name": "Guard Return Delay (s)"},
-            {"entity": f"sensor.{prefix}_dag_nacht_status",      "name": "Current Day/Night Status"},
-            {"entity": f"button.{prefix}_bewaak_punt_zet_huidige_positie","name": "Set Guard Point Here"},
-            {"entity": f"button.{prefix}_bewaak_punt_ga_naar",   "name": "Go to Guard Point"},
-            {"entity": f"button.{prefix}_ptz_kalibreren",        "name": "Calibrate PTZ"},
+            {"entity": f"number.{prefix}_baby_cry_sensitivity",  "name": "Baby Huil Gevoeligheid"},
+            {"entity": f"number.{prefix}_bewaak_punt_terugkeertijd","name": "Bewakingspunt Terugkeertijd (s)"},
+            {"entity": f"sensor.{prefix}_dag_nacht_status",      "name": "Huidige Dag/Nachtstatus"},
+            {"entity": f"button.{prefix}_bewaak_punt_zet_huidige_positie","name": "Stel Bewakingspunt In op Huidige Positie"},
+            {"entity": f"button.{prefix}_bewaak_punt_ga_naar",   "name": "Ga naar Bewakingspunt"},
+            {"entity": f"button.{prefix}_ptz_kalibreren",        "name": "Kalibreer PTZ"},
             {"entity": f"light.{prefix}_status_led",             "name": "Status LED"},
-            {"entity": f"siren.{prefix}_sirene",                 "name": "Siren (manual)"},
+            {"entity": f"siren.{prefix}_sirene",                 "name": "Sirene (handmatig)"},
         ],
     }
 
@@ -155,10 +155,10 @@ def camera_toggles(prefix, label):
 def camera_view(prefix, label, path, extra_note="", stack_stream_detection=False):
     note_text = (
         f"## 📹 {label} Camera\n"
-        "*PTZ buttons pan and tilt the camera in real time. "
-        "**Auto-Track** makes the camera follow detected movement. "
-        "**Privacy Mode** immediately freezes the stream and disables recording. "
-        "Sensitivity sliders take effect on the next detected event.*"
+        "*PTZ-knoppen draaien en kantelen de camera in realtime. "
+        "**Automatisch Volgen** laat de camera gedetecteerde bewegingen volgen. "
+        "**Privacymodus** bevriest onmiddellijk de stream en schakelt opname uit. "
+        "Gevoeligheidssliders hebben effect bij de volgende gedetecteerde gebeurtenis.*"
     )
     if extra_note:
         note_text += f"\n\n---\n⚠️ {extra_note}"
@@ -179,7 +179,7 @@ def camera_view(prefix, label, path, extra_note="", stack_stream_detection=False
         cards = [
             md(note_text),        # card 1 — note
             stream_block,         # card 2 — stream + detection (stacked)
-            md("### PTZ Control"),# card 3 — PTZ header
+            md("### PTZ Bediening"),# card 3 — PTZ header
             ptz_grid(prefix),     # card 4 — PTZ d-pad
             camera_toggles(prefix, label),  # card 5 — toggles
         ]
@@ -191,7 +191,7 @@ def camera_view(prefix, label, path, extra_note="", stack_stream_detection=False
             md(note_text),                    # card 1 — note
             camera_live_card(prefix, label),  # card 2 — live stream
             camera_detection_glance(prefix),  # card 3 — live detection
-            md("### PTZ Control"),            # card 4 — PTZ header
+            md("### PTZ Bediening"),            # card 4 — PTZ header
             ptz_grid(prefix),                 # card 5 — PTZ d-pad
             camera_toggles(prefix, label),    # card 6 — toggles
         ]
@@ -207,37 +207,37 @@ def camera_view(prefix, label, path, extra_note="", stack_stream_detection=False
 # SECTION 5 — SECURITY & ALERTS
 # ─────────────────────────────────────────────
 security_note = md(
-    "## 🚨 Security & Alerts\n"
-    "*Smoke detector, door sensor, SOS buttons, and fall-detection radar. "
-    "Devices showing **UNAVAILABLE** are Zigbee-based — check the Home Assistant Connect ZBT-2 "
-    "coordinator is powered and the Zigbee integration is running. "
-    "The sirens below can be triggered manually in an emergency.*"
+    "## 🚨 Beveiliging & Meldingen\n"
+    "*Rookmelder, deursensor, SOS-knoppen en valdetectieradar. "
+    "Apparaten met de status **NIET BESCHIKBAAR** zijn Zigbee-gebaseerd — controleer of de Home Assistant Connect ZBT-2 "
+    "coördinator van stroom is voorzien en de Zigbee-integratie actief is. "
+    "De sirenes hieronder kunnen handmatig worden geactiveerd in geval van nood.*"
 )
 
 security_entities = {
     "type": "entities",
-    "title": "Security Devices",
+    "title": "Beveiligingsapparaten",
     "entities": [
-        {"entity": "binary_sensor.rookmelder",                   "name": "Smoke Detector",       "icon": "mdi:smoke-detector-alert"},
-        {"entity": "sensor.rookmelder_rookdichtheid",            "name": "Smoke Density"},
-        {"entity": "sensor.rookmelder_batterij",                 "name": "Smoke Detector Battery","icon": "mdi:battery"},
+        {"entity": "binary_sensor.rookmelder",                   "name": "Rookmelder",              "icon": "mdi:smoke-detector-alert"},
+        {"entity": "sensor.rookmelder_rookdichtheid",            "name": "Rookdichtheid"},
+        {"entity": "sensor.rookmelder_batterij",                 "name": "Rookmelder Batterij",      "icon": "mdi:battery"},
         {"type": "divider"},
-        {"entity": "binary_sensor.deur_detection",               "name": "Door Sensor",          "icon": "mdi:door-open"},
-        {"entity": "binary_sensor.deur_detection_sabotage",      "name": "Door Sensor Tamper",   "icon": "mdi:shield-alert"},
-        {"entity": "sensor.deur_detection_batterij",             "name": "Door Sensor Battery",  "icon": "mdi:battery"},
+        {"entity": "binary_sensor.deur_detection",               "name": "Deursensor",               "icon": "mdi:door-open"},
+        {"entity": "binary_sensor.deur_detection_sabotage",      "name": "Deursensor Sabotage",      "icon": "mdi:shield-alert"},
+        {"entity": "sensor.deur_detection_batterij",             "name": "Deursensor Batterij",      "icon": "mdi:battery"},
         {"type": "divider"},
-        {"entity": "binary_sensor.sos_wall_button",              "name": "SOS Wall Button",      "icon": "mdi:alarm-light"},
-        {"entity": "sensor.sos_wall_button_batterij",            "name": "SOS Wall Button Battery","icon": "mdi:battery"},
-        {"entity": "binary_sensor.tz3000_p3fph1go_ts0215a",     "name": "SOS Carry Button",     "icon": "mdi:alarm-light"},
-        {"entity": "sensor.tz3000_p3fph1go_ts0215a_batterij",   "name": "SOS Carry Battery",    "icon": "mdi:battery"},
+        {"entity": "binary_sensor.sos_wall_button",              "name": "SOS Wandknop",             "icon": "mdi:alarm-light"},
+        {"entity": "sensor.sos_wall_button_batterij",            "name": "SOS Wandknop Batterij",    "icon": "mdi:battery"},
+        {"entity": "binary_sensor.tz3000_p3fph1go_ts0215a",     "name": "SOS Draagknop",            "icon": "mdi:alarm-light"},
+        {"entity": "sensor.tz3000_p3fph1go_ts0215a_batterij",   "name": "SOS Draagknop Batterij",   "icon": "mdi:battery"},
         {"type": "divider"},
-        {"entity": "binary_sensor.seeed_studio_mr60fda2_kit_8f65d0_falling_information", "name": "Fall Detected", "icon": "mdi:human-cane"},
-        {"entity": "binary_sensor.seeed_studio_mr60fda2_kit_8f65d0_person_information",  "name": "Person in Room","icon": "mdi:account"},
+        {"entity": "binary_sensor.seeed_studio_mr60fda2_kit_8f65d0_falling_information", "name": "Val Gedetecteerd",  "icon": "mdi:human-cane"},
+        {"entity": "binary_sensor.seeed_studio_mr60fda2_kit_8f65d0_person_information",  "name": "Persoon in Kamer",  "icon": "mdi:account"},
         {"type": "divider"},
-        {"entity": "siren.front_door_sirene",  "name": "Front Door Siren (Manual)", "icon": "mdi:alarm-bell"},
-        {"entity": "siren.backside_sirene",    "name": "Backside Siren (Manual)",   "icon": "mdi:alarm-bell"},
+        {"entity": "siren.front_door_sirene",  "name": "Voordeur Sirene (Handmatig)",   "icon": "mdi:alarm-bell"},
+        {"entity": "siren.backside_sirene",    "name": "Achterkant Sirene (Handmatig)", "icon": "mdi:alarm-bell"},
         {"type": "divider"},
-        {"entity": "automation.siren_webhoek", "name": "Webhook → Siren Automation", "icon": "mdi:webhook"},
+        {"entity": "automation.siren_webhoek", "name": "Webhook → Sirene Automatisering", "icon": "mdi:webhook"},
     ],
 }
 
@@ -245,10 +245,10 @@ security_entities = {
 # SECTION 6 — HEALTH MONITOR
 # ─────────────────────────────────────────────
 health_note = md(
-    "## ❤️ Health Monitor\n"
-    "*Data from your Withings devices: BeamO, BPM Connect, ScanWatch 2, and Body Scan. "
-    "Values update after each measurement sync — they do not stream in real-time. "
-    "Blood pressure and SpO2 reflect the most recent logged reading.*"
+    "## ❤️ Gezondheidsmonitor\n"
+    "*Gegevens van uw Withings-apparaten: BeamO, BPM Connect, ScanWatch 2 en Body Scan. "
+    "Waarden worden bijgewerkt na elke meting — ze streamen niet in realtime. "
+    "Bloeddruk en SpO2 weerspiegelen de meest recent opgeslagen meting.*"
 )
 
 health_grid = {
@@ -258,34 +258,34 @@ health_grid = {
     "cards": [
         {
             "type": "entities",
-            "title": "Vitals",
+            "title": "Vitale waarden",
             "entities": [
-                {"entity": "sensor.withings_hartslag",           "name": "Heart Rate (BPM)"},
-                {"entity": "sensor.withings_hartslag_2",         "name": "Heart Rate #2"},
-                {"entity": "sensor.withings_systolische_bloeddruk", "name": "Blood Pressure (Systolic)"},
-                {"entity": "sensor.withings_diastolische_bloeddruk","name": "Blood Pressure (Diastolic)"},
+                {"entity": "sensor.withings_hartslag",           "name": "Hartslag (BPM)"},
+                {"entity": "sensor.withings_hartslag_2",         "name": "Hartslag #2"},
+                {"entity": "sensor.withings_systolische_bloeddruk", "name": "Bloeddruk (Systolisch)"},
+                {"entity": "sensor.withings_diastolische_bloeddruk","name": "Bloeddruk (Diastolisch)"},
                 {"entity": "sensor.withings_spo2",               "name": "SpO2 (%)"},
                 {"entity": "sensor.withings_spo2_2",             "name": "SpO2 #2 (%)"},
-                {"entity": "sensor.withings_lichaamstemperatuur", "name": "Body Temperature (°C)"},
-                {"entity": "sensor.withings_huidtemperatuur",    "name": "Skin Temperature (°C)"},
-                {"entity": "sensor.withings_temperatuur",        "name": "Ambient Temperature (°C)"},
-                {"entity": "sensor.withings_gewicht",            "name": "Weight (kg)"},
+                {"entity": "sensor.withings_lichaamstemperatuur", "name": "Lichaamstemperatuur (°C)"},
+                {"entity": "sensor.withings_huidtemperatuur",    "name": "Huidtemperatuur (°C)"},
+                {"entity": "sensor.withings_temperatuur",        "name": "Omgevingstemperatuur (°C)"},
+                {"entity": "sensor.withings_gewicht",            "name": "Gewicht (kg)"},
             ],
         },
         {
             "type": "entities",
-            "title": "Activity & Batteries",
+            "title": "Activiteit & Batterijen",
             "entities": [
-                {"entity": "sensor.withings_stappen_vandaag",      "name": "Steps Today"},
-                {"entity": "sensor.withings_stap_doelstelling",    "name": "Step Goal"},
-                {"entity": "sensor.withings_vandaag_afgelegde_afstand","name": "Distance Today"},
-                {"entity": "sensor.withings_actieve_calorieen_vandaag_verbrand","name": "Active Calories"},
-                {"entity": "sensor.withings_totale_calorieen_vandaag_verbrand","name": "Total Calories"},
+                {"entity": "sensor.withings_stappen_vandaag",      "name": "Stappen Vandaag"},
+                {"entity": "sensor.withings_stap_doelstelling",    "name": "Stappendoel"},
+                {"entity": "sensor.withings_vandaag_afgelegde_afstand","name": "Afstand Vandaag"},
+                {"entity": "sensor.withings_actieve_calorieen_vandaag_verbrand","name": "Actieve Calorieën"},
+                {"entity": "sensor.withings_totale_calorieen_vandaag_verbrand","name": "Totale Calorieën"},
                 {"type": "divider"},
-                {"entity": "sensor.beamo_batterij",      "name": "BeamO Battery",      "icon": "mdi:battery"},
-                {"entity": "sensor.body_scan_batterij",  "name": "Body Scan Battery",  "icon": "mdi:battery"},
-                {"entity": "sensor.bpm_connect_batterij","name": "BPM Connect Battery","icon": "mdi:battery"},
-                {"entity": "sensor.scanwatch_2_batterij","name": "ScanWatch 2 Battery","icon": "mdi:battery"},
+                {"entity": "sensor.beamo_batterij",      "name": "BeamO Batterij",       "icon": "mdi:battery"},
+                {"entity": "sensor.body_scan_batterij",  "name": "Body Scan Batterij",   "icon": "mdi:battery"},
+                {"entity": "sensor.bpm_connect_batterij","name": "BPM Connect Batterij", "icon": "mdi:battery"},
+                {"entity": "sensor.scanwatch_2_batterij","name": "ScanWatch 2 Batterij", "icon": "mdi:battery"},
             ],
         },
     ],
@@ -295,21 +295,21 @@ health_grid = {
 # SECTION 7 — NETWORK STATUS
 # ─────────────────────────────────────────────
 network_note = md(
-    "## 🌐 Network Status\n"
-    "*Live stats from your ASUS RT-AX57 router. "
-    "Download and upload speeds refresh automatically. "
-    "If WAN shows **offline**, your internet connection is down — "
-    "cameras will still record locally but remote access and FTP upload will fail.*"
+    "## 🌐 Netwerkstatus\n"
+    "*Live statistieken van uw ASUS RT-AX57 router. "
+    "Download- en uploadsnelheden worden automatisch bijgewerkt. "
+    "Als WAN **offline** weergeeft, is uw internetverbinding verbroken — "
+    "camera's blijven lokaal opnemen maar externe toegang en FTP-upload zullen mislukken.*"
 )
 
 network_entities = {
     "type": "entities",
     "title": "ASUS RT-AX57 Router",
     "entities": [
-        {"entity": "binary_sensor.rt_ax57_02b8_wan_status",    "name": "Internet (WAN)",    "icon": "mdi:wan"},
-        {"entity": "sensor.rt_ax57_02b8_extern_ip",            "name": "External IP",       "icon": "mdi:ip-network"},
-        {"entity": "sensor.rt_ax57_02b8_downloadsnelheid",     "name": "Download Speed",    "icon": "mdi:download"},
-        {"entity": "sensor.rt_ax57_02b8_uploadsnelheid",       "name": "Upload Speed",      "icon": "mdi:upload"},
+        {"entity": "binary_sensor.rt_ax57_02b8_wan_status",    "name": "Internet (WAN)",     "icon": "mdi:wan"},
+        {"entity": "sensor.rt_ax57_02b8_extern_ip",            "name": "Extern IP",          "icon": "mdi:ip-network"},
+        {"entity": "sensor.rt_ax57_02b8_downloadsnelheid",     "name": "Downloadsnelheid",   "icon": "mdi:download"},
+        {"entity": "sensor.rt_ax57_02b8_uploadsnelheid",       "name": "Uploadsnelheid",     "icon": "mdi:upload"},
     ],
 }
 
@@ -318,14 +318,14 @@ network_entities = {
 # MORNING TAB — Withings Health & Body Metrics
 # ─────────────────────────────────────────────
 morning_intro = md(
-    "## 💙 Health & Body Metrics\n"
-    "*This data syncs automatically from your Withings devices "
+    "## 💙 Gezondheid & Lichaamsmetingen\n"
+    "*Deze gegevens worden automatisch gesynchroniseerd van uw Withings-apparaten "
     "(BPM Connect, BeamO, Body Scan, ScanWatch 2). "
-    "Tap on any metric to see your historical graph.*"
+    "Tik op een meting om de historische grafiek te bekijken.*"
 )
 
 morning_view = {
-    "title": "Morning",
+    "title": "Ochtend",
     "path": "morning",
     "icon": "mdi:weather-sunrise",
     # No "type" key → defaults to Masonry layout.
@@ -338,63 +338,63 @@ morning_view = {
         # ── Vitals — Masonry column 1 ────────────────────────────────────────────
         {
             "type": "entities",
-            "title": "❤️ Vitals",
+            "title": "❤️ Vitale waarden",
             "entities": [
-                {"entity": "sensor.withings_hartslag",              "name": "Heart Rate",           "icon": "mdi:heart-pulse"},
-                {"entity": "sensor.withings_hartslag_2",            "name": "Heart Rate #2",         "icon": "mdi:heart-pulse"},
+                {"entity": "sensor.withings_hartslag",              "name": "Hartslag",                "icon": "mdi:heart-pulse"},
+                {"entity": "sensor.withings_hartslag_2",            "name": "Hartslag #2",              "icon": "mdi:heart-pulse"},
                 {"type": "divider"},
-                {"entity": "sensor.withings_systolische_bloeddruk", "name": "Blood Pressure (Sys)",  "icon": "mdi:blood-bag"},
-                {"entity": "sensor.withings_diastolische_bloeddruk","name": "Blood Pressure (Dia)",  "icon": "mdi:blood-bag"},
+                {"entity": "sensor.withings_systolische_bloeddruk", "name": "Bloeddruk (Sys)",          "icon": "mdi:blood-bag"},
+                {"entity": "sensor.withings_diastolische_bloeddruk","name": "Bloeddruk (Dia)",          "icon": "mdi:blood-bag"},
                 {"type": "divider"},
-                {"entity": "sensor.withings_spo2",                  "name": "SpO2",                  "icon": "mdi:oxygen-cylinder"},
-                {"entity": "sensor.withings_spo2_2",                "name": "SpO2 #2",               "icon": "mdi:oxygen-cylinder"},
+                {"entity": "sensor.withings_spo2",                  "name": "SpO2",                     "icon": "mdi:oxygen-cylinder"},
+                {"entity": "sensor.withings_spo2_2",                "name": "SpO2 #2",                  "icon": "mdi:oxygen-cylinder"},
                 {"type": "divider"},
-                {"entity": "sensor.withings_gewicht",               "name": "Weight",                "icon": "mdi:scale-bathroom"},
-                {"entity": "sensor.withings_lichaamstemperatuur",   "name": "Body Temperature",      "icon": "mdi:thermometer"},
-                {"entity": "sensor.withings_huidtemperatuur",       "name": "Skin Temperature",      "icon": "mdi:thermometer-lines"},
-                {"entity": "sensor.withings_temperatuur",           "name": "Ambient Temperature",   "icon": "mdi:thermometer"},
+                {"entity": "sensor.withings_gewicht",               "name": "Gewicht",                  "icon": "mdi:scale-bathroom"},
+                {"entity": "sensor.withings_lichaamstemperatuur",   "name": "Lichaamstemperatuur",       "icon": "mdi:thermometer"},
+                {"entity": "sensor.withings_huidtemperatuur",       "name": "Huidtemperatuur",           "icon": "mdi:thermometer-lines"},
+                {"entity": "sensor.withings_temperatuur",           "name": "Omgevingstemperatuur",      "icon": "mdi:thermometer"},
             ],
         },
 
         # ── Activity: ScanWatch Device 1 — Masonry column 2 ─────────────────────
         {
             "type": "entities",
-            "title": "🏃 Activity — ScanWatch 2 (Device 1)",
+            "title": "🏃 Activiteit — ScanWatch 2 (Apparaat 1)",
             "entities": [
-                {"entity": "sensor.withings_stappen_vandaag",                    "name": "Steps Today",    "icon": "mdi:shoe-print"},
-                {"entity": "sensor.withings_stap_doelstelling",                  "name": "Step Goal",      "icon": "mdi:flag-checkered"},
-                {"entity": "sensor.withings_vandaag_afgelegde_afstand",          "name": "Distance Today", "icon": "mdi:map-marker-distance"},
-                {"entity": "sensor.withings_hoogteverschil_vandaag",             "name": "Altitude Change","icon": "mdi:elevation-rise"},
-                {"entity": "sensor.withings_actief_gespendeerde_tijd_vandaag",   "name": "Active Time",    "icon": "mdi:timer"},
-                {"entity": "sensor.withings_actieve_calorieen_vandaag_verbrand", "name": "Active Calories","icon": "mdi:fire"},
-                {"entity": "sensor.withings_totale_calorieen_vandaag_verbrand",  "name": "Total Calories", "icon": "mdi:fire-circle"},
+                {"entity": "sensor.withings_stappen_vandaag",                    "name": "Stappen Vandaag",    "icon": "mdi:shoe-print"},
+                {"entity": "sensor.withings_stap_doelstelling",                  "name": "Stappendoel",        "icon": "mdi:flag-checkered"},
+                {"entity": "sensor.withings_vandaag_afgelegde_afstand",          "name": "Afstand Vandaag",    "icon": "mdi:map-marker-distance"},
+                {"entity": "sensor.withings_hoogteverschil_vandaag",             "name": "Hoogteverschil",     "icon": "mdi:elevation-rise"},
+                {"entity": "sensor.withings_actief_gespendeerde_tijd_vandaag",   "name": "Actieve Tijd",       "icon": "mdi:timer"},
+                {"entity": "sensor.withings_actieve_calorieen_vandaag_verbrand", "name": "Actieve Calorieën",  "icon": "mdi:fire"},
+                {"entity": "sensor.withings_totale_calorieen_vandaag_verbrand",  "name": "Totale Calorieën",   "icon": "mdi:fire-circle"},
             ],
         },
 
         # ── Activity: ScanWatch — Masonry column 3 ─────────────────────
         {
             "type": "entities",
-            "title": "🏃 Activity — ScanWatch 2",
+            "title": "🏃 Activiteit — ScanWatch 2",
             "entities": [
-                {"entity": "sensor.withings_stappen_vandaag_2",                   "name": "Steps Today",    "icon": "mdi:shoe-print"},
-                {"entity": "sensor.withings_stap_doelstelling_2",                 "name": "Step Goal",      "icon": "mdi:flag-checkered"},
-                {"entity": "sensor.withings_vandaag_afgelegde_afstand_2",         "name": "Distance Today", "icon": "mdi:map-marker-distance"},
-                {"entity": "sensor.withings_hoogteverschil_vandaag_2",            "name": "Altitude Change","icon": "mdi:elevation-rise"},
-                {"entity": "sensor.withings_actief_gespendeerde_tijd_vandaag_2",  "name": "Active Time",    "icon": "mdi:timer"},
-                {"entity": "sensor.withings_actieve_calorieen_vandaag_verbrand_2","name": "Active Calories","icon": "mdi:fire"},
-                {"entity": "sensor.withings_totale_calorieen_vandaag_verbrand_2", "name": "Total Calories", "icon": "mdi:fire-circle"},
+                {"entity": "sensor.withings_stappen_vandaag_2",                   "name": "Stappen Vandaag",    "icon": "mdi:shoe-print"},
+                {"entity": "sensor.withings_stap_doelstelling_2",                 "name": "Stappendoel",        "icon": "mdi:flag-checkered"},
+                {"entity": "sensor.withings_vandaag_afgelegde_afstand_2",         "name": "Afstand Vandaag",    "icon": "mdi:map-marker-distance"},
+                {"entity": "sensor.withings_hoogteverschil_vandaag_2",            "name": "Hoogteverschil",     "icon": "mdi:elevation-rise"},
+                {"entity": "sensor.withings_actief_gespendeerde_tijd_vandaag_2",  "name": "Actieve Tijd",       "icon": "mdi:timer"},
+                {"entity": "sensor.withings_actieve_calorieen_vandaag_verbrand_2","name": "Actieve Calorieën",  "icon": "mdi:fire"},
+                {"entity": "sensor.withings_totale_calorieen_vandaag_verbrand_2", "name": "Totale Calorieën",   "icon": "mdi:fire-circle"},
             ],
         },
 
         # ── Device batteries — Masonry fills the shortest column ─────────────────
         {
             "type": "entities",
-            "title": "🔋 Device Status",
+            "title": "🔋 Apparaatstatus",
             "entities": [
-                {"entity": "sensor.beamo_batterij",       "name": "BeamO Battery",       "icon": "mdi:battery"},
-                {"entity": "sensor.body_scan_batterij",   "name": "Body Scan Battery",   "icon": "mdi:battery"},
-                {"entity": "sensor.bpm_connect_batterij", "name": "BPM Connect Battery", "icon": "mdi:battery"},
-                {"entity": "sensor.scanwatch_2_batterij", "name": "ScanWatch 2 Battery", "icon": "mdi:battery"},
+                {"entity": "sensor.beamo_batterij",       "name": "BeamO Batterij",       "icon": "mdi:battery"},
+                {"entity": "sensor.body_scan_batterij",   "name": "Body Scan Batterij",   "icon": "mdi:battery"},
+                {"entity": "sensor.bpm_connect_batterij", "name": "BPM Connect Batterij", "icon": "mdi:battery"},
+                {"entity": "sensor.scanwatch_2_batterij", "name": "ScanWatch 2 Batterij", "icon": "mdi:battery"},
             ],
         },
     ],
@@ -403,7 +403,7 @@ morning_view = {
 MAATING_URL_PATH = "dashboard-maating"
 
 maating_config = {
-    "title": "Morning",
+    "title": "Ochtend",
     "views": [morning_view],
 }
 
@@ -411,10 +411,10 @@ maating_config = {
 # MAIN OVERVIEW DASHBOARD  (camera-free)
 # ─────────────────────────────────────────────
 overview_config = {
-    "title": "Security & Health",
+    "title": "Beveiliging & Gezondheid",
     "views": [
         {
-            "title": "Overview",
+            "title": "Overzicht",
             "path": "default_view",
             "background": "var(--background-image)",
             "cards": [
@@ -458,16 +458,16 @@ overview_config = {
 CAMERAS_URL_PATH = "dashboard-cameras"
 
 cameras_config = {
-    "title": "Cameras",
+    "title": "Camera's",
     "views": [
         camera_view(
             "front_door",
-            "Front Door",
+            "Voordeur",
             "front-door",
         ),
         camera_view(
             "backside",
-            "Backside",
+            "Achterkant",
             "backside",
             stack_stream_detection=True,  # forces detection below the stream
         ),
@@ -578,7 +578,7 @@ def push_dashboards():
                             "id": 4,
                             "type": "lovelace/dashboards/create",
                             "url_path": CAMERAS_URL_PATH,
-                            "title": "Cameras",
+                            "title": "Camera's",
                             "icon": "mdi:cctv",
                             "show_in_sidebar": True,
                             "require_admin": False,
@@ -590,7 +590,7 @@ def push_dashboards():
                         "id": 4,
                         "type": "lovelace/dashboards/create",
                         "url_path": CAMERAS_URL_PATH,
-                        "title": "Cameras",
+                        "title": "Camera's",
                         "icon": "mdi:cctv",
                         "show_in_sidebar": True,
                         "require_admin": False,
