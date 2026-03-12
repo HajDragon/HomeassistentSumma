@@ -199,7 +199,7 @@ def camera_view(prefix, label, path, extra_note="", stack_stream_detection=False
         "title": label,
         "path": path,
         "icon": "mdi:cctv",
-        "background": "radial-gradient(ellipse at top, #0d0d1a 0%, #0a0a0a 100%)",
+        "background": "background: var(--background-image)",
         "cards": cards,
     }
 
@@ -313,41 +313,6 @@ network_entities = {
     ],
 }
 
-# ─────────────────────────────────────────────
-# SECTION 8 — SYSTEM HEALTH
-# ─────────────────────────────────────────────
-system_note = md(
-    "## 🖥️ System Health\n"
-    "*Home Assistant backup status and available software updates. "
-    "Updates are safe to install during low-usage hours. "
-    "The backup manager runs on a schedule — if 'Last Successful Backup' "
-    "shows **unknown**, check your backup configuration in Settings → System → Backups.*"
-)
-
-system_entities = {
-    "type": "entities",
-    "title": "HA System",
-    "entities": [
-        {"entity": "update.home_assistant_core_update",                 "name": "HA Core Update"},
-        {"entity": "update.home_assistant_operating_system_update",     "name": "HA OS Update"},
-        {"entity": "update.home_assistant_supervisor_update",           "name": "Supervisor Update"},
-        {"entity": "update.esphome_device_builder_update",              "name": "ESPHome Update"},
-        {"entity": "update.studio_code_server_update",                  "name": "Code Server Update"},
-        {"entity": "update.terminal_ssh_update",                        "name": "Terminal & SSH Update"},
-        {"entity": "update.log_viewer_update",                          "name": "Log Viewer Update"},
-        {"entity": "update.nginx_home_assistant_ssl_proxy_update",      "name": "NGINX SSL Proxy Update"},
-        {"type": "divider"},
-        {"entity": "sensor.backup_backup_manager_state",                "name": "Backup Manager State"},
-        {"entity": "sensor.backup_last_successful_automatic_backup",    "name": "Last Successful Backup"},
-        {"entity": "sensor.backup_last_attempted_automatic_backup",     "name": "Last Attempted Backup"},
-        {"entity": "sensor.backup_next_scheduled_automatic_backup",     "name": "Next Scheduled Backup"},
-        {"type": "divider"},
-        {"entity": "sun.sun",                                           "name": "Sun Position"},
-        {"entity": "sensor.sun_next_rising",                            "name": "Next Sunrise"},
-        {"entity": "sensor.sun_next_setting",                           "name": "Next Sunset"},
-        {"entity": "person.timo_terpstra",                              "name": "Timo — Location"},
-    ],
-}
 
 # ─────────────────────────────────────────────
 # MORNING TAB — Withings Health & Body Metrics
@@ -365,7 +330,7 @@ morning_view = {
     "icon": "mdi:weather-sunrise",
     # No "type" key → defaults to Masonry layout.
     # Cards are top-level so Masonry distributes them freely across columns.
-    "background": "radial-gradient(ellipse at top, #0d0d1a 0%, #0a0a0a 100%)",
+    "background": "var(--background-image)",
     "cards": [
         # ── Full-width intro (Masonry places one card per row when it fills a slot) ─
         morning_intro,
@@ -451,8 +416,21 @@ overview_config = {
         {
             "title": "Overview",
             "path": "default_view",
-            "background": "radial-gradient(ellipse at top, #0d0d1a 0%, #0a0a0a 100%)",
+            "background": "var(--background-image)",
             "cards": [
+                # ── Clock & Weather ──────────────────────────────
+                {
+                    "type": "custom:clock-weather-card",
+                    "entity": "weather.forecast_home",
+                    "forecast_rows": 5,
+                    "locale": "nl",
+                    "time_format": 24,
+                    "hide_today_section": False,
+                    "hide_forecast_section": False,
+                    "show_humidity": True,
+                    "show_wind": True,
+                },
+
                 # ── Section 1: Quick Status ──────────────────────
                 quick_status_note,
                 quick_status_glance,
@@ -469,9 +447,6 @@ overview_config = {
                 network_note,
                 network_entities,
 
-                # ── Section 5: System Health ─────────────────────
-                system_note,
-                system_entities,
             ],
         },
     ],
