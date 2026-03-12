@@ -62,6 +62,77 @@ Het script `scripts/dynamic_entity_scanner.py` demonstreert het patroon voor het
 -   `config/packages/`: YAML-configuratiepakketten.
 -   `scripts/`: Hulpscripts voor ontwikkeling en implementatie (draaien op de ontwikkelaarsmachine, niet HAOS).
 
+## Weersintegratie & Clock-Weather-Card
+
+### Architectuuroverzicht
+
+Het weersdashboard bestaat uit drie lagen:
+
+| Laag | Component | Verantwoordelijkheid |
+|---|---|---|
+| Dataprovider | Met.no (`domain: met`) | Haalt weersvoorspellingen op via de open API van yr.no op basis van coördinaten |
+| HA-entiteit | `weather.forecast_home` | Stelt weersstatus en uurlijkse/dagelijkse voorspellingen beschikbaar als HA-state |
+| Frontend-kaart | `custom:clock-weather-card` | Toont klok, huidige conditie en 5-daagse voorspelling in Lovelace |
+
+### Omgevingsconfiguratie
+
+De Met.no-integratie is geconfigureerd via de HA-config flow (niet via YAML). De waarden die bij setup zijn ingevoerd:
+
+```
+Naam      : Home  (weergavenaam 'Eindhoven' ingesteld via entity registry)
+Entiteit  : weather.forecast_home
+Breedtegraad : 51.4351 °N  (thuislocatie vanuit HA-kerninstelling)
+Lengtegraad  : 5.4617 °E
+Hoogte       : 0 m
+```
+
+De weergavenaam is los van de `entry_id` bijgewerkt naar **Eindhoven** via de entity registry (`config/entity_registry/update` WebSocket-call in `scripts/_setup_eindhoven_weather.py`).
+
+### Script: `scripts/_setup_eindhoven_weather.py`
+
+Eenmalig hulpscript dat op de **ontwikkelaarsmachine** wordt uitgevoerd (niet op HAOS).
+
+**Wat het doet:**
+1. Loopt in twee WebSocket-sessies: eerst een probe om de `entry_id` van de actieve Met.no-inschrijving te resolven, daarna de eigenlijke aanpassing.
+2. Roept `config/entity_registry/update` aan om de `name` van `weather.forecast_home` in te stellen op `"Eindhoven"`.
+3. Probeert de Met.no options-flow te starten om de hoogte bij te werken; valt stil terug als die WebSocket-handshake niet beschikbaar is (de REST-fallback is uitgecommentarieerd in het bestand).
+
+**Opnieuw uitvoeren:**
+```bash
+python scripts/_setup_eindhoven_weather.py
+```
+Het script is idempotent — een tweede uitvoering overschrijft de naam gewoon opnieuw.
+
+**Wanneer je dit script nodig hebt:**
+- Na een HA-reinstallatie waarbij de entity registry is gewist.
+- Als iemand de entiteitnaam handmatig heeft gereset via de HA-UI.
+
+### Kaartkonfiguratie in `scripts/push_dashboard.py`
+
+De `clock-weather-card` wordt als eerste kaart in het overzichtsview geïnjecteerd:
+
+```python
+{
+    "type": "custom:clock-weather-card",
+    "entity": "weather.forecast_home",
+    "forecast_rows": 5,
+    "locale": "nl",
+    "time_format": 24,
+    "hide_today_section": False,
+    "hide_forecast_section": False,
+    "show_humidity": True,
+    "show_wind": True,
+}
+```
+
+De kaart is geïnstalleerd via HACS (`pkissling/clock-weather-card`). Als de kaart na een HA-herstart verdwenen is, controleer dan of het HACS-frontend-resource `/hacsfiles/clock-weather-card/clock-weather-card.js` nog actief is via **HACS → Frontend**.
+
+### Schaalbaarheidsnotitie
+
+Met.no ondersteunt meerdere locaties door meerdere `config_entries` aan te maken (één per stad). Als de smart room naar een andere locatie verhuist, voer dan een nieuwe config flow uit via `scripts/_setup_eindhoven_weather.py` (pas `EH_LAT`, `EH_LON`, `EH_ELEV` en de naam aan) — de dashboardkaart blijft werken zolang `entity` in de kaartkonfiguratie overeenkomt.
+
+---
+
 ## Best Practices voor Bijdragen
 
 1.  **Wijzig Eerst Modellen:** Bij het toevoegen van functies, update eerst `models.py` om ervoor te zorgen dat de gegevensstructuur werkt.
