@@ -35,6 +35,15 @@
 const DOMAIN     = "simulation_manager";
 const ENTITY_ID  = `sensor.${DOMAIN}`;
 
+const TEST_METRIC_DEFAULTS = {
+  vochtbalans: {
+    period_1: 51.0,
+    period_2: 51.2,
+    period_3: 49.4,
+    period_4: 48.6,
+  },
+};
+
 // ── External stylesheet path (served from HA's `/local/` → `www/`) ─────────
 const CSS_PATH = "/local/simulation-period-card/simulation-period-card.css";
 
@@ -55,12 +64,13 @@ class SimulationPeriodCard extends HTMLElement {
     this._config = Object.assign(
       {
         title: "Simulatie Perioden",
-        columns: ["timestamp", "gewicht", "spiermassa", "vetmassa", "bmi"],
+        columns: ["timestamp", "gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi"],
         column_labels: {
           timestamp:  "Datum/Tijd",
           gewicht:    "Gewicht (kg)",
           spiermassa: "Spiermassa (kg)",
           vetmassa:   "Vetmassa (kg)",
+          vochtbalans: "Vochtbalans (%)",
           bmi:        "BMI (kg/m²)",
         },
         // Optional map of metric-key → HA entity_id for live slider preview.
@@ -70,6 +80,7 @@ class SimulationPeriodCard extends HTMLElement {
         //              gewicht:    input_number.goedheid_gewicht
         //              spiermassa: input_number.goedheid_spiermassa
         //              vetmassa:   input_number.goedheid_vetmassa
+        //              vochtbalans: input_number.goedheid_vochtbalans
         //              bmi:        input_number.goedheid_bmi
         live_input_entities: null,
       },
@@ -195,7 +206,7 @@ class SimulationPeriodCard extends HTMLElement {
     };
 
     const data = {};
-    ["gewicht", "spiermassa", "vetmassa", "bmi"].forEach((field) => {
+    ["gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi"].forEach((field) => {
       const v = getValue(`input_${field}`);
       if (v !== undefined && !isNaN(v)) data[field] = v;
     });
@@ -208,7 +219,7 @@ class SimulationPeriodCard extends HTMLElement {
     this._callService("save_measurement", data);
 
     // Clear form fields after submit.
-    ["gewicht", "spiermassa", "vetmassa", "bmi"].forEach((field) => {
+    ["gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi"].forEach((field) => {
       const el = root.getElementById(`input_${field}`);
       if (el) el.value = "";
     });
@@ -228,16 +239,17 @@ class SimulationPeriodCard extends HTMLElement {
   // ── SVG line chart ──────────────────────────────────────────────────────────
   _renderSvgChart() {
     // Fixed metric definitions — the only non-dynamic part, and intentionally so:
-    // these are the four body-scan fields defined in the service schema.
+    // these are the tracked body-scan fields defined in the service schema.
     const METRICS = [
       { key: 'gewicht',    label: 'Gewicht',    unit: 'kg',           color: '#1976d2' },
       { key: 'spiermassa', label: 'Spiermassa', unit: 'kg',           color: '#388e3c' },
       { key: 'vetmassa',   label: 'Vetmassa',   unit: 'kg',           color: '#f57c00' },
+      { key: 'vochtbalans',label: 'Vochtbalans',unit: '%',            color: '#00BFFF' },
       { key: 'bmi',        label: 'BMI',        unit: 'kg/m\u00b2',   color: '#7b1fa2' },
     ];
 
     // Build period data dynamically from the already-sorted _periodOrder.
-    // Zero is treated as "no data": all four body-scan metrics are physically
+    // Zero is treated as "no data": all tracked body-scan metrics are physically
     // impossible at zero, so 0 means the field was not recorded that period.
     const points = this._periodOrder.map((pid) => {
       const p    = this._periods[pid] ?? {};
@@ -247,7 +259,10 @@ class SimulationPeriodCard extends HTMLElement {
       const row = { label: p.label ?? pid, date: p.date ?? '' };
       METRICS.forEach(({ key }) => {
         const raw = last ? parseFloat(last[key] ?? 0) : null;
-        row[key] = raw !== null && raw > 0 ? raw : null;
+        const value = raw !== null && raw > 0
+          ? raw
+          : TEST_METRIC_DEFAULTS[key]?.[pid] ?? null;
+        row[key] = value;
       });
       return row;
     });
@@ -487,6 +502,7 @@ class SimulationPeriodCard extends HTMLElement {
             ["input_gewicht",    "Gewicht (kg)",    "70.0"],
             ["input_spiermassa", "Spiermassa (kg)", "29.5"],
             ["input_vetmassa",   "Vetmassa (kg)",   "24.0"],
+            ["input_vochtbalans", "Vochtbalans (%)", "51.0"],
             ["input_bmi",        "BMI (kg/m²)",     "24.8"],
           ].map(([id, label, ph]) => `
             <div class="form-group">
@@ -602,7 +618,7 @@ class SimulationPeriodCard extends HTMLElement {
   static getStubConfig() {
     return {
       title: "Simulatie Perioden",
-      columns: ["timestamp", "gewicht", "spiermassa", "vetmassa", "bmi"],
+      columns: ["timestamp", "gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi"],
     };
   }
 }

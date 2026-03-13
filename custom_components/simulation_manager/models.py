@@ -32,6 +32,7 @@ class Measurement:
     gewicht: float = 0.0
     spiermassa: float = 0.0
     vetmassa: float = 0.0
+    vochtbalans: float = 0.0
     bmi: float = 0.0
     # Accommodates arbitrary extra fields sent via the service call.
     extra: dict[str, Any] = field(default_factory=dict)
@@ -44,6 +45,7 @@ class Measurement:
             "gewicht": self.gewicht,
             "spiermassa": self.spiermassa,
             "vetmassa": self.vetmassa,
+            "vochtbalans": self.vochtbalans,
             "bmi": self.bmi,
         }
         d.update(self.extra)
@@ -51,7 +53,14 @@ class Measurement:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Measurement":
-        known = {"timestamp", "gewicht", "spiermassa", "vetmassa", "bmi"}
+        known = {
+            "timestamp",
+            "gewicht",
+            "spiermassa",
+            "vetmassa",
+            "vochtbalans",
+            "bmi",
+        }
         extra = {k: v for k, v in data.items() if k not in known}
         return cls(
             timestamp=data.get(
@@ -61,6 +70,7 @@ class Measurement:
             gewicht=float(data.get("gewicht", 0)),
             spiermassa=float(data.get("spiermassa", 0)),
             vetmassa=float(data.get("vetmassa", 0)),
+            vochtbalans=float(data.get("vochtbalans", 0)),
             bmi=float(data.get("bmi", 0)),
             extra=extra,
         )
