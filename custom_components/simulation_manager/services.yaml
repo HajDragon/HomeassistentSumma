@@ -69,6 +69,17 @@ save_measurement:
           max: 150
           step: 0.1
           unit_of_measurement: "kg"
+    vochtbalans:
+      name: Vochtbalans (%)
+      description: Estimated body water percentage.
+      required: false
+      example: 51.0
+      selector:
+        number:
+          min: 0
+          max: 100
+          step: 0.1
+          unit_of_measurement: "%"
     bmi:
       name: BMI (kg/m²)
       description: Body Mass Index, calculated or measured.

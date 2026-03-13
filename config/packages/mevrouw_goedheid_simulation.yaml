@@ -65,6 +65,14 @@ input_number:
     unit_of_measurement: "kg/m2"
     icon: mdi:human
 
+  goedheid_vochtbalans:
+    name: "Vochtbalans"
+    min: 0
+    max: 100
+    step: 0.1
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+
   goedheid_lengte:
     name: "Lichaamslengte (m)"
     min: 1.0
@@ -129,6 +137,19 @@ template:
           {%- endif %}
         icon: mdi:food-drumstick
 
+      - name: "display_vochtbalans"
+        unique_id: display_vochtbalans
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_vochtbalans") }}
+          {%- else %}
+            {%- set live = states("sensor.withings_vochtbalans") %}
+            {{ live if live not in ["unknown", "unavailable", "none", ""] else states("input_number.goedheid_vochtbalans") }}
+          {%- endif %}
+        icon: mdi:water-percent
+
 script:
   reset_goedheid_simulatie:
     alias: "Reset Simulatie Mevrouw Goedheid"
@@ -158,6 +179,11 @@ script:
       - service: input_number.set_value
         target:
           entity_id: input_number.goedheid_bmi
+        data:
+          value: 0
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_vochtbalans
         data:
           value: 0
       - service: input_datetime.set_datetime
@@ -190,6 +216,11 @@ script:
           entity_id: input_number.goedheid_bmi
         data:
           value: "{{ states('sensor.display_bmi') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_vochtbalans
+        data:
+          value: "{{ states('sensor.display_vochtbalans') | float(0) }}"
 
   goedheid_sla_meting_op:
     alias: "Sla Huidige Meting Op"
@@ -200,6 +231,7 @@ script:
           gewicht:    "{{ states('input_number.goedheid_gewicht')    | float(0) }}"
           spiermassa: "{{ states('input_number.goedheid_spiermassa') | float(0) }}"
           vetmassa:   "{{ states('input_number.goedheid_vetmassa')   | float(0) }}"
+          vochtbalans: "{{ states('input_number.goedheid_vochtbalans') | float(0) }}"
           bmi:        "{{ states('input_number.goedheid_bmi')        | float(0) }}"
           timestamp:  "{{ states('input_datetime.goedheid_meetdatum') }}"
 

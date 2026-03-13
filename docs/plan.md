@@ -22,12 +22,12 @@
 
 Mevrouw Goedheid (48 jaar) wordt gevolgd tijdens een leefstijltraject van zes maanden. Zij heeft moeite met het op peil houden van haar gewicht door een verminderde mobiliteit. Tijdens deze periode vinden vier metingen plaats: start, 2 maanden, 4 maanden en 6 maanden.
 
-| Meting           | Spiermassa | Vetmassa | Gewicht | BMI        |
-| ---------------- | ---------- | -------- | ------- | ---------- |
-| Meting 1 (start) | 29,5 kg    | 24,0 kg  | 70,0 kg | 24,8 kg/m2 |
-| Meting 2 (2 mnd) | 29,3 kg    | 25,5 kg  | 72,0 kg | 25,5 kg/m2 |
-| Meting 3 (4 mnd) | 29,0 kg    | 27,0 kg  | 74,5 kg | 26,4 kg/m2 |
-| Meting 4 (6 mnd) | 28,8 kg    | 28,5 kg  | 77,0 kg | 27,3 kg/m2 |
+| Meting           | Spiermassa | Vetmassa | Gewicht | Vochtbalans | BMI        |
+| ---------------- | ---------- | -------- | ------- | ----------- | ---------- |
+| Meting 1 (start) | 29,5 kg    | 24,0 kg  | 70,0 kg | 51,0 %      | 24,8 kg/m2 |
+| Meting 2 (2 mnd) | 29,3 kg    | 25,5 kg  | 72,0 kg | 51,2 %      | 25,5 kg/m2 |
+| Meting 3 (4 mnd) | 29,0 kg    | 27,0 kg  | 74,5 kg | 49,4 %      | 26,4 kg/m2 |
+| Meting 4 (6 mnd) | 28,8 kg    | 28,5 kg  | 77,0 kg | 48,6 %      | 27,3 kg/m2 |
 
 ---
 
@@ -35,13 +35,13 @@ Mevrouw Goedheid (48 jaar) wordt gevolgd tijdens een leefstijltraject van zes ma
 
 ### Inleiding
 
-Laat een mindmap maken in subgroepen. Wat weet de student over spiermassa, vetmassa en een gezond gewicht?
+Laat een mindmap maken in subgroepen. Wat weet de student over vochtbalans, spiermassa, vetmassa en een gezond gewicht?
 
 ### Kern
 
 - De subgroepen gaan om en om aan de slag met de body scan slimme weegschaal.
 - De studenten krijgen kennis over het gebruik van de slimme weegschaal door het te proberen.
-- De studenten krijgen een casus met de waardes van spiermassa, vetmassa, gewicht en BMI.
+- De studenten krijgen een casus met de waardes van vochtbalans, spiermassa, vetmassa, gewicht en BMI.
 - De student interpreteert de waardes en schrijft een PESDIE op basis van het geformuleerde doel.
 - De docent bespreekt de casus & PESDIE. Alle subgroepen komen aan bod.
 

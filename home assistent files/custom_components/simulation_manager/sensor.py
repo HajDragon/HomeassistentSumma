@@ -73,6 +73,14 @@ METRIC_DESCRIPTORS: list[dict[str, Any]] = [
         "icon":         "mdi:water-percent",
     },
     {
+        "key":          "vochtbalans",
+        "name":         "Simulatie Vochtbalans",
+        "unique_id":    f"{DOMAIN}_vochtbalans",
+        "unit":         "%",
+        "device_class": None,
+        "icon":         "mdi:water-percent",
+    },
+    {
         "key":          "bmi",
         "name":         "Simulatie BMI",
         "unique_id":    f"{DOMAIN}_bmi",

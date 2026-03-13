@@ -301,7 +301,7 @@ views:
               Druk op de knop **Meting 1** (rechts). De beginwaarden van Mevrouw Goedheid verschijnen automatisch.
 
               **Stap 3 — Bespreek met de klas**
-              Bekijk de waarden op het scherm: gewicht, BMI, spiermassa en vetmassa.
+              Bekijk de waarden op het scherm: gewicht, BMI, spiermassa, vetmassa en vochtbalans.
               Vraag de studenten: *"Wat valt op?"*
 
               **Stap 4 — Ga door naar Meting 2, 3 en 4**
@@ -318,63 +318,88 @@ views:
         columns: 2
         square: false
         cards:
-          - type: entities
-            title: "Huidige Meetwaarden — Mevrouw Goedheid"
-            card_mod:
-              style:
-                .: |
-                  :host { position: relative; z-index: 1; }
-                  :host(:hover) { z-index: 100; }
-                  ha-card { overflow: visible !important; }
-                ha-card$: |
-                  .card-header {
-                    pointer-events: none;
-                    padding-right: 44px !important;
-                    position: relative;
-                    overflow: visible !important;
-                  }
-                  .card-header::after {
-                    content: "?";
-                    pointer-events: auto;
-                    position: absolute;
-                    top: 50%; right: 12px;
-                    transform: translateY(-50%);
-                    width: 24px; height: 24px;
-                    background: var(--primary-color, #03a9f4);
-                    color: white; border-radius: 50%;
-                    font-size: 12px; font-weight: bold; font-family: sans-serif;
-                    line-height: 24px; text-align: center;
-                    cursor: help; opacity: 0.8; z-index: 10;
-                  }
-                  .card-header::before {
-                    content: "Actuele lichaamswaarden van Mevrouw Goedheid. In Simulatie-modus gestuurd door de sliders rechts. In Live-modus komen deze van de echte weegschaal.";
-                    position: absolute; top: 80%; right: 12px;
-                    background: rgba(20,20,20,0.95); color: #fff;
-                    padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
-                    text-transform: none; letter-spacing: normal;
-                    min-width: 200px; max-width: 260px; text-align: left;
-                    opacity: 0; transition: opacity 0.15s ease;
-                    z-index: 999; pointer-events: none; white-space: normal;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                  }
-                  .card-header:hover::after { opacity: 1; }
-                  .card-header:hover::before { opacity: 1; }
-            entities:
-              - entity: sensor.display_gewicht
-                name: Totaal Gewicht
-                icon: mdi:scale-bathroom
-              - entity: sensor.display_spiermassa
-                name: Spiermassa
-                icon: mdi:arm-flex
-              - entity: sensor.display_vetmassa
-                name: Vetmassa
-                icon: mdi:food-drumstick
-              - entity: sensor.display_bmi
-                name: BMI
-                icon: mdi:human
-              - entity: input_number.goedheid_lengte
-                name: Lichaamslengte (m)
-                icon: mdi:human-male-height
+          - type: vertical-stack
+            cards:
+              - type: entities
+                title: "Huidige Meetwaarden — Mevrouw Goedheid"
+                card_mod:
+                  style:
+                    .: |
+                      :host { position: relative; z-index: 1; }
+                      :host(:hover) { z-index: 100; }
+                      ha-card { overflow: visible !important; }
+                    ha-card$: |
+                      .card-header {
+                        pointer-events: none;
+                        padding-right: 44px !important;
+                        position: relative;
+                        overflow: visible !important;
+                      }
+                      .card-header::after {
+                        content: "?";
+                        pointer-events: auto;
+                        position: absolute;
+                        top: 50%; right: 12px;
+                        transform: translateY(-50%);
+                        width: 24px; height: 24px;
+                        background: var(--primary-color, #03a9f4);
+                        color: white; border-radius: 50%;
+                        font-size: 12px; font-weight: bold; font-family: sans-serif;
+                        line-height: 24px; text-align: center;
+                        cursor: help; opacity: 0.8; z-index: 10;
+                      }
+                      .card-header::before {
+                        content: "Actuele lichaamswaarden van Mevrouw Goedheid. In Simulatie-modus gestuurd door de sliders rechts. In Live-modus komen deze van de echte weegschaal.";
+                        position: absolute; top: 80%; right: 12px;
+                        background: rgba(20,20,20,0.95); color: #fff;
+                        padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
+                        text-transform: none; letter-spacing: normal;
+                        min-width: 200px; max-width: 260px; text-align: left;
+                        opacity: 0; transition: opacity 0.15s ease;
+                        z-index: 999; pointer-events: none; white-space: normal;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+                      }
+                      .card-header:hover::after { opacity: 1; }
+                      .card-header:hover::before { opacity: 1; }
+                entities:
+                  - entity: sensor.display_gewicht
+                    name: Totaal Gewicht
+                    icon: mdi:scale-bathroom
+                  - entity: sensor.display_spiermassa
+                    name: Spiermassa
+                    icon: mdi:arm-flex
+                  - entity: sensor.display_vetmassa
+                    name: Vetmassa
+                    icon: mdi:food-drumstick
+                  - entity: sensor.display_vochtbalans
+                    name: Vochtbalans
+                    icon: mdi:water-percent
+                  - entity: sensor.display_bmi
+                    name: BMI
+                    icon: mdi:human
+                  - entity: input_number.goedheid_lengte
+                    name: Lichaamslengte (m)
+                    icon: mdi:human-male-height
+
+              # Submit Waarde button — directly under Huidige Meetwaarden
+              - type: button
+                name: "Submit Waarde"
+                tap_action:
+                  action: call-service
+                  service: script.submit_waarde
+                card_mod:
+                  style: |
+                    ha-card {
+                      border-radius: 8px;
+                      width: 100%;
+                      margin-top: 8px;
+                    }
+                    mwc-ripple { border-radius: 8px; }
+                    .card-content {
+                      text-align: center;
+                      font-weight: 600;
+                      font-size: 1rem;
+                    }
 
           - type: entities
             title: "Simulatie Invoer (aanpasbaar)"
@@ -427,6 +452,9 @@ views:
               - entity: input_number.goedheid_vetmassa
                 name: Vetmassa (kg)
                 icon: mdi:food-drumstick
+              - entity: input_number.goedheid_vochtbalans
+                name: Vochtbalans (%)
+                icon: mdi:water-percent
               - entity: input_number.goedheid_bmi
                 name: BMI
                 icon: mdi:human
@@ -485,17 +513,20 @@ views:
           - gewicht
           - spiermassa
           - vetmassa
+          - vochtbalans
           - bmi
         column_labels:
           timestamp:  "Datum"
           gewicht:    "Gewicht (kg)"
           spiermassa: "Spiermassa (kg)"
           vetmassa:   "Vetmassa (kg)"
+          vochtbalans: "Vochtbalans (%)"
           bmi:        "BMI (kg/m²)"
         live_input_entities:
           gewicht:    input_number.goedheid_gewicht
           spiermassa: input_number.goedheid_spiermassa
           vetmassa:   input_number.goedheid_vetmassa
+          vochtbalans: input_number.goedheid_vochtbalans
           bmi:        input_number.goedheid_bmi
 
       # ══ ROW 4 — Referentietabel ════════════════════════════════════
@@ -541,11 +572,11 @@ views:
               .card-header:hover::after { opacity: 1; }
               .card-header:hover::before { opacity: 1; }
         content: |
-          | Meting | Datum | Gewicht | BMI | Spiermassa | Vetmassa |
-          |--------|-------|--------:|----:|-----------:|---------:|
-          | Meting 1 (start) | 1 jan 2026 | 70,0 kg | 24,8 | 29,5 kg | 24,0 kg |
-          | Meting 2 (2 mnd) | 1 mrt 2026 | 72,0 kg | 25,5 | 29,3 kg | 25,5 kg |
-          | Meting 3 (4 mnd) | 1 mei 2026 | 74,5 kg | 26,4 | 29,0 kg | 27,0 kg |
-          | Meting 4 (6 mnd) | 1 jul 2026 | 77,0 kg | 27,3 | 28,8 kg | 28,5 kg |
+          | Meting | Datum | Gewicht | BMI | Spiermassa | Vetmassa | Vochtbalans |
+          |--------|-------|--------:|----:|-----------:|---------:|-------------:|
+          | Meting 1 (start) | 1 jan 2026 | 70,0 kg | 24,8 | 29,5 kg | 24,0 kg | 51,0 % |
+          | Meting 2 (2 mnd) | 1 mrt 2026 | 72,0 kg | 25,5 | 29,3 kg | 25,5 kg | 51,2 % |
+          | Meting 3 (4 mnd) | 1 mei 2026 | 74,5 kg | 26,4 | 29,0 kg | 27,0 kg | 49,4 % |
+          | Meting 4 (6 mnd) | 1 jul 2026 | 77,0 kg | 27,3 | 28,8 kg | 28,5 kg | 48,6 % |
 
-          **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5
+          **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5 · Vochtbalans ↓ −2,4 %-punt

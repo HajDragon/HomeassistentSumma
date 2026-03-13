@@ -58,6 +58,7 @@ SAVE_MEASUREMENT_SCHEMA = vol.Schema(
         vol.Optional("gewicht"):    vol.Coerce(float),
         vol.Optional("spiermassa"): vol.Coerce(float),
         vol.Optional("vetmassa"):   vol.Coerce(float),
+        vol.Optional("vochtbalans"): vol.Coerce(float),
         vol.Optional("bmi"):        vol.Coerce(float),
         vol.Optional("timestamp"):  cv.string,
     },
