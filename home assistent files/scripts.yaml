@@ -22,8 +22,37 @@ submit_waarde:
         vochtbalans: "{{ states('input_number.goedheid_vochtbalans') | float(0) }}"
         bmi:        "{{ states('input_number.goedheid_bmi')        | float(0) }}"
         timestamp:  "{{ states('input_datetime.goedheid_meetdatum') }}"
+        pesdie_student_id: "{{ states('input_text.goedheid_student_id') | trim }}"
+        pesdie_output: "{{ states('input_text.goedheid_pesdie_output') | trim }}"
+        pesdie_phase: "{{ states('input_select.simulatiefase_goedheid') }}"
+        pesdie_saved_at: "{{ now().isoformat() }}"
   mode: single
   icon: mdi:content-save-check
+
+submit_pesdie:
+  alias: "Submit PESDIE naar Huidige Periode"
+  description: >
+    Saves one PESDIE submission for the active period and stores
+    the PESDIE Output value as the submitted PESDIE number.
+  sequence:
+    - variables:
+        pesdie_output_value: >
+          {% set raw = states('input_text.goedheid_pesdie_output') | trim %}
+          {{ '' if raw in ['unknown', 'unavailable', 'none'] else raw }}
+    - service: simulation_manager.switch_period
+      data:
+        period_id: "{{ states('sensor.simulation_manager') }}"
+        date: "{{ states('input_datetime.goedheid_meetdatum') }}"
+    - service: simulation_manager.save_measurement
+      data:
+        timestamp: "{{ states('input_datetime.goedheid_meetdatum') }}"
+        pesdie_submission_number: "{{ pesdie_output_value }}"
+        pesdie_student_id: "{{ states('input_text.goedheid_student_id') | trim }}"
+        pesdie_output: "{{ pesdie_output_value }}"
+        pesdie_phase: "{{ states('input_select.simulatiefase_goedheid') }}"
+        pesdie_saved_at: "{{ now().isoformat() }}"
+  mode: single
+  icon: mdi:clipboard-check-outline
 
 reset_goedheid_simulatie_handmatig:
   alias: "Reset Simulatie Mevrouw Goedheid (Handmatig)"
@@ -67,6 +96,16 @@ reset_goedheid_simulatie_handmatig:
         entity_id: input_datetime.goedheid_meetdatum
       data:
         date: "{{ now().strftime('%Y-%m-%d') }}"
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.goedheid_student_id
+      data:
+        value: ""
+    - service: input_text.set_value
+      target:
+        entity_id: input_text.goedheid_pesdie_output
+      data:
+        value: ""
   mode: single
   icon: mdi:restart
 
@@ -118,5 +157,9 @@ goedheid_sla_meting_op_handmatig:
         vochtbalans: "{{ states('input_number.goedheid_vochtbalans') | float(0) }}"
         bmi: "{{ states('input_number.goedheid_bmi') | float(0) }}"
         timestamp: "{{ states('input_datetime.goedheid_meetdatum') }}"
+        pesdie_student_id: "{{ states('input_text.goedheid_student_id') | trim }}"
+        pesdie_output: "{{ states('input_text.goedheid_pesdie_output') | trim }}"
+        pesdie_phase: "{{ states('input_select.simulatiefase_goedheid') }}"
+        pesdie_saved_at: "{{ now().isoformat() }}"
   mode: single
   icon: mdi:content-save-check

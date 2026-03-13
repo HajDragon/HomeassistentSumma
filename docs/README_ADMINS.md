@@ -68,3 +68,30 @@ De geautomatiseerde logica vertrouwt er vaak op dat apparaten zich in de juiste 
 **Oplossing:**
 1.  Zorg ervoor dat Home Assistant draait en verbonden is met het netwerk.
 2.  Controleer of er momenteel een periode actief is. Het systeem vereist een actieve periode (bijv. "Periode 1") om metingen aan te koppelen.
+
+## PESDIE Workflow Beheren
+
+Deze les gebruikt een verplichte PESDIE-inlevering per student binnen hetzelfde simulatiescherm.
+
+1.  Open het simulatiedashboard en controleer of de sectie **PESDIE Workflow (Per Student)** zichtbaar is.
+2.  Controleer in **PESDIE Invoer** of de velden **Student ID** en **PESDIE Output** aanwezig zijn.
+3.  Controleer dat het veld **Laatste PESDIE Nummer** niet meer wordt getoond (dit is bewust verwijderd).
+3.  Controleer of de knop **Submit PESDIE** zichtbaar is.
+4.  Laat de docent/student eerst beide velden invullen en daarna op **Submit PESDIE** drukken.
+5.  Controleer de kaart **PESDIE Inzendingen per Periode** op een nieuwe regel met **PESDIE #** en **Student ID**.
+6.  Controleer dat deze kaart nu direct met de tabel start (geen grafiek of metric-knoppen).
+7.  Bij een nieuwe les: gebruik **Reset Simulatie** zodat oude PESDIE-tekst en Student ID worden gewist.
+
+### Nummering van PESDIE #
+
+De nummering wordt automatisch per periode opgebouwd.
+
+1.  Bij de eerste inzending in een periode is **PESDIE # = 1**.
+2.  Volgende inzendingen in dezelfde periode tellen op (**2, 3, 4, ...**).
+3.  In een andere periode start de telling opnieuw vanaf **1**.
+
+### Als PESDIE velden niet zichtbaar zijn
+
+1.  Herlaad het dashboard in de browser.
+2.  Controleer in **Instellingen > Apparaten & Diensten > Helpers** of de helpers **Student ID** en **PESDIE Output** bestaan.
+3.  Als ze ontbreken, open het juiste dashboard opnieuw en controleer of de laatste dashboardversie actief is.

@@ -18,11 +18,26 @@ De simulatie is georganiseerd in "Perioden". Het activeren van een periode stelt
 
 Tijdens een les kunnen u of uw studenten datapunten direct in het systeem opnemen.
 
-1.  **Zoek het invoerformulier:** Zoek het gedeelte met het label **Meting Opslaan** op de dashboardkaart.
-2.  **Voer details in (Optioneel):** Als er specifieke observaties of notities zijn voor dit datapunt, typ deze dan in het tekstveld.
-3.  **Opslaan:** Tik op de knop **OPSLAAN**.
-    -   De nieuwe meting verschijnt direct in de tabel hieronder.
-    -   Deze gegevens worden permanent opgeslagen voor de duur van de actieve simulatie.
+1.  **Kies de juiste meting:** Controleer eerst of de juiste fase actief staat (Meting 1, 2, 3 of 4).
+2.  **Voer meetwaarden in:** Gebruik de sectie **Simulatie Invoer (aanpasbaar)** voor de actuele waarden.
+3.  **Voer PESDIE in:** Ga naar **PESDIE Workflow (Per Student)** en vul in:
+    -   **Student ID** (bijvoorbeeld student_01)
+    -   **PESDIE Output** (1 tekst met P-E-S-D-I-E)
+4.  **Opslaan PESDIE:** Tik op de knop **Submit PESDIE**.
+    -   De inzending verschijnt in de lijst **PESDIE Inzendingen per Periode**.
+    -   Elke inzending krijgt automatisch een oplopend **PESDIE #** nummer binnen de huidige meting/periode.
+    -   De PESDIE-lijst toont nu meteen de tabel (zonder grafiek), zodat je direct de nieuwe regel ziet.
+5.  **Opslaan meetwaarden (optioneel):** Gebruik **Submit Waarde** als u ook meetwaarden tegelijk wilt bewaren.
+
+## Lesworkflow Voor PESDIE
+
+Gebruik deze volgorde tijdens de kern van de les:
+
+1.  Bespreek de trend tussen Meting 1 t/m 4 met de klas.
+2.  Laat elke student 1 PESDIE schrijven voor Mevrouw Goedheid.
+3.  Laat studenten om de beurt hun Student ID en PESDIE invullen.
+4.  Druk na elke student op **Submit PESDIE**.
+5.  Bespreek in de afronding enkele PESDIE-voorstellen klassikaal.
 
 ## De Simulatie Resetten
 

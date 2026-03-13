@@ -82,6 +82,19 @@ input_number:
     icon: mdi:human-male-height
     initial: 1.65
 
+input_text:
+  goedheid_student_id:
+    name: "Student ID"
+    min: 1
+    max: 50
+    icon: mdi:account-badge
+
+  goedheid_pesdie_output:
+    name: "PESDIE Output"
+    min: 1
+    max: 255
+    icon: mdi:text-box-edit-outline
+
 template:
   - sensor:
       - name: "display_gewicht"
@@ -191,6 +204,16 @@ script:
           entity_id: input_datetime.goedheid_meetdatum
         data:
           date: "{{ now().strftime('%Y-%m-%d') }}"
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.goedheid_student_id
+        data:
+          value: ""
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.goedheid_pesdie_output
+        data:
+          value: ""
 
   sync_display_naar_simulatie_invoer:
     alias: "Sync Meetwaarden naar Simulatie Invoer"
@@ -234,6 +257,31 @@ script:
           vochtbalans: "{{ states('input_number.goedheid_vochtbalans') | float(0) }}"
           bmi:        "{{ states('input_number.goedheid_bmi')        | float(0) }}"
           timestamp:  "{{ states('input_datetime.goedheid_meetdatum') }}"
+          pesdie_student_id: "{{ states('input_text.goedheid_student_id') | trim }}"
+          pesdie_output: "{{ states('input_text.goedheid_pesdie_output') | trim }}"
+          pesdie_phase: "{{ states('input_select.simulatiefase_goedheid') }}"
+          pesdie_saved_at: "{{ now().isoformat() }}"
+
+  goedheid_submit_pesdie:
+    alias: "Submit PESDIE"
+    icon: mdi:clipboard-check-outline
+    sequence:
+      - variables:
+          pesdie_output_value: >
+            {% set raw = states('input_text.goedheid_pesdie_output') | trim %}
+            {{ '' if raw in ['unknown', 'unavailable', 'none'] else raw }}
+      - service: simulation_manager.switch_period
+        data:
+          period_id: "{{ states('sensor.simulation_manager') }}"
+          date: "{{ states('input_datetime.goedheid_meetdatum') }}"
+      - service: simulation_manager.save_measurement
+        data:
+          timestamp: "{{ states('input_datetime.goedheid_meetdatum') }}"
+          pesdie_submission_number: "{{ pesdie_output_value }}"
+          pesdie_student_id: "{{ states('input_text.goedheid_student_id') | trim }}"
+          pesdie_output: "{{ pesdie_output_value }}"
+          pesdie_phase: "{{ states('input_select.simulatiefase_goedheid') }}"
+          pesdie_saved_at: "{{ now().isoformat() }}"
 
 automation goedheid:
   - id: goedheid_simulatie_fase_wissel

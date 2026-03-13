@@ -139,3 +139,33 @@ Met.no ondersteunt meerdere locaties door meerdere `config_entries` aan te maken
 2.  **Update Services:** Stel nieuwe functionaliteit bloot via services in `services.yaml` en handlers in `__init__.py`.
 3.  **Frontend Synchronisatie:** Zorg ervoor dat de frontend-kaart de nieuwe staatstructuur die naar `sensor.simulation_manager` wordt gepusht correct afhandelt.
 4.  **Geen OS-wijzigingen:** Vertrouw niet op het installeren van systeempakketten via `apt` of `pip` op de HA-host. Alles moet draaien binnen de standaard Home Assistant-omgeving.
+
+## PESDIE Datastroom (Studentoutput)
+
+Voor de lesdoelstelling rond PESDIE wordt studentoutput opgeslagen via dezelfde submit-flow als meetwaarden.
+
+-   **Invoerhelpers:** `input_text.goedheid_student_id` en `input_text.goedheid_pesdie_output`.
+-   **Submitpad:** Dashboardknop **Submit PESDIE** roept `script.submit_pesdie` aan (en **Submit Waarde** blijft beschikbaar voor gecombineerde opslag).
+-   **Persistente opslag:** Script roept `simulation_manager.save_measurement` aan met extra PESDIE velden (`pesdie_submission_number`, `pesdie_student_id`, `pesdie_output`, `pesdie_phase`, `pesdie_saved_at`).
+-   **Waarom dit schaalbaar is:** De integratie accepteert extra velden via `ALLOW_EXTRA` en `Measurement.extra`, waardoor extra didactische output kan worden toegevoegd zonder schema-breuk of hardcoded studentnamen.
+
+### Ontwerpkeuze
+
+-   Er is bewust gekozen voor **1 tekstveld per studentinlevering** als directe implementatie.
+-   Dit houdt de backend stabiel en maakt latere uitbreiding naar gestructureerde PESDIE-deelvelden mogelijk zonder data-migratie van de kernmetingen.
+
+## PESDIE Dashboard Vereenvoudiging (2026-03)
+
+De kaart **PESDIE Inzendingen per Periode** gebruikt nu een table-first layout zonder grafiek.
+
+-   **Kaartconfiguratie:** `show_chart: false` op de PESDIE-card in `config/dashboards/simulation_dashboard.yaml`.
+-   **Shared component gedrag:** `www/simulation-period-card/simulation-period-card.js` ondersteunt een nieuwe vlag `show_chart` (default `true`) zodat andere kaartinstanties de grafiek behouden.
+-   **Waarom:** Minder visuele duplicatie; tabel is de primaire bron voor PESDIE-inzendingen.
+
+### Nummeringslogica zonder teller-helper
+
+De helper `input_number.goedheid_pesdie_teller` is verwijderd uit de bronpackage.
+
+-   `script.submit_pesdie` berekent `pesdie_submission_number` nu dynamisch per actieve periode.
+-   Formule: aantal bestaande metingen in die periode met een bestaand `pesdie_submission_number` + 1.
+-   Resultaat: elke periode start lokaal bij `1`, zonder globale teller-state.

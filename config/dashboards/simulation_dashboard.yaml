@@ -313,10 +313,15 @@ views:
               ---
               💡 *Zie een oranje knipperende rij in de tabel? Wacht even — de waarde wordt automatisch opgeslagen.*
 
-      # ══ ROW 2 — Huidige Meetwaarden ═══════════════════════════════
-      - type: grid
-        columns: 2
-        square: false
+ # ══ ROW 2 — Huidige Meetwaarden ═══════════════════════════════
+
+      - type: horizontal-stack
+        card_mod:
+          style: |
+            #root {
+              align-items: flex-start !important;
+            }
+
         cards:
           - type: vertical-stack
             cards:
@@ -347,38 +352,71 @@ views:
                         font-size: 12px; font-weight: bold; font-family: sans-serif;
                         line-height: 24px; text-align: center;
                         cursor: help; opacity: 0.8; z-index: 10;
+
                       }
+
                       .card-header::before {
+
                         content: "Actuele lichaamswaarden van Mevrouw Goedheid. In Simulatie-modus gestuurd door de sliders rechts. In Live-modus komen deze van de echte weegschaal.";
+
                         position: absolute; top: 80%; right: 12px;
+
                         background: rgba(20,20,20,0.95); color: #fff;
+
                         padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
+
                         text-transform: none; letter-spacing: normal;
+
                         min-width: 200px; max-width: 260px; text-align: left;
+
                         opacity: 0; transition: opacity 0.15s ease;
+
                         z-index: 999; pointer-events: none; white-space: normal;
+
                         box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+
                       }
+
                       .card-header:hover::after { opacity: 1; }
+
                       .card-header:hover::before { opacity: 1; }
+
                 entities:
+
                   - entity: sensor.display_gewicht
+
                     name: Totaal Gewicht
+
                     icon: mdi:scale-bathroom
+
                   - entity: sensor.display_spiermassa
+
                     name: Spiermassa
+
                     icon: mdi:arm-flex
+
                   - entity: sensor.display_vetmassa
+
                     name: Vetmassa
+
                     icon: mdi:food-drumstick
+
                   - entity: sensor.display_vochtbalans
+
                     name: Vochtbalans
+
                     icon: mdi:water-percent
+
                   - entity: sensor.display_bmi
+
                     name: BMI
+
                     icon: mdi:human
+
                   - entity: input_number.goedheid_lengte
+
                     name: Lichaamslengte (m)
+
                     icon: mdi:human-male-height
 
               # Submit Waarde button — directly under Huidige Meetwaarden
@@ -387,6 +425,36 @@ views:
                 tap_action:
                   action: call-service
                   service: script.submit_waarde
+                card_mod:
+                  style: |
+                    ha-card {
+                      border-radius: 8px;
+                      width: 100%;
+                      margin-top: 8px;
+                    }
+                    mwc-ripple { border-radius: 8px; }
+                    .card-content {
+                      text-align: center;
+                      font-weight: 600;
+                      font-size: 1rem;
+                    }
+
+              - type: entities
+                title: "PESDIE Invoer"
+                entities:
+                  - entity: input_text.goedheid_student_id
+                    name: Student ID (bijv. student_01)
+                    icon: mdi:account-badge
+                  - entity: input_text.goedheid_pesdie_output
+                    name: PESDIE Output
+                    icon: mdi:text-box-edit-outline
+
+              - type: button
+                name: "Submit PESDIE"
+                icon: mdi:clipboard-check-outline
+                tap_action:
+                  action: call-service
+                  service: script.submit_pesdie
                 card_mod:
                   style: |
                     ha-card {
@@ -528,6 +596,18 @@ views:
           vetmassa:   input_number.goedheid_vetmassa
           vochtbalans: input_number.goedheid_vochtbalans
           bmi:        input_number.goedheid_bmi
+
+      - type: custom:simulation-period-card
+        title: "PESDIE Inzendingen per Periode"
+        show_chart: false
+        columns:
+          - timestamp
+          - pesdie_submission_number
+          - pesdie_student_id
+        column_labels:
+          timestamp: "Datum"
+          pesdie_submission_number: "PESDIE #"
+          pesdie_student_id: "Student ID"
 
       # ══ ROW 4 — Referentietabel ════════════════════════════════════
       - type: markdown

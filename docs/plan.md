@@ -1,4 +1,4 @@
-# Lesplan — Body Scan Slimme Weegschaal
+# eLesplan — Body Scan Slimme Weegschaal
 
 ## Algemene informatie
 
