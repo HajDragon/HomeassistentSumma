@@ -4,6 +4,19 @@
 
 Welkom in de Slimme Kamer! Met dit systeem kunt u interactieve simulaties uitvoeren tijdens uw lessen, de kameromgeving regelen en experimentgegevens in realtime loggen. Deze handleiding legt uit hoe u de dashboardbediening gebruikt.
 
+## Lesvoorbereiding
+
+Vink de volgende punten aan op het dashboard **vóór** u de simulatie start. U vindt deze in de kaart **Lesvoorbereiding ✓** bovenaan de pagina.
+
+1. **Weegschaal gereserveerd (Xerte)** — Heeft u de body scan slimme weegschaal gereserveerd via Xerte?
+2. **Studenten kennen vochtbalans & BMI** — Hebben uw studenten voorkennis over vochtbalans en BMI?
+3. **Studenten kennen spijsvertering** — Hebben uw studenten kennis van voedingsstoffen en het spijsverteringskanaal?
+4. **Studenten kunnen PESDIE toepassen** — Weten uw studenten hoe ze een PESDIE schrijven?
+
+Zet elk vakje op **Aan** zodra u het punt hebt gecontroleerd. Zodra alle vier vakjes aan staan, verandert de statusregel **Les klaar om te starten?** naar **True**.
+
+> De checkboxes worden **niet** gereset als u op "Reset Simulatie" drukt — ze blijven aan staan voor de hele les.
+
 ## Een Klassimulatie Starten
 
 De simulatie is georganiseerd in "Perioden". Het activeren van een periode stelt de status van de kamer in voor die specifieke lesfase.

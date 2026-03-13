@@ -5,7 +5,19 @@ views:
     type: masonry
     cards:
 
-      # ══ ROW 1 — Controls + Stappenplan ══════════════════════════════
+      # ══ LESVOORBEREIDING CHECKLIST ══════════════════════════════════════
+      - type: entities
+        title: "Lesvoorbereiding ✓"
+        icon: mdi:clipboard-check
+        entities:
+          - entity: input_boolean.goedheid_weegschaal_gereserveerd
+          - entity: input_boolean.goedheid_kennis_vochtbalans_bmi
+          - entity: input_boolean.goedheid_kennis_spijsvertering
+          - entity: input_boolean.goedheid_kennis_pesdie
+          - entity: sensor.goedheid_les_klaar
+            name: "Les klaar om te starten?"
+
+      # ══ ROW 1 — Controls + Stappenplan ════════════════════════════════
       - type: vertical-stack
         cards:
           - type: grid
@@ -151,7 +163,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Laadt de beginwaarden van Mevrouw Goedheid: januari 2026. Gebruik dit als startpunt van de simulatie.";
+                              content: "Schakelt naar Periode 1 (januari 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -192,7 +204,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Laadt de meting na 2 maanden: maart 2026. Gewicht en vetmassa zijn licht gestegen.";
+                              content: "Schakelt naar Periode 2 (maart 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -233,7 +245,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Laadt de meting na 4 maanden: mei 2026. De trend van gewichtstoename zet door.";
+                              content: "Schakelt naar Periode 3 (mei 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -274,7 +286,7 @@ views:
                               cursor: help; opacity: 0.8; z-index: 10;
                             }
                             ha-state-icon::after {
-                              content: "Eindmeting na 6 maanden: juli 2026. Totaal +7 kg gewicht, spiermassa licht gedaald. Bespreek mogelijke oorzaken met de klas.";
+                              content: "Schakelt naar Periode 4 (juli 2026). Stel daarna de waarden in met de sliders en druk op Sla Meting Op om op te slaan.";
                               pointer-events: none;
                               position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
                               background: rgba(20,20,20,0.95); color: #fff;
@@ -286,6 +298,48 @@ views:
                             }
                             ha-state-icon:hover::before { opacity: 1; }
                             ha-state-icon:hover::after { opacity: 1; }
+                  - type: button
+                    name: "Sla Meting Op"
+                    icon: mdi:content-save-check
+                    icon_height: 36px
+                    tap_action:
+                      action: call-service
+                      service: script.goedheid_sla_meting_op
+                    card_mod:
+                      style: |
+                        :host {
+                          --primary-color: #43a047;
+                          position: relative; z-index: 1;
+                        }
+                        :host(:hover) { z-index: 100; }
+                        ha-card { position: relative; overflow: visible !important; }
+                        ha-state-icon {
+                          position: static !important;
+                          pointer-events: none;
+                        }
+                        ha-state-icon::before {
+                          content: "?";
+                          pointer-events: auto;
+                          position: absolute; top: 6px; right: 6px;
+                          width: 20px; height: 20px;
+                          background: rgba(255,255,255,0.5); color: white; border-radius: 50%;
+                          font-size: 11px; font-weight: bold; font-family: sans-serif;
+                          line-height: 20px; text-align: center;
+                          cursor: help; opacity: 0.9; z-index: 10;
+                        }
+                        ha-state-icon::after {
+                          content: "Sla de huidige sliderwaarden op in de actieve periode. Druk op deze knop nadat je de waarden hebt ingesteld.";
+                          pointer-events: none;
+                          position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+                          background: rgba(20,20,20,0.95); color: #fff;
+                          padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
+                          min-width: 200px; max-width: 260px; text-align: left;
+                          opacity: 0; transition: opacity 0.15s ease;
+                          z-index: 999; white-space: normal;
+                          box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+                        }
+                        ha-state-icon:hover::before { opacity: 1; }
+                        ha-state-icon:hover::after { opacity: 1; }
 
           # Stappenplan — spans full width
           - type: markdown
@@ -297,189 +351,86 @@ views:
               **Stap 1 — Controleer de databron**
               Zorg dat bovenaan **Simulatie** is geselecteerd, niet "Live Data".
 
-              **Stap 2 — Start op Meting 1**
-              Druk op de knop **Meting 1** (rechts). De beginwaarden van Mevrouw Goedheid verschijnen automatisch.
+              **Stap 2 — Navigeer naar Meting 1**
+              Druk op de knop **Meting 1** (rechts). De actieve periode wisselt naar januari 2026.
 
-              **Stap 3 — Bespreek met de klas**
-              Bekijk de waarden op het scherm: gewicht, BMI, spiermassa, vetmassa en vochtbalans.
-              Vraag de studenten: *"Wat valt op?"*
+              **Stap 3 — Voer de waarden in en sla op**
+              Stel de sliders in op de gewenste meetwaarden. Druk daarna op de groene knop **Sla Meting Op** om de waarden op te slaan in deze periode.
 
-              **Stap 4 — Ga door naar Meting 2, 3 en 4**
-              Druk telkens op de volgende meetknop. Vergelijk de veranderingen en bespreek mogelijke oorzaken.
+              **Stap 4 — Bespreek met de klas**
+              Bekijk de opgeslagen waarden in de tabel. Vraag de studenten: *"Wat valt op?"*
 
-              **Stap 5 — Afsluiten**
+              **Stap 5 — Ga door naar Meting 2, 3 en 4**
+              Druk op de volgende meetknop, pas de sliders aan, en sla weer op met **Sla Meting Op**. Vergelijk de veranderingen.
+
+              **Stap 6 — Afsluiten**
               Druk op de rode knop **Reset Simulatie** en bevestig. Het systeem is klaar voor de volgende les.
 
               ---
-              💡 *Zie een oranje knipperende rij in de tabel? Wacht even — de waarde wordt automatisch opgeslagen.*
+              💡 *Oranje knipperende rij in de tabel = nog niet opgeslagen. Druk op **Sla Meting Op** om te bevestigen.*
 
-          - type: entities
-            title: "Stappenplan voor de Les — Checklist"
-            show_header_toggle: false
-            state_color: true
-            entities:
-              - entity: input_boolean.goedheid_weegschaal_gereserveerd
-              - entity: input_boolean.goedheid_kennis_vochtbalans_bmi
-              - entity: input_boolean.goedheid_kennis_spijsvertering
-              - entity: input_boolean.goedheid_kennis_pesdie
-              - entity: sensor.goedheid_les_klaar
-                name: Les klaar (alle stappen voltooid)
-
- # ══ ROW 2 — Huidige Meetwaarden ═══════════════════════════════
-
-      - type: horizontal-stack
-        card_mod:
-          style: |
-            #root {
-              align-items: flex-start !important;
-            }
-
+      # ══ ROW 2 — Huidige Meetwaarden ══════════════════════════════════
+      - type: grid
+        columns: 2
+        square: false
         cards:
-          - type: vertical-stack
-            cards:
-              - type: entities
-                title: "Huidige Meetwaarden — Mevrouw Goedheid"
-                card_mod:
-                  style:
-                    .: |
-                      :host { position: relative; z-index: 1; }
-                      :host(:hover) { z-index: 100; }
-                      ha-card { overflow: visible !important; }
-                    ha-card$: |
-                      .card-header {
-                        pointer-events: none;
-                        padding-right: 44px !important;
-                        position: relative;
-                        overflow: visible !important;
-                      }
-                      .card-header::after {
-                        content: "?";
-                        pointer-events: auto;
-                        position: absolute;
-                        top: 50%; right: 12px;
-                        transform: translateY(-50%);
-                        width: 24px; height: 24px;
-                        background: var(--primary-color, #03a9f4);
-                        color: white; border-radius: 50%;
-                        font-size: 12px; font-weight: bold; font-family: sans-serif;
-                        line-height: 24px; text-align: center;
-                        cursor: help; opacity: 0.8; z-index: 10;
-
-                      }
-
-                      .card-header::before {
-
-                        content: "Actuele lichaamswaarden van Mevrouw Goedheid. In Simulatie-modus gestuurd door de sliders rechts. In Live-modus komen deze van de echte weegschaal.";
-
-                        position: absolute; top: 80%; right: 12px;
-
-                        background: rgba(20,20,20,0.95); color: #fff;
-
-                        padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
-
-                        text-transform: none; letter-spacing: normal;
-
-                        min-width: 200px; max-width: 260px; text-align: left;
-
-                        opacity: 0; transition: opacity 0.15s ease;
-
-                        z-index: 999; pointer-events: none; white-space: normal;
-
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-
-                      }
-
-                      .card-header:hover::after { opacity: 1; }
-
-                      .card-header:hover::before { opacity: 1; }
-
-                entities:
-
-                  - entity: sensor.display_gewicht
-
-                    name: Totaal Gewicht
-
-                    icon: mdi:scale-bathroom
-
-                  - entity: sensor.display_spiermassa
-
-                    name: Spiermassa
-
-                    icon: mdi:arm-flex
-
-                  - entity: sensor.display_vetmassa
-
-                    name: Vetmassa
-
-                    icon: mdi:food-drumstick
-
-                  - entity: sensor.display_vochtbalans
-
-                    name: Vochtbalans
-
-                    icon: mdi:water-percent
-
-                  - entity: sensor.display_bmi
-
-                    name: BMI
-
-                    icon: mdi:human
-
-                  - entity: input_number.goedheid_lengte
-
-                    name: Lichaamslengte (m)
-
-                    icon: mdi:human-male-height
-
-              # Submit Waarde button — directly under Huidige Meetwaarden
-              - type: button
-                name: "Submit Waarde"
-                tap_action:
-                  action: call-service
-                  service: script.submit_waarde
-                card_mod:
-                  style: |
-                    ha-card {
-                      border-radius: 8px;
-                      width: 100%;
-                      margin-top: 8px;
-                    }
-                    mwc-ripple { border-radius: 8px; }
-                    .card-content {
-                      text-align: center;
-                      font-weight: 600;
-                      font-size: 1rem;
-                    }
-
-              - type: entities
-                title: "PESDIE Invoer"
-                entities:
-                  - entity: input_text.goedheid_student_id
-                    name: Student ID (bijv. student_01)
-                    icon: mdi:account-badge
-                  - entity: input_text.goedheid_pesdie_output
-                    name: PESDIE Output
-                    icon: mdi:text-box-edit-outline
-
-              - type: button
-                name: "Submit PESDIE"
-                icon: mdi:clipboard-check-outline
-                tap_action:
-                  action: call-service
-                  service: script.submit_pesdie
-                card_mod:
-                  style: |
-                    ha-card {
-                      border-radius: 8px;
-                      width: 100%;
-                      margin-top: 8px;
-                    }
-                    mwc-ripple { border-radius: 8px; }
-                    .card-content {
-                      text-align: center;
-                      font-weight: 600;
-                      font-size: 1rem;
-                    }
+          - type: entities
+            title: "Huidige Meetwaarden — Mevrouw Goedheid"
+            card_mod:
+              style:
+                .: |
+                  :host { position: relative; z-index: 1; }
+                  :host(:hover) { z-index: 100; }
+                  ha-card { overflow: visible !important; }
+                ha-card$: |
+                  .card-header {
+                    pointer-events: none;
+                    padding-right: 44px !important;
+                    position: relative;
+                    overflow: visible !important;
+                  }
+                  .card-header::after {
+                    content: "?";
+                    pointer-events: auto;
+                    position: absolute;
+                    top: 50%; right: 12px;
+                    transform: translateY(-50%);
+                    width: 24px; height: 24px;
+                    background: var(--primary-color, #03a9f4);
+                    color: white; border-radius: 50%;
+                    font-size: 12px; font-weight: bold; font-family: sans-serif;
+                    line-height: 24px; text-align: center;
+                    cursor: help; opacity: 0.8; z-index: 10;
+                  }
+                  .card-header::before {
+                    content: "Actuele lichaamswaarden van Mevrouw Goedheid. In Simulatie-modus gestuurd door de sliders rechts. In Live-modus komen deze van de echte weegschaal.";
+                    position: absolute; top: 80%; right: 12px;
+                    background: rgba(20,20,20,0.95); color: #fff;
+                    padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
+                    text-transform: none; letter-spacing: normal;
+                    min-width: 200px; max-width: 260px; text-align: left;
+                    opacity: 0; transition: opacity 0.15s ease;
+                    z-index: 999; pointer-events: none; white-space: normal;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+                  }
+                  .card-header:hover::after { opacity: 1; }
+                  .card-header:hover::before { opacity: 1; }
+            entities:
+              - entity: sensor.display_gewicht
+                name: Totaal Gewicht
+                icon: mdi:scale-bathroom
+              - entity: sensor.display_spiermassa
+                name: Spiermassa
+                icon: mdi:arm-flex
+              - entity: sensor.display_vetmassa
+                name: Vetmassa
+                icon: mdi:food-drumstick
+              - entity: sensor.display_bmi
+                name: BMI
+                icon: mdi:human
+              - entity: input_number.goedheid_lengte
+                name: Lichaamslengte (m)
+                icon: mdi:human-male-height
 
           - type: entities
             title: "Simulatie Invoer (aanpasbaar)"
@@ -532,9 +483,6 @@ views:
               - entity: input_number.goedheid_vetmassa
                 name: Vetmassa (kg)
                 icon: mdi:food-drumstick
-              - entity: input_number.goedheid_vochtbalans
-                name: Vochtbalans (%)
-                icon: mdi:water-percent
               - entity: input_number.goedheid_bmi
                 name: BMI
                 icon: mdi:human
@@ -546,7 +494,7 @@ views:
                 name: "Sync meetwaarden → invoer"
                 icon: mdi:sync-circle
 
-      # ══ ROW 3 — Simulation Period Card ══════════════════════════════════
+      # ══ ROW 3 — Simulation Period Card ════════════════════════════════
       - type: custom:simulation-period-card
         title: "Mevrouw Goedheid — Lichaamssamenstelling per Periode"
         card_mod:
@@ -593,38 +541,20 @@ views:
           - gewicht
           - spiermassa
           - vetmassa
-          - vochtbalans
           - bmi
         column_labels:
           timestamp:  "Datum"
           gewicht:    "Gewicht (kg)"
           spiermassa: "Spiermassa (kg)"
           vetmassa:   "Vetmassa (kg)"
-          vochtbalans: "Vochtbalans (%)"
           bmi:        "BMI (kg/m²)"
         live_input_entities:
           gewicht:    input_number.goedheid_gewicht
           spiermassa: input_number.goedheid_spiermassa
           vetmassa:   input_number.goedheid_vetmassa
-          vochtbalans: input_number.goedheid_vochtbalans
           bmi:        input_number.goedheid_bmi
 
-      - type: custom:simulation-period-card
-        title: "PESDIE Inzendingen per Periode"
-        show_chart: false
-        columns:
-          - timestamp
-          - pesdie_submission_number
-          - pesdie_student_id
-        column_labels:
-          timestamp: "Datum"
-          pesdie_submission_number: "PESDIE #"
-          pesdie_student_id: "Student ID"
-
-
-      
-
-      # ══ ROW 4 — Referentietabel ════════════════════════════════════
+      # ══ ROW 4 — Referentietabel ══════════════════════════════════════
       - type: markdown
         title: "6-maanden Trend — Mevrouw Goedheid"
         card_mod:
@@ -667,11 +597,11 @@ views:
               .card-header:hover::after { opacity: 1; }
               .card-header:hover::before { opacity: 1; }
         content: |
-          | Meting | Datum | Gewicht | BMI | Spiermassa | Vetmassa | Vochtbalans |
-          |--------|-------|--------:|----:|-----------:|---------:|-------------:|
-          | Meting 1 (start) | 1 jan 2026 | 70,0 kg | 24,8 | 29,5 kg | 24,0 kg | 51,0 % |
-          | Meting 2 (2 mnd) | 1 mrt 2026 | 72,0 kg | 25,5 | 29,3 kg | 25,5 kg | 51,2 % |
-          | Meting 3 (4 mnd) | 1 mei 2026 | 74,5 kg | 26,4 | 29,0 kg | 27,0 kg | 49,4 % |
-          | Meting 4 (6 mnd) | 1 jul 2026 | 77,0 kg | 27,3 | 28,8 kg | 28,5 kg | 48,6 % |
+          | Meting | Datum | Gewicht | BMI | Spiermassa | Vetmassa |
+          |--------|-------|--------:|----:|-----------:|---------:|
+          | Meting 1 (start) | 1 jan 2026 | 70,0 kg | 24,8 | 29,5 kg | 24,0 kg |
+          | Meting 2 (2 mnd) | 1 mrt 2026 | 72,0 kg | 25,5 | 29,3 kg | 25,5 kg |
+          | Meting 3 (4 mnd) | 1 mei 2026 | 74,5 kg | 26,4 | 29,0 kg | 27,0 kg |
+          | Meting 4 (6 mnd) | 1 jul 2026 | 77,0 kg | 27,3 | 28,8 kg | 28,5 kg |
 
-          **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5 · Vochtbalans ↓ −2,4 %-punt
+          **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5
