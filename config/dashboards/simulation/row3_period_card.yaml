@@ -1,0 +1,57 @@
+type: vertical-stack
+cards:
+  - type: custom:simulation-period-card
+    title: Body Scan en BPM Connect - Meetreeks
+    show_chart: false
+    columns:
+      - timestamp
+      - gewicht
+      - bloeddruk
+      - hartfrequentie
+      - ademfrequentie
+      - saturatie
+      - opmerking
+    column_labels:
+      timestamp: Datum
+      gewicht: Gewicht (kg)
+      bloeddruk: Bloeddruk (mmHg)
+      hartfrequentie: Pols (bpm)
+      ademfrequentie: Ademfreq. (/min)
+      saturatie: Saturatie (%)
+      opmerking: Opmerkingen
+    live_input_entities:
+      gewicht: input_number.goedheid_gewicht
+      bloeddruk_sys: input_number.goedheid_bloeddruk_sys
+      bloeddruk_dia: input_number.goedheid_bloeddruk_dia
+      hartfrequentie: input_number.goedheid_hartfrequentie
+      ademfrequentie: input_number.goedheid_ademfrequentie
+      saturatie: input_number.goedheid_saturatie
+
+  - type: custom:apexcharts-card
+    header:
+      title: 6-maanden Trend (geschaald op beschikbare maartdata)
+      show: true
+    graph_span: 6month
+    span:
+      start: month
+    series:
+      - entity: sensor.gewicht
+        name: Gewicht
+      - entity: sensor.saturatie
+        name: Saturatie
+      - entity: sensor.display_bloeddruk_systolisch
+        name: Bloeddruk systolisch
+
+  - type: markdown
+    title: Observatielog Progressie
+    content: |
+      | Datum | Opmerkingen |
+      |---|---|
+      | 01-03-2026 | **Stabiele situatie na ontslag** |
+      | 04-03-2026 | Geen klachten |
+      | 08-03-2026 | Licht vermoeid |
+      | 11-03-2026 | Enkels licht gezwollen |
+      | 15-03-2026 | Kortademig bij inspanning |
+      | 18-03-2026 | **Meer oedeem in onderbenen** |
+      | 22-03-2026 | **Gewicht stijgt snel** |
+      | 25-03-2026 | Duidelijke verslechtering |

@@ -1,0 +1,50 @@
+type: markdown
+title: "6-maanden Trend — Mevrouw Goedheid"
+card_mod:
+  style:
+    .: |
+      :host { position: relative; z-index: 1; }
+      :host(:hover) { z-index: 100; }
+      ha-card { overflow: visible !important; }
+    ha-card$: |
+      .card-header {
+        pointer-events: none;
+        padding-right: 44px !important;
+        position: relative;
+        overflow: visible !important;
+      }
+      .card-header::after {
+        content: "?";
+        pointer-events: auto;
+        position: absolute;
+        top: 50%; right: 12px;
+        transform: translateY(-50%);
+        width: 24px; height: 24px;
+        background: var(--primary-color, #03a9f4);
+        color: white; border-radius: 50%;
+        font-size: 12px; font-weight: bold; font-family: sans-serif;
+        line-height: 24px; text-align: center;
+        cursor: help; opacity: 0.8; z-index: 10;
+      }
+      .card-header::before {
+        content: "Referentietabel met de doelwaarden voor alle 4 metingen over 6 maanden. Vergelijk dit met de ingevoerde simulatiewaarden.";
+        position: absolute; top: 80%; right: 12px;
+        background: rgba(20,20,20,0.95); color: #fff;
+        padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
+        text-transform: none; letter-spacing: normal;
+        min-width: 200px; max-width: 260px; text-align: left;
+        opacity: 0; transition: opacity 0.15s ease;
+        z-index: 999; pointer-events: none; white-space: normal;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      }
+      .card-header:hover::after { opacity: 1; }
+      .card-header:hover::before { opacity: 1; }
+content: |
+  | Meting | Datum | Gewicht | BMI | Spiermassa | Vetmassa | Vochtbalans |
+  |--------|-------|--------:|----:|-----------:|---------:|-------------:|
+  | Meting 1 (start) | 1 jan 2026 | 70,0 kg | 24,8 | 29,5 kg | 24,0 kg | 51,0 % |
+  | Meting 2 (2 mnd) | 1 mrt 2026 | 72,0 kg | 25,5 | 29,3 kg | 25,5 kg | 51,2 % |
+  | Meting 3 (4 mnd) | 1 mei 2026 | 74,5 kg | 26,4 | 29,0 kg | 27,0 kg | 49,4 % |
+  | Meting 4 (6 mnd) | 1 jul 2026 | 77,0 kg | 27,3 | 28,8 kg | 28,5 kg | 48,6 % |
+
+  **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5 · Vochtbalans ↓ −2,4 %-punt

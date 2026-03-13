@@ -4,627 +4,125 @@ views:
     icon: mdi:scale-bathroom
     type: masonry
     cards:
-
-      # ══ ROW 1 — Controls + Stappenplan ══════════════════════════════
       - type: vertical-stack
         cards:
-          - type: grid
-            columns: 2
-            square: false
-            cards:
-
-              # Col 1 — Databron + Simulatiefase knoppen
-              - type: entities
-                title: "Databron & Tijdlijn"
-                card_mod:
-                  style:
-                    .: |
-                      :host { position: relative; z-index: 1; }
-                      :host(:hover) { z-index: 100; }
-                      ha-card { overflow: visible !important; }
-                    ha-card$: |
-                      .card-header {
-                        pointer-events: none; /* Ignores mouse over the general header */
-                        padding-right: 44px !important; /* Prevents text from overlapping the icon */
-                        position: relative;
-                        overflow: visible !important;
-                      }
-                      .card-header::after {
-                        content: "?";
-                        pointer-events: auto; /* ONLY the icon catches the mouse hover */
-                        position: absolute;
-                        top: 50%; right: 12px;
-                        transform: translateY(-50%);
-                        width: 24px; height: 24px;
-                        background: var(--primary-color, #03a9f4);
-                        color: white; border-radius: 50%;
-                        font-size: 12px; font-weight: bold; font-family: sans-serif;
-                        line-height: 24px; text-align: center;
-                        cursor: help; opacity: 0.8; z-index: 10;
-                      }
-                      .card-header::before {
-                        content: "Kies de databron: Simulatie gebruikt voorgeprogrammeerde waarden. Live Data leest van de echte weegschaal. Stel ook de meetdatum in.";
-                        position: absolute; top: 80%; right: 12px;
-                        background: rgba(20,20,20,0.95); color: #fff;
-                        padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
-                        text-transform: none; letter-spacing: normal;
-                        min-width: 200px; max-width: 260px; text-align: left;
-                        opacity: 0; transition: opacity 0.15s ease;
-                        z-index: 999; pointer-events: none; white-space: normal;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                      }
-                      .card-header:hover::after { opacity: 1; }
-                      .card-header:hover::before { opacity: 1; }
-                entities:
-                  - entity: input_select.data_bron_weegschaal
-                    name: Databron
-                    card_mod:
-                      style: |
-                        ha-select {
-                          width: 130px !important;
-                          min-width: unset !important;
-                        }
-                  - entity: input_select.simulatiefase_goedheid
-                    name: Simulatiefase (legacy)
-                  - entity: input_datetime.goedheid_meetdatum
-                    name: Datum van Meting
-
-              # Col 2 — Reset button + period quick-switch
-              - type: vertical-stack
-                card_mod:
-                  style: |
-                    :host { position: relative; overflow: visible !important; z-index: 1; }
-                    :host(:hover) { z-index: 100; }
-                cards:
-                  - type: button
-                    name: "Reset Simulatie"
-                    icon: mdi:restart
-                    icon_height: 36px
-                    tap_action:
-                      action: call-service
-                      service: simulation_manager.reset_simulation
-                    card_mod:
-                      style: |
-                        :host { 
-                          --primary-color: var(--error-color, #db4437);
-                          position: relative; z-index: 1;
-                        }
-                        :host(:hover) { z-index: 100; }
-                        ha-card { position: relative; overflow: visible !important; }
-                        ha-state-icon {
-                          position: static !important;
-                          pointer-events: none; /* Ignore mouse on the big icon */
-                        }
-                        ha-state-icon::before {
-                          content: "?";
-                          pointer-events: auto; /* Catch mouse ONLY on the ? mark */
-                          position: absolute; top: 6px; right: 6px;
-                          width: 20px; height: 20px;
-                          background: rgba(255,255,255,0.5); color: white; border-radius: 50%;
-                          font-size: 11px; font-weight: bold; font-family: sans-serif;
-                          line-height: 20px; text-align: center;
-                          cursor: help; opacity: 0.9; z-index: 10;
-                        }
-                        ha-state-icon::after {
-                          content: "Reset wist alle meetdata en keert terug naar beginstand. Gebruik dit aan het einde van een les of bij een nieuw experiment.";
-                          pointer-events: none;
-                          position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
-                          background: rgba(20,20,20,0.95); color: #fff;
-                          padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
-                          min-width: 200px; max-width: 260px; text-align: left;
-                          opacity: 0; transition: opacity 0.15s ease;
-                          z-index: 999; white-space: normal;
-                          box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                        }
-                        ha-state-icon:hover::before { opacity: 1; }
-                        ha-state-icon:hover::after { opacity: 1; }
-                  - type: grid
-                    columns: 2
-                    square: false
-                    cards:
-                      - type: button
-                        name: "Meting 1"
-                        icon: mdi:numeric-1-circle
-                        tap_action:
-                          action: call-service
-                          service: input_select.select_option
-                          service_data:
-                            entity_id: input_select.simulatiefase_goedheid
-                            option: "Meting 1 (start)"
-                        card_mod:
-                          style: |
-                            :host { position: relative; z-index: 1; }
-                            :host(:hover) { z-index: 100; }
-                            ha-card { position: relative; overflow: visible !important; }
-                            ha-state-icon {
-                              position: static !important;
-                              pointer-events: none;
-                            }
-                            ha-state-icon::before {
-                              content: "?";
-                              pointer-events: auto;
-                              position: absolute; top: 6px; right: 6px;
-                              width: 18px; height: 18px;
-                              background: var(--primary-color, #03a9f4); color: white; border-radius: 50%;
-                              font-size: 10px; font-weight: bold; font-family: sans-serif;
-                              line-height: 18px; text-align: center;
-                              cursor: help; opacity: 0.8; z-index: 10;
-                            }
-                            ha-state-icon::after {
-                              content: "Laadt de beginwaarden van Mevrouw Goedheid: januari 2026. Gebruik dit als startpunt van de simulatie.";
-                              pointer-events: none;
-                              position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
-                              background: rgba(20,20,20,0.95); color: #fff;
-                              padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
-                              min-width: 180px; max-width: 240px; text-align: left;
-                              opacity: 0; transition: opacity 0.15s ease;
-                              z-index: 999; white-space: normal;
-                              box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                            }
-                            ha-state-icon:hover::before { opacity: 1; }
-                            ha-state-icon:hover::after { opacity: 1; }
-                      - type: button
-                        name: "Meting 2"
-                        icon: mdi:numeric-2-circle
-                        tap_action:
-                          action: call-service
-                          service: input_select.select_option
-                          service_data:
-                            entity_id: input_select.simulatiefase_goedheid
-                            option: "Meting 2 (2 mnd)"
-                        card_mod:
-                          style: |
-                            :host { position: relative; z-index: 1; }
-                            :host(:hover) { z-index: 100; }
-                            ha-card { position: relative; overflow: visible !important; }
-                            ha-state-icon {
-                              position: static !important;
-                              pointer-events: none;
-                            }
-                            ha-state-icon::before {
-                              content: "?";
-                              pointer-events: auto;
-                              position: absolute; top: 6px; right: 6px;
-                              width: 18px; height: 18px;
-                              background: var(--primary-color, #03a9f4); color: white; border-radius: 50%;
-                              font-size: 10px; font-weight: bold; font-family: sans-serif;
-                              line-height: 18px; text-align: center;
-                              cursor: help; opacity: 0.8; z-index: 10;
-                            }
-                            ha-state-icon::after {
-                              content: "Laadt de meting na 2 maanden: maart 2026. Gewicht en vetmassa zijn licht gestegen.";
-                              pointer-events: none;
-                              position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
-                              background: rgba(20,20,20,0.95); color: #fff;
-                              padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
-                              min-width: 180px; max-width: 240px; text-align: left;
-                              opacity: 0; transition: opacity 0.15s ease;
-                              z-index: 999; white-space: normal;
-                              box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                            }
-                            ha-state-icon:hover::before { opacity: 1; }
-                            ha-state-icon:hover::after { opacity: 1; }
-                      - type: button
-                        name: "Meting 3"
-                        icon: mdi:numeric-3-circle
-                        tap_action:
-                          action: call-service
-                          service: input_select.select_option
-                          service_data:
-                            entity_id: input_select.simulatiefase_goedheid
-                            option: "Meting 3 (4 mnd)"
-                        card_mod:
-                          style: |
-                            :host { position: relative; z-index: 1; }
-                            :host(:hover) { z-index: 100; }
-                            ha-card { position: relative; overflow: visible !important; }
-                            ha-state-icon {
-                              position: static !important;
-                              pointer-events: none;
-                            }
-                            ha-state-icon::before {
-                              content: "?";
-                              pointer-events: auto;
-                              position: absolute; top: 6px; right: 6px;
-                              width: 18px; height: 18px;
-                              background: var(--primary-color, #03a9f4); color: white; border-radius: 50%;
-                              font-size: 10px; font-weight: bold; font-family: sans-serif;
-                              line-height: 18px; text-align: center;
-                              cursor: help; opacity: 0.8; z-index: 10;
-                            }
-                            ha-state-icon::after {
-                              content: "Laadt de meting na 4 maanden: mei 2026. De trend van gewichtstoename zet door.";
-                              pointer-events: none;
-                              position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
-                              background: rgba(20,20,20,0.95); color: #fff;
-                              padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
-                              min-width: 180px; max-width: 240px; text-align: left;
-                              opacity: 0; transition: opacity 0.15s ease;
-                              z-index: 999; white-space: normal;
-                              box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                            }
-                            ha-state-icon:hover::before { opacity: 1; }
-                            ha-state-icon:hover::after { opacity: 1; }
-                      - type: button
-                        name: "Meting 4"
-                        icon: mdi:numeric-4-circle
-                        tap_action:
-                          action: call-service
-                          service: input_select.select_option
-                          service_data:
-                            entity_id: input_select.simulatiefase_goedheid
-                            option: "Meting 4 (6 mnd)"
-                        card_mod:
-                          style: |
-                            :host { position: relative; z-index: 1; }
-                            :host(:hover) { z-index: 100; }
-                            ha-card { position: relative; overflow: visible !important; }
-                            ha-state-icon {
-                              position: static !important;
-                              pointer-events: none;
-                            }
-                            ha-state-icon::before {
-                              content: "?";
-                              pointer-events: auto;
-                              position: absolute; top: 6px; right: 6px;
-                              width: 18px; height: 18px;
-                              background: var(--primary-color, #03a9f4); color: white; border-radius: 50%;
-                              font-size: 10px; font-weight: bold; font-family: sans-serif;
-                              line-height: 18px; text-align: center;
-                              cursor: help; opacity: 0.8; z-index: 10;
-                            }
-                            ha-state-icon::after {
-                              content: "Eindmeting na 6 maanden: juli 2026. Totaal +7 kg gewicht, spiermassa licht gedaald. Bespreek mogelijke oorzaken met de klas.";
-                              pointer-events: none;
-                              position: absolute; top: 28px; left: 50%; transform: translateX(-50%);
-                              background: rgba(20,20,20,0.95); color: #fff;
-                              padding: 8px 12px; border-radius: 6px; font-size: 12px; line-height: 1.6;
-                              min-width: 180px; max-width: 240px; text-align: left;
-                              opacity: 0; transition: opacity 0.15s ease;
-                              z-index: 999; white-space: normal;
-                              box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                            }
-                            ha-state-icon:hover::before { opacity: 1; }
-                            ha-state-icon:hover::after { opacity: 1; }
-
-          # Stappenplan — spans full width
-          - type: markdown
-            title: "Stappenplan voor de Les"
-            card_mod:
-              style: |
-                ha-card { width: 100%; box-sizing: border-box; margin-top: 16px; }
-            content: |
-              **Stap 1 — Controleer de databron**
-              Zorg dat bovenaan **Simulatie** is geselecteerd, niet "Live Data".
-
-              **Stap 2 — Start op Meting 1**
-              Druk op de knop **Meting 1** (rechts). De beginwaarden van Mevrouw Goedheid verschijnen automatisch.
-
-              **Stap 3 — Bespreek met de klas**
-              Bekijk de waarden op het scherm: gewicht, BMI, spiermassa, vetmassa en vochtbalans.
-              Vraag de studenten: *"Wat valt op?"*
-
-              **Stap 4 — Ga door naar Meting 2, 3 en 4**
-              Druk telkens op de volgende meetknop. Vergelijk de veranderingen en bespreek mogelijke oorzaken.
-
-              **Stap 5 — Afsluiten**
-              Druk op de rode knop **Reset Simulatie** en bevestig. Het systeem is klaar voor de volgende les.
-
-              ---
-              💡 *Zie een oranje knipperende rij in de tabel? Wacht even — de waarde wordt automatisch opgeslagen.*
-
           - type: entities
-            title: "Stappenplan voor de Les — Checklist"
-            show_header_toggle: false
-            state_color: true
+            title: Databron en Simulatiefase
             entities:
-              - entity: input_boolean.goedheid_weegschaal_gereserveerd
-              - entity: input_boolean.goedheid_kennis_vochtbalans_bmi
-              - entity: input_boolean.goedheid_kennis_spijsvertering
-              - entity: input_boolean.goedheid_kennis_pesdie
-              - entity: sensor.goedheid_les_klaar
-                name: Les klaar (alle stappen voltooid)
-
- # ══ ROW 2 — Huidige Meetwaarden ═══════════════════════════════
-
+              - entity: input_select.data_bron_weegschaal
+                name: Databron
+              - entity: input_select.simulatiefase_goedheid
+                name: Simulatiefase
+              - entity: input_datetime.goedheid_meetdatum
+                name: Datum van meting
+        
+          - type: markdown
+            title: Patiëntprofiel
+            content: |
+              **Mevrouw Goedheid**
+              - Leeftijd: **70 jaar**
+              - Anamnese: **Myocardinfarct (MI), artrose**
+              - Monitoring focus: **Body Scan en BPM Connect**
+              - Huidig gewicht (laatste meetpunt): **72.2 kg op 25-03-2026**
       - type: horizontal-stack
-        card_mod:
-          style: |
-            #root {
-              align-items: flex-start !important;
-            }
-
         cards:
-          - type: vertical-stack
-            cards:
-              - type: entities
-                title: "Huidige Meetwaarden — Mevrouw Goedheid"
-                card_mod:
-                  style:
-                    .: |
-                      :host { position: relative; z-index: 1; }
-                      :host(:hover) { z-index: 100; }
-                      ha-card { overflow: visible !important; }
-                    ha-card$: |
-                      .card-header {
-                        pointer-events: none;
-                        padding-right: 44px !important;
-                        position: relative;
-                        overflow: visible !important;
-                      }
-                      .card-header::after {
-                        content: "?";
-                        pointer-events: auto;
-                        position: absolute;
-                        top: 50%; right: 12px;
-                        transform: translateY(-50%);
-                        width: 24px; height: 24px;
-                        background: var(--primary-color, #03a9f4);
-                        color: white; border-radius: 50%;
-                        font-size: 12px; font-weight: bold; font-family: sans-serif;
-                        line-height: 24px; text-align: center;
-                        cursor: help; opacity: 0.8; z-index: 10;
-
-                      }
-
-                      .card-header::before {
-
-                        content: "Actuele lichaamswaarden van Mevrouw Goedheid. In Simulatie-modus gestuurd door de sliders rechts. In Live-modus komen deze van de echte weegschaal.";
-
-                        position: absolute; top: 80%; right: 12px;
-
-                        background: rgba(20,20,20,0.95); color: #fff;
-
-                        padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
-
-                        text-transform: none; letter-spacing: normal;
-
-                        min-width: 200px; max-width: 260px; text-align: left;
-
-                        opacity: 0; transition: opacity 0.15s ease;
-
-                        z-index: 999; pointer-events: none; white-space: normal;
-
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-
-                      }
-
-                      .card-header:hover::after { opacity: 1; }
-
-                      .card-header:hover::before { opacity: 1; }
-
-                entities:
-
-                  - entity: sensor.display_gewicht
-
-                    name: Totaal Gewicht
-
-                    icon: mdi:scale-bathroom
-
-                  - entity: sensor.display_spiermassa
-
-                    name: Spiermassa
-
-                    icon: mdi:arm-flex
-
-                  - entity: sensor.display_vetmassa
-
-                    name: Vetmassa
-
-                    icon: mdi:food-drumstick
-
-                  - entity: sensor.display_vochtbalans
-
-                    name: Vochtbalans
-
-                    icon: mdi:water-percent
-
-                  - entity: sensor.display_bmi
-
-                    name: BMI
-
-                    icon: mdi:human
-
-                  - entity: input_number.goedheid_lengte
-
-                    name: Lichaamslengte (m)
-
-                    icon: mdi:human-male-height
-
-              # Submit Waarde button — directly under Huidige Meetwaarden
-              - type: button
-                name: "Submit Waarde"
-                tap_action:
-                  action: call-service
-                  service: script.submit_waarde
-                card_mod:
-                  style: |
-                    ha-card {
-                      border-radius: 8px;
-                      width: 100%;
-                      margin-top: 8px;
-                    }
-                    mwc-ripple { border-radius: 8px; }
-                    .card-content {
-                      text-align: center;
-                      font-weight: 600;
-                      font-size: 1rem;
-                    }
-
-              - type: entities
-                title: "PESDIE Invoer"
-                entities:
-                  - entity: input_text.goedheid_student_id
-                    name: Student ID (bijv. student_01)
-                    icon: mdi:account-badge
-                  - entity: input_text.goedheid_pesdie_output
-                    name: PESDIE Output
-                    icon: mdi:text-box-edit-outline
-
-              - type: button
-                name: "Submit PESDIE"
-                icon: mdi:clipboard-check-outline
-                tap_action:
-                  action: call-service
-                  service: script.submit_pesdie
-                card_mod:
-                  style: |
-                    ha-card {
-                      border-radius: 8px;
-                      width: 100%;
-                      margin-top: 8px;
-                    }
-                    mwc-ripple { border-radius: 8px; }
-                    .card-content {
-                      text-align: center;
-                      font-weight: 600;
-                      font-size: 1rem;
-                    }
-
           - type: entities
-            title: "Simulatie Invoer (aanpasbaar)"
-            card_mod:
-              style:
-                .: |
-                  :host { position: relative; z-index: 1; }
-                  :host(:hover) { z-index: 100; }
-                  ha-card { overflow: visible !important; }
-                ha-card$: |
-                  .card-header {
-                    pointer-events: none;
-                    padding-right: 44px !important;
-                    position: relative;
-                    overflow: visible !important;
-                  }
-                  .card-header::after {
-                    content: "?";
-                    pointer-events: auto;
-                    position: absolute;
-                    top: 50%; right: 12px;
-                    transform: translateY(-50%);
-                    width: 24px; height: 24px;
-                    background: var(--primary-color, #03a9f4);
-                    color: white; border-radius: 50%;
-                    font-size: 12px; font-weight: bold; font-family: sans-serif;
-                    line-height: 24px; text-align: center;
-                    cursor: help; opacity: 0.8; z-index: 10;
-                  }
-                  .card-header::before {
-                    content: "Pas de waarden aan met de sliders. Wijzigingen worden automatisch opgeslagen. Gebruik Sync om live-data als startpunt over te nemen.";
-                    position: absolute; top: 80%; right: 12px;
-                    background: rgba(20,20,20,0.95); color: #fff;
-                    padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
-                    text-transform: none; letter-spacing: normal;
-                    min-width: 200px; max-width: 260px; text-align: left;
-                    opacity: 0; transition: opacity 0.15s ease;
-                    z-index: 999; pointer-events: none; white-space: normal;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-                  }
-                  .card-header:hover::after { opacity: 1; }
-                  .card-header:hover::before { opacity: 1; }
+            title: Huidige Meetwaarden
+            entities:
+              - entity: sensor.gewicht
+                name: Gewicht
+              - entity: sensor.bloeddruk
+                name: Bloeddruk
+              - entity: sensor.hartfrequentie
+                name: Hartfrequentie
+              - entity: sensor.ademfrequentie
+                name: Ademfrequentie
+              - entity: sensor.saturatie
+                name: Saturatie
+              - entity: binary_sensor.goedheid_alert_lage_saturatie
+                name: Alert lage saturatie (<93)
+              - entity: binary_sensor.goedheid_alert_hoge_pols
+                name: Alert hoge pols (>100)
+        
+          - type: entities
+            title: Simulatie Invoer
             entities:
               - entity: input_number.goedheid_gewicht
                 name: Gewicht (kg)
-                icon: mdi:scale-bathroom
-              - entity: input_number.goedheid_spiermassa
-                name: Spiermassa (kg)
-                icon: mdi:arm-flex
-              - entity: input_number.goedheid_vetmassa
-                name: Vetmassa (kg)
-                icon: mdi:food-drumstick
-              - entity: input_number.goedheid_vochtbalans
-                name: Vochtbalans (%)
-                icon: mdi:water-percent
-              - entity: input_number.goedheid_bmi
-                name: BMI
-                icon: mdi:human
-              - entity: input_number.goedheid_lengte
-                name: Lichaamslengte (m)
-                icon: mdi:human-male-height
+              - entity: input_number.goedheid_bloeddruk_sys
+                name: Bloeddruk systolisch (mmHg)
+              - entity: input_number.goedheid_bloeddruk_dia
+                name: Bloeddruk diastolisch (mmHg)
+              - entity: input_number.goedheid_hartfrequentie
+                name: Hartfrequentie (bpm)
+              - entity: input_number.goedheid_ademfrequentie
+                name: Ademfrequentie (/min)
+              - entity: input_number.goedheid_saturatie
+                name: Saturatie (%)
+              - entity: input_text.goedheid_opmerking
+                name: Opmerking
               - type: divider
               - entity: script.sync_display_naar_simulatie_invoer
-                name: "Sync meetwaarden → invoer"
-                icon: mdi:sync-circle
-
-      # ══ ROW 3 — Simulation Period Card ══════════════════════════════════
-      - type: custom:simulation-period-card
-        title: "Mevrouw Goedheid — Lichaamssamenstelling per Periode"
-        card_mod:
-          style:
-            .: |
-              :host { position: relative; z-index: 1; }
-              :host(:hover) { z-index: 100; }
-              ha-card { overflow: visible !important; }
-            ha-card$: |
-              .card-header {
-                pointer-events: none;
-                padding-right: 44px !important;
-                position: relative;
-                overflow: visible !important;
-              }
-              .card-header::after {
-                content: "?";
-                pointer-events: auto;
-                position: absolute;
-                top: 50%; right: 12px;
-                transform: translateY(-50%);
-                width: 24px; height: 24px;
-                background: var(--primary-color, #03a9f4);
-                color: white; border-radius: 50%;
-                font-size: 12px; font-weight: bold; font-family: sans-serif;
-                line-height: 24px; text-align: center;
-                cursor: help; opacity: 0.8; z-index: 10;
-              }
-              .card-header::before {
-                content: "Overzichtstabel van alle opgeslagen meetpunten per periode. Een oranje knipperende rij betekent dat de huidige sliderwaarde nog niet opgeslagen is.";
-                position: absolute; top: 80%; right: 12px;
-                background: rgba(20,20,20,0.95); color: #fff;
-                padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
-                text-transform: none; letter-spacing: normal;
-                min-width: 200px; max-width: 260px; text-align: left;
-                opacity: 0; transition: opacity 0.15s ease;
-                z-index: 999; pointer-events: none; white-space: normal;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-              }
-              .card-header:hover::after { opacity: 1; }
-              .card-header:hover::before { opacity: 1; }
-        columns:
-          - timestamp
-          - gewicht
-          - spiermassa
-          - vetmassa
-          - vochtbalans
-          - bmi
-        column_labels:
-          timestamp:  "Datum"
-          gewicht:    "Gewicht (kg)"
-          spiermassa: "Spiermassa (kg)"
-          vetmassa:   "Vetmassa (kg)"
-          vochtbalans: "Vochtbalans (%)"
-          bmi:        "BMI (kg/m²)"
-        live_input_entities:
-          gewicht:    input_number.goedheid_gewicht
-          spiermassa: input_number.goedheid_spiermassa
-          vetmassa:   input_number.goedheid_vetmassa
-          vochtbalans: input_number.goedheid_vochtbalans
-          bmi:        input_number.goedheid_bmi
-
-      - type: custom:simulation-period-card
-        title: "PESDIE Inzendingen per Periode"
-        show_chart: false
-        columns:
-          - timestamp
-          - pesdie_submission_number
-          - pesdie_student_id
-        column_labels:
-          timestamp: "Datum"
-          pesdie_submission_number: "PESDIE #"
-          pesdie_student_id: "Student ID"
-
-
-      
-
-      # ══ ROW 4 — Referentietabel ════════════════════════════════════
+                name: Sync live waarden naar simulatie
+              - entity: script.goedheid_sla_meting_op
+                name: Sla huidige meting op
+      - type: vertical-stack
+        cards:
+          - type: custom:simulation-period-card
+            title: Body Scan en BPM Connect - Meetreeks
+            show_chart: false
+            columns:
+              - timestamp
+              - gewicht
+              - bloeddruk
+              - hartfrequentie
+              - ademfrequentie
+              - saturatie
+              - opmerking
+            column_labels:
+              timestamp: Datum
+              gewicht: Gewicht (kg)
+              bloeddruk: Bloeddruk (mmHg)
+              hartfrequentie: Pols (bpm)
+              ademfrequentie: Ademfreq. (/min)
+              saturatie: Saturatie (%)
+              opmerking: Opmerkingen
+            live_input_entities:
+              gewicht: input_number.goedheid_gewicht
+              bloeddruk_sys: input_number.goedheid_bloeddruk_sys
+              bloeddruk_dia: input_number.goedheid_bloeddruk_dia
+              hartfrequentie: input_number.goedheid_hartfrequentie
+              ademfrequentie: input_number.goedheid_ademfrequentie
+              saturatie: input_number.goedheid_saturatie
+        
+          - type: custom:apexcharts-card
+            header:
+              title: 6-maanden Trend (geschaald op beschikbare maartdata)
+              show: true
+            graph_span: 6month
+            span:
+              start: month
+            series:
+              - entity: sensor.gewicht
+                name: Gewicht
+              - entity: sensor.saturatie
+                name: Saturatie
+              - entity: sensor.display_bloeddruk_systolisch
+                name: Bloeddruk systolisch
+        
+          - type: markdown
+            title: Observatielog Progressie
+            content: |
+              | Datum | Opmerkingen |
+              |---|---|
+              | 01-03-2026 | **Stabiele situatie na ontslag** |
+              | 04-03-2026 | Geen klachten |
+              | 08-03-2026 | Licht vermoeid |
+              | 11-03-2026 | Enkels licht gezwollen |
+              | 15-03-2026 | Kortademig bij inspanning |
+              | 18-03-2026 | **Meer oedeem in onderbenen** |
+              | 22-03-2026 | **Gewicht stijgt snel** |
+              | 25-03-2026 | Duidelijke verslechtering |
       - type: markdown
         title: "6-maanden Trend — Mevrouw Goedheid"
         card_mod:
@@ -673,5 +171,5 @@ views:
           | Meting 2 (2 mnd) | 1 mrt 2026 | 72,0 kg | 25,5 | 29,3 kg | 25,5 kg | 51,2 % |
           | Meting 3 (4 mnd) | 1 mei 2026 | 74,5 kg | 26,4 | 29,0 kg | 27,0 kg | 49,4 % |
           | Meting 4 (6 mnd) | 1 jul 2026 | 77,0 kg | 27,3 | 28,8 kg | 28,5 kg | 48,6 % |
-
+        
           **Trend:** Gewicht ↑ +7 kg · Vetmassa ↑ +4,5 kg · Spiermassa ↓ −0,7 kg · BMI ↑ +2,5 · Vochtbalans ↓ −2,4 %-punt
