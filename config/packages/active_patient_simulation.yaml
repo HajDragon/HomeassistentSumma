@@ -1,0 +1,395 @@
+# ============================================================
+# Package: active_patient_simulation.yaml
+# Purpose: Scalable Active Patient bridge for simulation dashboard
+# ============================================================
+
+input_select:
+  active_simulation_patient:
+    name: Active Simulation Patient
+    options:
+      - Piet van Bakel
+      - Keet Jansen
+      - Timp Terpstra
+      
+    initial: Piet van Bakel
+    icon: mdi:account-switch
+
+  active_simulation_phase:
+    name: Active Simulation Phase
+    options:
+      - Intake
+      - Follow-up 1
+      - Follow-up 2
+      - Follow-up 3
+    initial: Intake
+    icon: mdi:timeline-clock
+
+input_datetime:
+  active_simulation_measurement_date:
+    name: Active Simulation Measurement Date
+    has_date: true
+    has_time: false
+    icon: mdi:calendar
+
+input_text:
+  active_patient_name:
+    name: Active Patient Name
+    min: 1
+    max: 80
+    icon: mdi:badge-account
+
+  active_patient_gender:
+    name: Active Patient Gender
+    min: 1
+    max: 20
+    icon: mdi:human
+
+  active_patient_primary_condition:
+    name: Active Patient Primary Condition
+    min: 1
+    max: 120
+    icon: mdi:stethoscope
+
+  active_patient_case_focus:
+    name: Active Patient Case Focus
+    min: 1
+    max: 255
+    icon: mdi:text-box-search-outline
+
+  active_patient_bp:
+    name: Active Patient Blood Pressure
+    min: 1
+    max: 20
+    icon: mdi:gauge
+
+  active_patient_skin_triage:
+    name: Active Patient Skin Triage
+    min: 1
+    max: 255
+    icon: mdi:face-man-shimmer
+
+input_number:
+  active_patient_age:
+    name: Active Patient Age
+    min: 0
+    max: 120
+    step: 1
+    mode: box
+    unit_of_measurement: jaar
+    icon: mdi:cake-variant
+
+  active_patient_heart_rate:
+    name: Active Patient Heart Rate
+    min: 0
+    max: 260
+    step: 1
+    mode: box
+    unit_of_measurement: bpm
+    icon: mdi:heart-pulse
+
+  active_patient_temperature:
+    name: Active Patient Temperature
+    min: 30
+    max: 43
+    step: 0.1
+    mode: box
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+
+input_boolean:
+  active_patient_supports_cardiac:
+    name: Active Patient Supports Cardiac Monitoring
+    icon: mdi:heart-cog
+
+  active_patient_supports_skin_triage:
+    name: Active Patient Supports Skin Triage
+    icon: mdi:skin
+
+  active_patient_supports_temperature:
+    name: Active Patient Supports Temperature
+    icon: mdi:thermometer-lines
+
+template:
+  - sensor:
+      # Generic bridge sensors used by the dashboard only.
+      - name: active_patient_name
+        unique_id: active_patient_name
+        state: "{{ states('input_text.active_patient_name') }}"
+
+      - name: active_patient_gender
+        unique_id: active_patient_gender
+        state: "{{ states('input_text.active_patient_gender') }}"
+
+      - name: active_patient_age
+        unique_id: active_patient_age
+        unit_of_measurement: jaar
+        state_class: measurement
+        state: "{{ states('input_number.active_patient_age') | int(0) }}"
+
+      - name: active_patient_primary_condition
+        unique_id: active_patient_primary_condition
+        state: "{{ states('input_text.active_patient_primary_condition') }}"
+
+      - name: active_patient_case_focus
+        unique_id: active_patient_case_focus
+        state: "{{ states('input_text.active_patient_case_focus') }}"
+
+      - name: active_patient_bp
+        unique_id: active_patient_bp
+        state: "{{ states('input_text.active_patient_bp') }}"
+
+      - name: active_patient_heart_rate
+        unique_id: active_patient_heart_rate
+        unit_of_measurement: bpm
+        state_class: measurement
+        state: "{{ states('input_number.active_patient_heart_rate') | int(0) }}"
+
+      - name: active_patient_temperature
+        unique_id: active_patient_temperature
+        unit_of_measurement: "°C"
+        state_class: measurement
+        state: "{{ states('input_number.active_patient_temperature') | float(0) }}"
+
+      - name: active_patient_skin_triage
+        unique_id: active_patient_skin_triage
+        state: "{{ states('input_text.active_patient_skin_triage') }}"
+
+
+ # fill the patients profile
+script:
+  active_patient_apply_profile:
+    alias: Active Patient - Apply Selected Profile
+    icon: mdi:account-convert
+    sequence:
+      - variables:
+          patient_catalog:
+            Piet van Bakel:
+              age: 65
+              gender: Male
+              primary_condition: Hypercholesterolemia
+              case_focus: Home blood pressure and heart rate monitoring
+              bp: 140/90 mmHg
+              heart_rate: 68
+              temperature: 36.5
+              skin_triage: n.v.t.
+              supports_cardiac: true
+              supports_skin_triage: false
+              supports_temperature: false
+            Keet Jansen:
+              age: 2
+              gender: Female
+              primary_condition: Skin complaint with possible waterpokken
+              case_focus: Video triage for skin complaints and fever follow-up
+              bp: n.v.t.
+              heart_rate: 0
+              temperature: 37.8
+              skin_triage: Possible waterpokken; observe spread and hydration.
+              supports_cardiac: false
+              supports_skin_triage: true
+              supports_temperature: true
+          selected_name: "{{ states('input_select.active_simulation_patient') }}"
+          selected_profile: "{{ patient_catalog.get(selected_name, {}) }}"
+
+          Timo Terpstra:
+              age: 45
+              primary_condition: Koorts en hoesten
+              case_focus: Video triage for respiratory complaints and fever follow-up
+              bp: n.v.t.
+              heart_rate: 90
+              temperature: 38.5
+              skin_triage: n.v.t.
+              supports_cardiac: true
+              supports_skin_triage: true
+              supports_temperature: true
+
+
+      # Bridge selected patient into generic helper entities.
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.active_patient_name
+        data:
+          value: "{{ selected_name }}"
+
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.active_patient_age
+        data:
+          value: "{{ selected_profile.get('age', 0) }}"
+
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.active_patient_gender
+        data:
+          value: "{{ selected_profile.get('gender', '') }}"
+
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.active_patient_primary_condition
+        data:
+          value: "{{ selected_profile.get('primary_condition', '') }}"
+
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.active_patient_case_focus
+        data:
+          value: "{{ selected_profile.get('case_focus', '') }}"
+
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.active_patient_bp
+        data:
+          value: "{{ selected_profile.get('bp', 'n.v.t.') }}"
+
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.active_patient_heart_rate
+        data:
+          value: "{{ selected_profile.get('heart_rate', 0) }}"
+
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.active_patient_temperature
+        data:
+          value: "{{ selected_profile.get('temperature', 0) }}"
+
+      - service: input_text.set_value
+        target:
+          entity_id: input_text.active_patient_skin_triage
+        data:
+          value: "{{ selected_profile.get('skin_triage', '') }}"
+
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ selected_profile.get('supports_cardiac', false) }}"
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.active_patient_supports_cardiac
+        default:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.active_patient_supports_cardiac
+
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ selected_profile.get('supports_skin_triage', false) }}"
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.active_patient_supports_skin_triage
+        default:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.active_patient_supports_skin_triage
+
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ selected_profile.get('supports_temperature', false) }}"
+            sequence:
+              - service: input_boolean.turn_on
+                target:
+                  entity_id: input_boolean.active_patient_supports_temperature
+        default:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: input_boolean.active_patient_supports_temperature
+
+      - service: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.active_simulation_measurement_date
+        data:
+          date: "{{ now().strftime('%Y-%m-%d') }}"
+
+  active_patient_reset_timeline:
+    alias: Active Patient - Reset Timeline
+    icon: mdi:restart
+    sequence:
+      - service: simulation_manager.reset_simulation
+      - service: simulation_manager.switch_period
+        data:
+          period_id: period_1
+          label: "{{ states('input_select.active_simulation_phase') }}"
+          date: "{{ states('input_datetime.active_simulation_measurement_date') }}"
+
+  active_patient_save_measurement:
+    alias: Active Patient - Save Measurement
+    icon: mdi:content-save
+    sequence:
+      - service: simulation_manager.save_measurement
+        data:
+          timestamp: "{{ states('input_datetime.active_simulation_measurement_date') }}"
+          patient_name: "{{ states('sensor.active_patient_name') }}"
+          patient_age: "{{ states('sensor.active_patient_age') | int(0) }}"
+          patient_gender: "{{ states('sensor.active_patient_gender') }}"
+          case_focus: "{{ states('sensor.active_patient_case_focus') }}"
+          blood_pressure: >
+            {% if is_state('input_boolean.active_patient_supports_cardiac', 'on') %}
+              {{ states('sensor.active_patient_bp') }}
+            {% else %}
+              n.v.t.
+            {% endif %}
+          heart_rate: >
+            {% if is_state('input_boolean.active_patient_supports_cardiac', 'on') %}
+              {{ states('sensor.active_patient_heart_rate') | int(0) }}
+            {% else %}
+              0
+            {% endif %}
+          temperature: >
+            {% if is_state('input_boolean.active_patient_supports_temperature', 'on') %}
+              {{ states('sensor.active_patient_temperature') | float(0) }}
+            {% else %}
+              0
+            {% endif %}
+          skin_triage: >
+            {% if is_state('input_boolean.active_patient_supports_skin_triage', 'on') %}
+              {{ states('sensor.active_patient_skin_triage') }}
+            {% else %}
+              n.v.t.
+            {% endif %}
+
+  active_patient_apply_and_reset:
+    alias: Active Patient - Apply Profile And Reset Timeline
+    icon: mdi:account-sync
+    sequence:
+      - service: script.active_patient_apply_profile
+      - service: script.active_patient_reset_timeline
+      - service: script.active_patient_save_measurement
+
+automation:
+  - id: active_patient_on_select_change
+    alias: Active Patient - Refresh Bridge On Selection Change
+    trigger:
+      - platform: state
+        entity_id: input_select.active_simulation_patient
+    action:
+      - service: script.active_patient_apply_and_reset
+
+  - id: active_patient_on_phase_change
+    alias: Active Patient - Sync Phase To Simulation Manager
+    trigger:
+      - platform: state
+        entity_id: input_select.active_simulation_phase
+    action:
+      - service: simulation_manager.switch_period
+        data:
+          period_id: >
+            {% set phase_map = {
+              'Intake': 'period_1',
+              'Follow-up 1': 'period_2',
+              'Follow-up 2': 'period_3',
+              'Follow-up 3': 'period_4'
+            } %}
+            {{ phase_map.get(states('input_select.active_simulation_phase'), 'period_1') }}
+          label: "{{ states('input_select.active_simulation_phase') }}"
+          date: "{{ states('input_datetime.active_simulation_measurement_date') }}"
+
+  - id: active_patient_startup_sync
+    alias: Active Patient - Initialize Bridge At Startup
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      - service: script.active_patient_apply_and_reset
