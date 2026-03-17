@@ -68,6 +68,36 @@ input_text:
     max: 255
     icon: mdi:face-man-shimmer
 
+  huidklacht_opmerking_student:
+    name: Huidklacht - Opmerking student
+    min: 0
+    max: 512
+    icon: mdi:note-text
+
+  huidklacht_reflect_wat_ging_goed:
+    name: Huidklacht - Reflectie: Wat ging goed?
+    min: 0
+    max: 512
+    icon: mdi:thumb-up
+
+  huidklacht_reflect_wat_kon_beter:
+    name: Huidklacht - Reflectie: Wat kon beter?
+    min: 0
+    max: 512
+    icon: mdi:thumb-down
+
+  huidklacht_reflect_thoughts:
+    name: Huidklacht - Reflectie: Wat was je gedachtegang?
+    min: 0
+    max: 512
+    icon: mdi:brain
+
+  huidklacht_reflect_takeaway:
+    name: Huidklacht - Reflectie: Wat neem je mee naar de volgende keer?
+    min: 0
+    max: 512
+    icon: mdi:lightbulb-on
+
 input_number:
   active_patient_age:
     name: Active Patient Age
@@ -108,6 +138,46 @@ input_boolean:
   active_patient_supports_temperature:
     name: Active Patient Supports Temperature
     icon: mdi:thermometer-lines
+
+  huidklacht_beveiligde_verbinding:
+    name: Beveiligde verbinding opgestart
+    icon: mdi:lock-check
+
+  huidklacht_triage_via_tragewijzer:
+    name: Triage via triagewijzer / thuisarts.nl
+    icon: mdi:book-medical
+
+  huidklacht_noteer_his:
+    name: Noteren bevindingen in HIS
+    icon: mdi:notebook-plus
+
+  huidklacht_overleg_huisarts:
+    name: Overleg met huisarts
+    icon: mdi:phone-classic
+
+  huidklacht_terugbellen_advies:
+    name: Terugbellen met advies
+    icon: mdi:phone-return
+
+  huidklacht_obs_protocol:
+    name: Observatie - Protocol
+    icon: mdi:check-all
+
+  huidklacht_obs_communicatie:
+    name: Observatie - Communicatie
+    icon: mdi:account-voice
+
+  huidklacht_obs_veiligheid:
+    name: Observatie - Veiligheid
+    icon: mdi:shield-check
+
+  huidklacht_obs_profhouding:
+    name: Observatie - Professionele houding
+    icon: mdi:account-tie
+
+  huidklacht_obs_probleemoplossend:
+    name: Observatie - Probleemoplossend vermogen
+    icon: mdi:lightbulb-question
 
 template:
   - sensor:
@@ -302,6 +372,18 @@ script:
           entity_id: input_datetime.active_simulation_measurement_date
         data:
           date: "{{ now().strftime('%Y-%m-%d') }}"
+
+  start_secure_video_connection:
+    alias: Start beveiligde videoverbinding
+    icon: mdi:video-secure
+    sequence:
+      - service: persistent_notification.create
+        data:
+          title: "Beveiligde verbinding"
+          message: "Beveiligde verbinding gestart (placeholder)."
+      - service: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.huidklacht_beveiligde_verbinding
 
   active_patient_reset_timeline:
     alias: Active Patient - Reset Timeline

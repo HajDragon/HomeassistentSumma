@@ -85,6 +85,13 @@ class SimulationPeriodCard extends HTMLElement {
         live_input_entities: null,
         // Set to false to use a table-first layout without the chart block.
         show_chart: true,
+           // Optional: limit how many most-recent periods the chart will show.
+           // When null/omitted the chart shows all available periods.
+           // Example: chart_limit: 8
+           chart_limit: null,
+           // Optional: radius of point markers (in px) drawn on each measurement.
+           // A value > 0 ensures visible markers on the line.
+           chart_point_radius: 6,
       },
       config
     );

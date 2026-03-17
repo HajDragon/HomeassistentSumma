@@ -68,13 +68,17 @@ SAVE_MEASUREMENT_SCHEMA = vol.Schema(
 # No fields needed for reset — schema is intentionally empty.
 RESET_SIMULATION_SCHEMA = vol.Schema({})
 
-# ── Canonical 4-period definition ─────────────────────────────────────────────
+# ── Canonical default periods (expanded to 6) ────────────────────────────────
 
+# The integration guarantees a set of default periods exist on first run.
+# Extended to six periods to match lesson plans that use 6 metingen.
 DEFAULT_PERIODS = [
-    {"period_id": "period_1", "label": "Meting 1 (start)",  "date": "2026-01-01"},
-    {"period_id": "period_2", "label": "Meting 2 (2 mnd)",  "date": "2026-03-01"},
-    {"period_id": "period_3", "label": "Meting 3 (4 mnd)",  "date": "2026-05-01"},
-    {"period_id": "period_4", "label": "Meting 4 (6 mnd)",  "date": "2026-07-01"},
+    {"period_id": "period_1", "label": "Meting 1 (start)",  "date": "2026-03-01"},
+    {"period_id": "period_2", "label": "Meting 2 (2 mnd)",  "date": "2026-03-04"},
+    {"period_id": "period_3", "label": "Meting 3 (4 mnd)",  "date": "2026-03-08"},
+    {"period_id": "period_4", "label": "Meting 4 (6 mnd)",  "date": "2026-03-11"},
+    {"period_id": "period_5", "label": "Meting 5 (8 mnd)",  "date": "2026-03-15"},
+    {"period_id": "period_6", "label": "Meting 6 (10 mnd)", "date": "2026-03-18"},
 ]
 
 
