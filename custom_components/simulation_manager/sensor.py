@@ -89,6 +89,46 @@ METRIC_DESCRIPTORS: list[dict[str, Any]] = [
         "device_class": None,
         "icon":         "mdi:human-male-height",
     },
+    {
+        "key":          "bloeddruk_sys",
+        "name":         "Simulatie Bloeddruk Systolisch",
+        "unique_id":    f"{DOMAIN}_bloeddruk_sys",
+        "unit":         "mmHg",
+        "device_class": None,
+        "icon":         "mdi:heart-pulse",
+    },
+    {
+        "key":          "bloeddruk_dia",
+        "name":         "Simulatie Bloeddruk Diastolisch",
+        "unique_id":    f"{DOMAIN}_bloeddruk_dia",
+        "unit":         "mmHg",
+        "device_class": None,
+        "icon":         "mdi:heart-pulse",
+    },
+    {
+        "key":          "hartfrequentie",
+        "name":         "Simulatie Hartfrequentie",
+        "unique_id":    f"{DOMAIN}_hartfrequentie",
+        "unit":         "bpm",
+        "device_class": None,
+        "icon":         "mdi:pulse",
+    },
+    {
+        "key":          "ademfrequentie",
+        "name":         "Simulatie Ademfrequentie",
+        "unique_id":    f"{DOMAIN}_ademfrequentie",
+        "unit":         "/min",
+        "device_class": None,
+        "icon":         "mdi:lungs",
+    },
+    {
+        "key":          "saturatie",
+        "name":         "Simulatie Saturatie",
+        "unique_id":    f"{DOMAIN}_saturatie",
+        "unit":         "%",
+        "device_class": None,
+        "icon":         "mdi:oxygen",
+    },
 ]
 
 

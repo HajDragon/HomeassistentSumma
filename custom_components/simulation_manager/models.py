@@ -29,11 +29,20 @@ class Measurement:
     """One measurement snapshot stored inside a period."""
 
     timestamp: str
+    # Body Scan metrics
     gewicht: float = 0.0
     spiermassa: float = 0.0
     vetmassa: float = 0.0
     vochtbalans: float = 0.0
     bmi: float = 0.0
+    # Cardiac metrics
+    bloeddruk_sys: float = 0.0
+    bloeddruk_dia: float = 0.0
+    hartfrequentie: float = 0.0
+    ademfrequentie: float = 0.0
+    saturatie: float = 0.0
+    # Notes
+    opmerking: str = ""
     # Accommodates arbitrary extra fields sent via the service call.
     extra: dict[str, Any] = field(default_factory=dict)
 
@@ -47,6 +56,12 @@ class Measurement:
             "vetmassa": self.vetmassa,
             "vochtbalans": self.vochtbalans,
             "bmi": self.bmi,
+            "bloeddruk_sys": self.bloeddruk_sys,
+            "bloeddruk_dia": self.bloeddruk_dia,
+            "hartfrequentie": self.hartfrequentie,
+            "ademfrequentie": self.ademfrequentie,
+            "saturatie": self.saturatie,
+            "opmerking": self.opmerking,
         }
         d.update(self.extra)
         return d
@@ -60,6 +75,12 @@ class Measurement:
             "vetmassa",
             "vochtbalans",
             "bmi",
+            "bloeddruk_sys",
+            "bloeddruk_dia",
+            "hartfrequentie",
+            "ademfrequentie",
+            "saturatie",
+            "opmerking",
         }
         extra = {k: v for k, v in data.items() if k not in known}
         return cls(
@@ -72,6 +93,12 @@ class Measurement:
             vetmassa=float(data.get("vetmassa", 0)),
             vochtbalans=float(data.get("vochtbalans", 0)),
             bmi=float(data.get("bmi", 0)),
+            bloeddruk_sys=float(data.get("bloeddruk_sys", 0)),
+            bloeddruk_dia=float(data.get("bloeddruk_dia", 0)),
+            hartfrequentie=float(data.get("hartfrequentie", 0)),
+            ademfrequentie=float(data.get("ademfrequentie", 0)),
+            saturatie=float(data.get("saturatie", 0)),
+            opmerking=str(data.get("opmerking", "")),
             extra=extra,
         )
 

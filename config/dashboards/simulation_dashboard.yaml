@@ -171,86 +171,8 @@ views:
         cards:
           - type: vertical-stack
             cards:
-              - type: custom:apexcharts-card
-                header:
-                  title: Cardiale Trend op basis van maartmetingen
-                  show: true
-                graph_span: 25d
-                span:
-                  start: day
-                series:
-                  - entity: sensor.gewicht
-                    name: Gewicht
-                    unit: kg
-                    data_generator: |
-                      return [
-                        [new Date('2026-03-01T09:00:00').getTime(), 68.0],
-                        [new Date('2026-03-04T09:00:00').getTime(), 68.2],
-                        [new Date('2026-03-08T09:00:00').getTime(), 68.7],
-                        [new Date('2026-03-11T09:00:00').getTime(), 69.3],
-                        [new Date('2026-03-15T09:00:00').getTime(), 70.1],
-                        [new Date('2026-03-18T09:00:00').getTime(), 70.8],
-                        [new Date('2026-03-22T09:00:00').getTime(), 71.5],
-                        [new Date('2026-03-25T09:00:00').getTime(), 72.2],
-                      ];
-                  - entity: sensor.display_bloeddruk_systolisch
-                    name: Bloeddruk systolisch
-                    unit: mmHg
-                    data_generator: |
-                      return [
-                        [new Date('2026-03-01T09:00:00').getTime(), 130],
-                        [new Date('2026-03-04T09:00:00').getTime(), 132),
-                        [new Date('2026-03-08T09:00:00').getTime(), 135),
-                        [new Date('2026-03-11T09:00:00').getTime(), 138),
-                        [new Date('2026-03-15T09:00:00').getTime(), 142),
-                        [new Date('2026-03-18T09:00:00').getTime(), 145),
-                        [new Date('2026-03-22T09:00:00').getTime(), 150),
-                        [new Date('2026-03-25T09:00:00').getTime(), 155),
-                      ];
-                  - entity: sensor.hartfrequentie
-                    name: Hartfrequentie
-                    unit: bpm
-                    data_generator: |
-                      return [
-                        [new Date('2026-03-01T09:00:00').getTime(), 72),
-                        [new Date('2026-03-04T09:00:00').getTime(), 74),
-                        [new Date('2026-03-08T09:00:00').getTime(), 78),
-                        [new Date('2026-03-11T09:00:00').getTime(), 80),
-                        [new Date('2026-03-15T09:00:00').getTime(), 86),
-                        [new Date('2026-03-18T09:00:00').getTime(), 90),
-                        [new Date('2026-03-22T09:00:00').getTime(), 96),
-                        [new Date('2026-03-25T09:00:00').getTime(), 102),
-                      ];
-                  - entity: sensor.ademfrequentie
-                    name: Ademfrequentie
-                    unit: /min
-                    data_generator: |
-                      return [
-                        [new Date('2026-03-01T09:00:00').getTime(), 16),
-                        [new Date('2026-03-04T09:00:00').getTime(), 16),
-                        [new Date('2026-03-08T09:00:00').getTime(), 17),
-                        [new Date('2026-03-11T09:00:00').getTime(), 18),
-                        [new Date('2026-03-15T09:00:00').getTime(), 19),
-                        [new Date('2026-03-18T09:00:00').getTime(), 20),
-                        [new Date('2026-03-22T09:00:00').getTime(), 21),
-                        [new Date('2026-03-25T09:00:00').getTime(), 22),
-                      ];
-                  - entity: sensor.saturatie
-                    name: Saturatie
-                    unit: '%'
-                    data_generator: |
-                      return [
-                        [new Date('2026-03-01T09:00:00').getTime(), 96),
-                        [new Date('2026-03-04T09:00:00').getTime(), 96),
-                        [new Date('2026-03-08T09:00:00').getTime(), 95),
-                        [new Date('2026-03-11T09:00:00').getTime(), 95),
-                        [new Date('2026-03-15T09:00:00').getTime(), 94),
-                        [new Date('2026-03-18T09:00:00').getTime(), 94),
-                        [new Date('2026-03-22T09:00:00').getTime(), 93),
-                        [new Date('2026-03-25T09:00:00').getTime(), 92),
-                      ];
               - type: custom:simulation-period-card
-                title: Body Scan - Meetreeks
+                title: Cardiale Monitoring - Meetreeks (8 perioden)
                 show_chart: true            # 1) Chart enabled
                 chart_limit: 8             # 3) Show exactly the last 8 measurement periods on the X-axis
                 chart_point_radius: 6      # 2) Visible point markers (radius in px) for every measurement
@@ -258,7 +180,8 @@ views:
                 columns:
                   - timestamp
                   - gewicht
-                  - bloeddruk
+                  - bloeddruk_sys
+                  - bloeddruk_dia
                   - hartfrequentie
                   - ademfrequentie
                   - saturatie
@@ -267,148 +190,25 @@ views:
                 column_labels:
                   timestamp: Datum
                   gewicht: Gewicht (kg)
-                  bloeddruk: Bloeddruk (mmHg)
+                  bloeddruk_sys: Bloeddruk Sys (mmHg)
+                  bloeddruk_dia: Bloeddruk Dia (mmHg)
                   hartfrequentie: Pols (bpm)
                   ademfrequentie: Ademfreq. (/min)
                   saturatie: Saturatie (%)
                   opmerking: Opmerkingen
 
                 live_input_entities:
-                  # NOTE: the card's live preview expects keys that match tracked metric names.
-                  # The custom card's built-in chart/metrics (v1.8.0) only visualises these keys:
-                  #   - gewicht, spiermassa, vetmassa, vochtbalans, bmi
-                  # If you want live preview for those charted metrics, add matching entries.
-                  gewicht: input_number.<prefix>_gewicht
-                  #spiermassa: input_number.<prefix>_spiermassa    # Uncomment if you collect/track this
-                  #vetmassa: input_number.<prefix>_vetmassa        # Uncomment if you collect/track this
-                  #vochtbalans: input_number.<prefix>_vochtbalans  # Uncomment if you collect/track this
-                  #bmi: input_number.<prefix>_bmi                  # Uncomment if you collect/track this
-
-                  # The following were in your original mapping but are not used by the card's chart:
-                  # bloeddruk_sys: input_number.goedheid_bloeddruk_sys   # not used for charting by this card (card doesn't define 'bloeddruk' metric)
-                  # bloeddruk_dia: input_number.goedheid_bloeddruk_dia   # not used for charting by this card
-                  # hartfrequentie: input_number.goedheid_hartfrequentie # only appears in table; not part of built-in chart metrics
-                  # ademfrequentie: input_number.goedheid_ademfrequentie # only appears in table; not part of built-in chart metrics
-                  # saturatie: input_number.goedheid_saturatie           # only appears in table; not part of built-in chart metrics
+                  gewicht: input_number.goedheid_gewicht
+                  spiermassa: input_number.goedheid_spiermassa
+                  vetmassa: input_number.goedheid_vetmassa
+                  vochtbalans: input_number.goedheid_vochtbalans
+                  bmi: input_number.goedheid_bmi
+                  bloeddruk_sys: input_number.goedheid_bloeddruk_sys
+                  bloeddruk_dia: input_number.goedheid_bloeddruk_dia
+                  hartfrequentie: input_number.goedheid_hartfrequentie
+                  ademfrequentie: input_number.goedheid_ademfrequentie
+                  saturatie: input_number.goedheid_saturatie
 
                 grid_options:
                   columns: 18
-                  # The card height (rows) should follow the number of simulation
-                  # phases defined in `input_select.simulatiefase_goedheid`.
-                  # Lovelace grid options do not accept Jinja templates by default,
-                  # so we provide a safe fallback and an example dynamic approach
-                  # below using `custom:config-template-card` (requires that card).
-                  #
-                  # Fallback (static): keep rows equal to 8 so the table matches
-                  # an 8-step simulation. If the `simulatiefase` later changes,
-                  # update will be required unless you enable the template card.
                   rows: 8
-
-                # -----------------------------------------------------------------
-                # Example: BPM Connect table (mirror of Body Scan but showing BPM)
-                # If you already have a separate card for BPM Connect, mirror the
-                # same `grid_options.rows` approach below. By default we set a
-                # safe fallback of 8 rows so the table aligns with an 8-step
-                # simulation. Replace column names as needed for BPM Connect.
-                # -----------------------------------------------------------------
-                # - type: custom:simulation-period-card
-                #   title: BPM Connect - Meetreeks
-                #   show_chart: true
-                #   chart_limit: 8
-                #   chart_point_radius: 6
-                #   columns:
-                #     - timestamp
-                #     - bloeddruk
-                #     - hartfrequentie
-                #     - ademfrequentie
-                #     - saturatie
-                #   column_labels:
-                #     timestamp: Datum
-                #     bloeddruk: Bloeddruk (mmHg)
-                #     hartfrequentie: Pols (bpm)
-                #     ademfrequentie: Ademfreq. (/min)
-                #     saturatie: Saturatie (%)
-                #   grid_options:
-                #     columns: 18
-                #     # Fallback: static rows while Lovelace lacks template support for grid_options
-                #     rows: 8
-                #   # To make rows dynamic, use the `config-template-card` wrapper as shown
-                #   # in the Body Scan card example above.
-
-                  # --- Example dynamic approach (uncomment to use) ---
-                  # This requires installation of `config-template-card`.
-                  # Replace the simulation-period-card below with a wrapper like:
-                  # - type: custom:config-template-card
-                  #   entities:
-                  #     - input_select.simulatiefase_goedheid
-                  #   card: |
-                  #     type: custom:simulation-period-card
-                  #     title: Body Scan - Meetreeks
-                  #     show_chart: true
-                  #     chart_limit: 8
-                  #     chart_point_radius: 6
-                  #     columns:
-                  #       - timestamp
-                  #       - gewicht
-                  #       - bloeddruk
-                  #       - hartfrequentie
-                  #       - ademfrequentie
-                  #       - saturatie
-                  #       - opmerking
-                  #     column_labels:
-                  #       timestamp: Datum
-                  #       gewicht: Gewicht (kg)
-                  #       bloeddruk: Bloeddruk (mmHg)
-                  #       hartfrequentie: Pols (bpm)
-                  #       ademfrequentie: Ademfreq. (/min)
-                  #       saturatie: Saturatie (%)
-                  #       opmerking: Opmerkingen
-                  #     grid_options:
-                  #       columns: 18
-                  #       rows: "${states['input_select.simulatiefase_goedheid'].attributes.options.length}"
-
-# ---------------------------------------------------------------------------
-# Notes / Explanations (per your requirements)
-# ---------------------------------------------------------------------------
-# - Chart enabled: `show_chart: true` and `chart_limit: 8` enforce the chart is shown
-#   and limited to the most recent 8 periods.
-#
-# - Visible markers (requirement #2): the card renders lines + circle markers.
-#   I added `chart_point_radius: 6` (JS now reads this). This ensures each
-#   plotted measurement gets a visible dot/marker on the line.
-#
-# - Data limit (requirement #3): `chart_limit: 8` tells the patched card to use
-#   only the last 8 periods for the chart X axis. (Implementation added to the JS.)
-#
-# - Commented / unused config entries (requirement #4):
-#   • Many of your original keys (bloeddruk_sys, bloeddruk_dia, hartfrequentie,
-#     ademfrequentie, saturatie, opmerking) are valid columns for the table
-#     overview (they will show in the grid), but they are NOT part of the card's
-#     built-in chart metric set. The card's chart currently visualises:
-#       weight-related metrics only: `gewicht`, `spiermassa`, `vetmassa`,
-#       `vochtbalans`, and `bmi`.
-#     Therefore the blood pressure / pulse / saturation keys are commented in
-#     `live_input_entities` (above) because they do not drive the SVG chart.
-#
-#   • I left the columns list intact so the table still shows those fields.
-#     If you want them removed from the table, delete their lines in `columns:`.
-#
-# - No-hardcoding reminder & live_input_entities (requirement #5):
-#   • The card configuration is static YAML; it does not support runtime Jinja
-#     templating inside Lovelace config. That means you can't place a small Jinja
-#     template like `input_number.{{ my_prefix }}_gewicht` directly in the card
-#     YAML and have it expand at render-time.
-#   • Practical options instead:
-#       - use a stable entity prefix for the patient/room and place that prefix
-#         into the YAML (I used `<prefix>` as a placeholder above for you to
-#         replace with your prefix or use `!secret` entries).
-#       - or generate the Lovelace card programmatically (e.g., via `yaml` preprocessor,
-#         or a script that writes Lovelace YAML) if you need per-room templating.
-#   • For clarity, I've replaced the hardcoded `goedheid_` names with
-#     `input_number.<prefix>_gewicht` placeholders. Replace `<prefix>` with your
-#     actual entity prefix (or use `!secret` values where appropriate).
-#
-# - Files changed:
-#   • I updated the card implementation to honour `chart_limit` and
-#     `chart_point_radius` in `simulation-period-card.js` so the YAML above
-#     is effective. The edited file is `simulation-period-card.js`.
