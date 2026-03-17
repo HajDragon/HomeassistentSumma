@@ -83,12 +83,17 @@ class SimulationPeriodCard extends HTMLElement {
         //              vochtbalans: input_number.goedheid_vochtbalans
         //              bmi:        input_number.goedheid_bmi
         live_input_entities: null,
+        // Set to false to use a table-first layout without the chart block.
+        show_chart: true,
       },
       config
     );
 
+    this._showChart = this._config.show_chart !== false;
+
     // Preserve chart filter across re-renders; null = show all metrics.
-    if (this._chartFilter === undefined) this._chartFilter = null;
+    if (this._showChart && this._chartFilter === undefined) this._chartFilter = null;
+    if (!this._showChart) this._chartFilter = null;
 
     // Build shadow root once and load external stylesheet from `/local/`.
     if (!this.shadowRoot) {
@@ -122,23 +127,27 @@ class SimulationPeriodCard extends HTMLElement {
       this._container = document.createElement("div");
       this.shadowRoot.appendChild(this._container);
 
-      // Tooltip overlay — position:fixed so it escapes any overflow:hidden ancestor.
-      this._tooltip = document.createElement("div");
-      this._tooltip.style.cssText = [
-        "position:fixed",
-        "pointer-events:none",
-        "background:rgba(30,30,30,0.88)",
-        "color:#fff",
-        "padding:6px 10px",
-        "border-radius:6px",
-        "font-size:0.78rem",
-        "line-height:1.6",
-        "white-space:nowrap",
-        "z-index:9999",
-        "display:none",
-        "box-shadow:0 2px 8px rgba(0,0,0,0.3)",
-      ].join(";");
-      this.shadowRoot.appendChild(this._tooltip);
+      // Tooltip overlay is only needed when chart rendering is enabled.
+      if (this._showChart) {
+        this._tooltip = document.createElement("div");
+        this._tooltip.style.cssText = [
+          "position:fixed",
+          "pointer-events:none",
+          "background:rgba(30,30,30,0.88)",
+          "color:#fff",
+          "padding:6px 10px",
+          "border-radius:6px",
+          "font-size:0.78rem",
+          "line-height:1.6",
+          "white-space:nowrap",
+          "z-index:9999",
+          "display:none",
+          "box-shadow:0 2px 8px rgba(0,0,0,0.3)",
+        ].join(";");
+        this.shadowRoot.appendChild(this._tooltip);
+      } else {
+        this._tooltip = null;
+      }
     }
   }
 
@@ -527,7 +536,7 @@ class SimulationPeriodCard extends HTMLElement {
       </div>`;
 
     // ── Compose & inject ──────────────────────────────────────────────────────
-    const chartHtml = this._renderSvgChart();
+    const chartHtml = this._showChart ? this._renderSvgChart() : "";
     this._container.innerHTML = `
       <ha-card>
         <div class="card-header">
@@ -550,13 +559,15 @@ class SimulationPeriodCard extends HTMLElement {
       btn.addEventListener("click", () => this._switchPeriod(btn.dataset.periodId));
     });
 
-    // Chart metric filter buttons
-    this._container.querySelectorAll(".chart-filter-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        this._chartFilter = btn.dataset.filter || null;
-        this._render();
+    if (this._showChart) {
+      // Chart metric filter buttons
+      this._container.querySelectorAll(".chart-filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          this._chartFilter = btn.dataset.filter || null;
+          this._render();
+        });
       });
-    });
+    }
 
     const saveBtn  = this._container.querySelector("#btn-save");
     const resetBtn = this._container.querySelector("#btn-reset");
@@ -568,7 +579,7 @@ class SimulationPeriodCard extends HTMLElement {
     // metrics as JSON in data-metrics.  This means hovering anywhere in the
     // column — even where multiple dots overlap at the same pixel — always
     // shows every variable's value in one aggregated tooltip.
-    if (this._tooltip) {
+    if (this._showChart && this._tooltip) {
       const tip = this._tooltip;
       this._container.querySelectorAll(".chart-strip").forEach((strip) => {
         strip.addEventListener("mouseenter", () => {
@@ -667,7 +678,7 @@ window.customCards.push({
 });
 
 console.info(
-  "%c SIMULATION-PERIOD-CARD %c v1.7.0 ",
+  "%c SIMULATION-PERIOD-CARD %c v1.8.0 ",
   "color:#fff;background:#1976d2;font-weight:700;padding:2px 4px;border-radius:3px 0 0 3px",
   "color:#1976d2;background:#e3f2fd;font-weight:700;padding:2px 4px;border-radius:0 3px 3px 0"
 );

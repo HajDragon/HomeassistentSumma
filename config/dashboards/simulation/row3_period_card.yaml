@@ -1,0 +1,121 @@
+type: vertical-stack
+cards:
+  - type: custom:simulation-period-card
+    title: Body Scan en BPM Connect - Meetreeks
+    show_chart: false
+    columns:
+      - timestamp
+      - gewicht
+      - bloeddruk
+      - hartfrequentie
+      - ademfrequentie
+      - saturatie
+      - opmerking
+    column_labels:
+      timestamp: Datum
+      gewicht: Gewicht (kg)
+      bloeddruk: Bloeddruk (mmHg)
+      hartfrequentie: Pols (bpm)
+      ademfrequentie: Ademfreq. (/min)
+      saturatie: Saturatie (%)
+      opmerking: Opmerkingen
+    live_input_entities:
+      gewicht: input_number.goedheid_gewicht
+      bloeddruk_sys: input_number.goedheid_bloeddruk_sys
+      bloeddruk_dia: input_number.goedheid_bloeddruk_dia
+      hartfrequentie: input_number.goedheid_hartfrequentie
+      ademfrequentie: input_number.goedheid_ademfrequentie
+      saturatie: input_number.goedheid_saturatie
+
+  - type: custom:apexcharts-card
+    header:
+      title: Cardiale Trend op basis van maartmetingen
+      show: true
+    graph_span: 25d
+    span:
+      start: day
+    series:
+      - entity: sensor.gewicht
+        name: Gewicht
+        unit: kg
+        data_generator: |
+          return [
+            [new Date('2026-03-01T09:00:00').getTime(), 68.0],
+            [new Date('2026-03-04T09:00:00').getTime(), 68.2],
+            [new Date('2026-03-08T09:00:00').getTime(), 68.7],
+            [new Date('2026-03-11T09:00:00').getTime(), 69.3],
+            [new Date('2026-03-15T09:00:00').getTime(), 70.1],
+            [new Date('2026-03-18T09:00:00').getTime(), 70.8],
+            [new Date('2026-03-22T09:00:00').getTime(), 71.5],
+            [new Date('2026-03-25T09:00:00').getTime(), 72.2],
+          ];
+      - entity: sensor.display_bloeddruk_systolisch
+        name: Bloeddruk systolisch
+        unit: mmHg
+        data_generator: |
+          return [
+            [new Date('2026-03-01T09:00:00').getTime(), 130],
+            [new Date('2026-03-04T09:00:00').getTime(), 132],
+            [new Date('2026-03-08T09:00:00').getTime(), 135],
+            [new Date('2026-03-11T09:00:00').getTime(), 138],
+            [new Date('2026-03-15T09:00:00').getTime(), 142],
+            [new Date('2026-03-18T09:00:00').getTime(), 145],
+            [new Date('2026-03-22T09:00:00').getTime(), 150],
+            [new Date('2026-03-25T09:00:00').getTime(), 155],
+          ];
+      - entity: sensor.hartfrequentie
+        name: Hartfrequentie
+        unit: bpm
+        data_generator: |
+          return [
+            [new Date('2026-03-01T09:00:00').getTime(), 72],
+            [new Date('2026-03-04T09:00:00').getTime(), 74],
+            [new Date('2026-03-08T09:00:00').getTime(), 78],
+            [new Date('2026-03-11T09:00:00').getTime(), 80],
+            [new Date('2026-03-15T09:00:00').getTime(), 86],
+            [new Date('2026-03-18T09:00:00').getTime(), 90],
+            [new Date('2026-03-22T09:00:00').getTime(), 96],
+            [new Date('2026-03-25T09:00:00').getTime(), 102],
+          ];
+      - entity: sensor.ademfrequentie
+        name: Ademfrequentie
+        unit: /min
+        data_generator: |
+          return [
+            [new Date('2026-03-01T09:00:00').getTime(), 16],
+            [new Date('2026-03-04T09:00:00').getTime(), 16],
+            [new Date('2026-03-08T09:00:00').getTime(), 17],
+            [new Date('2026-03-11T09:00:00').getTime(), 18],
+            [new Date('2026-03-15T09:00:00').getTime(), 19],
+            [new Date('2026-03-18T09:00:00').getTime(), 20],
+            [new Date('2026-03-22T09:00:00').getTime(), 21],
+            [new Date('2026-03-25T09:00:00').getTime(), 22],
+          ];
+      - entity: sensor.saturatie
+        name: Saturatie
+        unit: '%'
+        data_generator: |
+          return [
+            [new Date('2026-03-01T09:00:00').getTime(), 96],
+            [new Date('2026-03-04T09:00:00').getTime(), 96],
+            [new Date('2026-03-08T09:00:00').getTime(), 95],
+            [new Date('2026-03-11T09:00:00').getTime(), 95],
+            [new Date('2026-03-15T09:00:00').getTime(), 94],
+            [new Date('2026-03-18T09:00:00').getTime(), 94],
+            [new Date('2026-03-22T09:00:00').getTime(), 93],
+            [new Date('2026-03-25T09:00:00').getTime(), 92],
+          ];
+
+  - type: markdown
+    title: Observatielog Progressie
+    content: |
+      | Datum | Opmerkingen |
+      |---|---|
+      | 01-03-2026 | **Stabiele situatie na ontslag** |
+      | 04-03-2026 | Geen klachten |
+      | 08-03-2026 | Licht vermoeid |
+      | 11-03-2026 | Enkels licht gezwollen |
+      | 15-03-2026 | Kortademig bij inspanning |
+      | 18-03-2026 | **Meer oedeem in onderbenen** |
+      | 22-03-2026 | **Gewicht stijgt snel** |
+      | 25-03-2026 | Duidelijke verslechtering |

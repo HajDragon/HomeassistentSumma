@@ -20,6 +20,7 @@ import sys
 import time
 import yaml
 import websocket  # pip install websocket-client
+from build_simulation_dashboard import build_dashboard
 
 from dotenv import load_dotenv
 
@@ -47,19 +48,32 @@ PERIODS = [
 PERIOD_SWITCH_IDS = {4: PERIODS[0], 5: PERIODS[1], 6: PERIODS[2], 7: PERIODS[3]}
 RESTORE_ACTIVE_ID = 8
 
-# ── Load dashboard config from YAML ─────────────────────────────────────────
-_here = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(_here, "..", "config", "dashboards", "simulation_dashboard.yaml"), encoding="utf-8") as _f:
-    _raw = yaml.safe_load(_f)
+def _build_and_load_simulation_config() -> dict:
+    """Compile row components to monolithic YAML and load it for push."""
+    _here = os.path.dirname(os.path.abspath(__file__))
+    output_path = os.path.join(_here, "..", "config", "dashboards", "simulation_dashboard.yaml")
 
-simulatie_config = {
-    "title": "Simulatie Goedheid",
-    "views": _raw["views"],
-}
+    compiled_yaml = build_dashboard()
+    with open(output_path, "w", encoding="utf-8") as output_file:
+        output_file.write(compiled_yaml)
+
+    with open(output_path, encoding="utf-8") as input_file:
+        raw = yaml.safe_load(input_file)
+
+    return {
+        "title": "Simulatie Goedheid",
+        "views": raw["views"],
+    }
 
 
 # ── WebSocket push ───────────────────────────────────────────────────────────
 def push():
+    try:
+        simulatie_config = _build_and_load_simulation_config()
+    except Exception as error:
+        print(f"  ✗ Build/load failed: {type(error).__name__}: {repr(error)}")
+        raise
+
     print("=" * 55)
     print("  Pushing Simulation dashboard + ensuring 4 periods")
     print(f"  URL path  : {SIMULATIE_URL_PATH}")
@@ -186,8 +200,9 @@ def push():
                 ws.close()
 
     def on_error(ws, error):
-        print(f"  ✗ WebSocket error: {error}")
-        results["error"] = str(error)
+        error_text = f"{type(error).__name__}: {repr(error)}"
+        print(f"  ✗ WebSocket error: {error_text}")
+        results["error"] = error_text
 
     def on_close(ws, code, msg):
         print()
@@ -198,6 +213,7 @@ def push():
             print("  1. Press F5 in your HA browser to reload.")
             print(f"  2. Open: http://homeassistant.local:8123/{SIMULATIE_URL_PATH}")
         else:
+            print(f"  WebSocket close: code={code}, message={msg}")
             print(f"  Finished with issues: {results.get('error', 'unknown')}")
         print("=" * 55)
 

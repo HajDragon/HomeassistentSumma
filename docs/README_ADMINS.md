@@ -1,70 +1,41 @@
-# Systeembeheerdershandleiding: Home Assistant Educatieve Slimme Kamer
+# Beheerdershandleiding: Cardiac Monitoring Dashboard
 
-## Overzicht
+## Doel
 
-Deze handleiding is bedoeld voor systeembeheerders die de educatieve slimme kamer beheren met behulp van de Home Assistant-gebruikersinterface. Het behandelt configuratie, apparaatbeheer en stappen voor probleemoplossing. Er is geen programmeerkennis of terminaltoegang vereist voor deze taken.
+Deze handleiding beschrijft het beheer van de nieuwe Body Scan + BPM Connect simulatie voor Mevrouw Goedheid.
 
-## Dashboardconfiguratie
+## Wat is veranderd
 
-De primaire interface voor de simulatie is de **Simulation Period Card**. Dit aangepaste element stelt leraren in staat de simulatie te besturen en gegevens te loggen.
+1. PESDIE workflow is verwijderd uit de gebruikersinterface.
+2. Stappenplan-kaarten zijn verwijderd.
+3. De simulatie draait nu op 8 vaste meetpunten in maart 2026.
+4. Alerts zijn actief voor lage saturatie en hoge pols.
 
-### De Simulatiekaart Toevoegen
+## Bediening via Home Assistant UI
 
-Als u het simulatiebedieningspaneel aan een nieuwe dashboardweergave moet toevoegen:
+1. Open het dashboard Body Scan en BPM Connect.
+2. Controleer Databron en Simulatiefase.
+3. Controleer de kaart Huidige Meetwaarden voor gewicht, bloeddruk, pols, ademfrequentie en saturatie.
+4. Controleer de twee alert-indicatoren:
+   - Alert lage saturatie (<93)
+   - Alert hoge pols (>100)
 
-1.  Navigeer naar het gewenste Dashboard.
-2.  Klik op het **Dashboard bewerken** (potloodpictogram) in de rechterbovenhoek.
-3.  Klik op de knop **+ Kaart toevoegen**.
-4.  Scrol naar de onderkant van de lijst en selecteer **Handmatig**.
-5.  Voer de volgende configuratie-YAML in:
+## Nieuwe les starten
 
-```yaml
-type: custom:simulation-period-card
-```
+1. Zet de simulatiefase op Reset / Startklaar.
+2. Kies daarna de gewenste meting (1 t/m 8).
+3. Controleer dat datum, waarden en opmerking meeschakelen.
+4. Gebruik Sla huidige meting op als u een datapunt wilt vastleggen.
 
-6.  Klik op **Opslaan**. De kaart zal proberen de simulatiemanager-entiteit automatisch te ontdekken.
+## Controlepunten na deploy
 
-## Apparaten Beheren
+1. De observatielog toont 8 regels van 01-03-2026 t/m 25-03-2026.
+2. De trendkaart toont stijgend gewicht, stijgende bloeddruk en dalende saturatie.
+3. Het patiëntprofiel toont 70 jaar, MI en artrose.
+4. Er zijn geen PESDIE- of stappenplanblokken zichtbaar.
 
-Wanneer nieuwe hardware aan de kamer wordt toegevoegd (bijv. slimme stekkers, sensoren of lampen), moet deze correct worden toegewezen in Home Assistant zodat het systeem deze herkent.
+## Foutafhandeling
 
-### Een Nieuw Apparaat Toevoegen
-
-1.  Ga naar **Instellingen** > **Apparaten & Diensten**.
-2.  Als het apparaat automatisch wordt ontdekt, klik op **Configureren**. Zo niet, klik op **+ Integratie toevoegen** en zoek naar het merk van het apparaat (bijv. Withings, Philips Hue).
-3.  Volg de instructies op het scherm om het apparaat te koppelen.
-
-### Toewijzen aan een Ruimte
-
-De geautomatiseerde logica vertrouwt er vaak op dat apparaten zich in de juiste "Ruimte" bevinden.
-
-1.  Zoek na het toevoegen van het apparaat deze in de apparaatlijst.
-2.  Klik op het **potloodpictogram** (Bewerken) naast de naam van het apparaat.
-3.  Selecteer in het vervolgkeuzemenu **Ruimte** de juiste kamer (bijv. "Klaslokaal" of "Lab").
-4.  Klik op **Bijwerken**.
-
-## Probleemoplossing
-
-### Fouten in Simulatiekaart
-
-**Probleem:** Het dashboard toont "Custom Element doesn't exist: simulation-period-card".
-**Oplossing:**
-1.  Dit is vaak een browsercache-probleem. Voer een harde verversing van de browserpagina uit (Ctrl + F5 op Windows/Linux, Cmd + Shift + R op macOS).
-2.  Controleer of het bestand `simulation-period-card.js` bestaat in de map `www/simulation-period-card/` met behulp van de File Editor add-on indien beschikbaar.
-
-### Simulatiemanager Niet Beschikbaar
-
-**Probleem:** De kaart toont een fout of knoppen reageren niet.
-**Oplossing:**
-1.  Ga naar **Ontwikkelhulpmiddelen** > **Staten**.
-2.  Zoek naar `sensor.simulation_manager`.
-3.  Controleer de kolom **Staat**.
-    -   Als de staat `unavailable` of `unknown` is, is de integratie mogelijk niet geladen.
-    -   Herstart Home Assistant door naar **Instellingen** > **Systeem** > **Herstarten** te gaan.
-
-### Gegevens Worden Niet Opgeslagen
-
-**Probleem:** Klikken op "Meting Opslaan" werkt de tabel niet bij.
-**Oplossing:**
-1.  Zorg ervoor dat Home Assistant draait en verbonden is met het netwerk.
-2.  Controleer of er momenteel een periode actief is. Het systeem vereist een actieve periode (bijv. "Periode 1") om metingen aan te koppelen.
+1. Als waarden niet updaten: herlaad de pagina en controleer sensor.simulation_manager in Ontwikkelhulpmiddelen > Staten.
+2. Als de custom kaart niet laadt: controleer of simulation-period-card.js als resource beschikbaar is.
+3. Als de trendkaart leeg is: controleer of apexcharts-card beschikbaar is en de entiteiten status hebben.
