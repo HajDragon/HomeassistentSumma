@@ -36,6 +36,7 @@ resources:
 ## Deploying changes to Home Assistant
 
 - Use the provided deployment scripts in `scripts/` (for example `deploy_simulation_manager.py` or `push_dashboard.py`) or copy files to HA `www/` and `custom_components/` using your preferred approved method (Studio Code Server, Samba, or the File Editor add-on).
+ - A full simulation dashboard YAML can be placed at `config/dashboards/simulatie_goedheid.yaml`. If present, `scripts/build_simulation_dashboard.py` will use that file (instead of building from row fragments) and `scripts/push_simulation_dashboard.py` will deploy it.
 - After updating `custom_components`, restart the Home Assistant Core integration or reboot the host if required by the integration.
 
 ## Contributing

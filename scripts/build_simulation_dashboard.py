@@ -46,6 +46,11 @@ def _load_row_lines(path: Path) -> list[str]:
 
 
 def build_dashboard() -> str:
+    # If a full dashboard YAML has been provided by the user, prefer it.
+    custom_full = ROOT / "config" / "dashboards" / "simulatie_goedheid.yaml"
+    if custom_full.exists():
+        return custom_full.read_text(encoding="utf-8")
+
     output: list[str] = list(HEADER)
 
     for filename in ROW_FILES:
