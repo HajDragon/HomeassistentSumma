@@ -26,6 +26,23 @@ views:
                   - Anamnese: **Myocardinfarct (MI), artrose**
                   - Monitoring focus: **Body Scan en BPM Connect**
                   - Huidig gewicht (laatste meetpunt): **72.2 kg op 25-03-2026**
+              - type: entities
+                title: 📸 Patiëntfoto
+                entities:
+                  - entity: input_select.available_photos
+                    name: Selecteer foto
+              - type: markdown
+                title: Geselecteerde Foto
+                content: >
+                  <img src="/local/photos/{{ states('input_select.available_photos') }}"
+                  style="width:100%; border-radius:8px;"
+                  onerror="this.style.display='none'">
+              - type: button
+                name: Vernieuw Fotogalerij
+                icon: mdi:camera-sync
+                tap_action:
+                  action: call-service
+                  service: script.scan_photos_directory
           - type: vertical-stack
             cards:
               - type: markdown

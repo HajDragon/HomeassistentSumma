@@ -29,6 +29,15 @@ input_select:
     initial: "Simulatie"
     icon: mdi:database-switch
 
+  available_photos:
+    name: "Beschikbare patiëntfoto's"
+    options:
+      - "(geen foto's gevonden)"
+    initial: "(geen foto's gevonden)"
+    icon: mdi:image-multiple
+
+photo_scanner:
+
 input_datetime:
   goedheid_meetdatum:
     name: "Datum van Huidige Meting"
@@ -125,6 +134,14 @@ input_number:
     step: 1
     unit_of_measurement: "%"
     icon: mdi:oxygen
+
+  config_alert_low_saturation_threshold:
+    name: "Low saturation alert threshold"
+    min: 50
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+    icon: mdi:heart-pulse
 
 input_text:
   goedheid_student_id:
@@ -244,6 +261,64 @@ template:
             mdi:alert-circle
           {% endif %}
 
+  - sensor:
+      - name: "display_bloeddruk"
+        unique_id: display_bloeddruk
+        unit_of_measurement: "mmHg"
+        state: >
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ (states("input_number.goedheid_bloeddruk_sys") | int(0)) ~ "/" ~ (states("input_number.goedheid_bloeddruk_dia") | int(0)) }}
+          {%- else %}
+            {%- set sys = states("sensor.withings_bloeddruk_sys") %}
+            {%- set dia = states("sensor.withings_bloeddruk_dia") %}
+            {{ (sys if sys not in ["unknown","unavailable","none",""] else "unknown") ~ "/" ~ (dia if dia not in ["unknown","unavailable","none",""] else "unknown") }}
+          {%- endif %}
+        icon: mdi:heart-pulse
+
+      - name: "display_hartfrequentie"
+        unique_id: display_hartfrequentie
+        unit_of_measurement: "bpm"
+        state_class: measurement
+        state: >
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_hartfrequentie") }}
+          {%- else %}
+            {{ states("sensor.withings_hartfrequentie") }}
+          {%- endif %}
+        icon: mdi:heart
+
+      - name: "display_ademfrequentie"
+        unique_id: display_ademfrequentie
+        unit_of_measurement: "/min"
+        state_class: measurement
+        state: >
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_ademfrequentie") }}
+          {%- else %}
+            {{ states("sensor.withings_ademfrequentie") }}
+          {%- endif %}
+        icon: mdi:lungs
+
+      - name: "display_saturatie"
+        unique_id: display_saturatie
+        unit_of_measurement: "%"
+        state_class: measurement
+        state: >
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_saturatie") }}
+          {%- else %}
+            {%- set live = states("sensor.withings_saturatie") %}
+            {{ live if live not in ["unknown", "unavailable", "none", ""] else states("input_number.goedheid_saturatie") }}
+          {%- endif %}
+        icon: mdi:oxygen
+
+  - binary_sensor:
+      - name: "config_alert_low_saturation"
+        unique_id: config_alert_low_saturation
+        device_class: safety
+        state: >
+          {{ (states('sensor.display_saturatie') | float(100)) < (states('input_number.config_alert_low_saturation_threshold') | float(90)) }}
+
 script:
   reset_goedheid_simulatie:
     alias: "Reset Simulatie Mevrouw Goedheid"
@@ -348,6 +423,12 @@ script:
           pesdie_output:  "{{ states('input_text.goedheid_pesdie_output')    | trim }}"
           pesdie_phase:   "{{ states('input_select.simulatiefase_goedheid') }}"
           pesdie_saved_at: "{{ now().isoformat() }}"
+
+  scan_photos_directory:
+    alias: "Scan Photos Directory"
+    icon: mdi:folder-refresh
+    sequence:
+      - service: photo_scanner.scan
 
   goedheid_submit_pesdie:
     alias: "Submit PESDIE"
@@ -563,5 +644,14 @@ automation:
                   entity_id: input_select.simulatiefase_goedheid
                 data:
                   option: "Meting 4 (6 mnd)"
+
+  - id: goedheid_scan_photos_on_start
+    alias: "Goedheid - Scan Photos Directory on Startup"
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      - service: script.scan_photos_directory
+    mode: single
 
 
