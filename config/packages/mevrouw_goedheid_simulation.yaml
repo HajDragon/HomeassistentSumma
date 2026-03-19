@@ -275,6 +275,30 @@ template:
           {%- endif %}
         icon: mdi:heart-pulse
 
+      - name: "display_bloeddruk_systolisch"
+        unique_id: display_bloeddruk_systolisch
+        unit_of_measurement: "mmHg"
+        state_class: measurement
+        state: >
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_bloeddruk_sys") }}
+          {%- else %}
+            {{ states("sensor.withings_bloeddruk_sys") }}
+          {%- endif %}
+        icon: mdi:arrow-up-bold-hexagon-outline
+
+      - name: "display_bloeddruk_diastolisch"
+        unique_id: display_bloeddruk_diastolisch
+        unit_of_measurement: "mmHg"
+        state_class: measurement
+        state: >
+          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+            {{ states("input_number.goedheid_bloeddruk_dia") }}
+          {%- else %}
+            {{ states("sensor.withings_bloeddruk_dia") }}
+          {%- endif %}
+        icon: mdi:arrow-down-bold-hexagon-outline
+
       - name: "display_hartfrequentie"
         unique_id: display_hartfrequentie
         unit_of_measurement: "bpm"
