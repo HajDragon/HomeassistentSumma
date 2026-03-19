@@ -1,0 +1,9 @@
+{
+  "domain": "photo_scanner",
+  "name": "Photo Scanner",
+  "version": "1.0.0",
+  "documentation": "https://example.com",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": []
+}
