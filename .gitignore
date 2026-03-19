@@ -53,6 +53,8 @@ www/community/          # HACS downloaded cards
 # ── Deployment artefacts ──────────────────────────────────────────────────────
 *.zip
 simulation_manager_deploy.zip
+*.png
+*.jpg
 
 # ── Node / frontend tooling (if introduced later) ────────────────────────────
 node_modules/

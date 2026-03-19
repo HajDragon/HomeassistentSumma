@@ -55,12 +55,18 @@ SWITCH_PERIOD_SCHEMA = vol.Schema(
 
 SAVE_MEASUREMENT_SCHEMA = vol.Schema(
     {
-        vol.Optional("gewicht"):    vol.Coerce(float),
-        vol.Optional("spiermassa"): vol.Coerce(float),
-        vol.Optional("vetmassa"):   vol.Coerce(float),
-        vol.Optional("vochtbalans"): vol.Coerce(float),
-        vol.Optional("bmi"):        vol.Coerce(float),
-        vol.Optional("timestamp"):  cv.string,
+        vol.Optional("gewicht"):      vol.Coerce(float),
+        vol.Optional("spiermassa"):   vol.Coerce(float),
+        vol.Optional("vetmassa"):     vol.Coerce(float),
+        vol.Optional("vochtbalans"):  vol.Coerce(float),
+        vol.Optional("bmi"):          vol.Coerce(float),
+        vol.Optional("bloeddruk_sys"):     vol.Coerce(float),
+        vol.Optional("bloeddruk_dia"):     vol.Coerce(float),
+        vol.Optional("hartfrequentie"):    vol.Coerce(float),
+        vol.Optional("ademfrequentie"):    vol.Coerce(float),
+        vol.Optional("saturatie"):         vol.Coerce(float),
+        vol.Optional("opmerking"):    cv.string,
+        vol.Optional("timestamp"):    cv.string,
     },
     extra=vol.ALLOW_EXTRA,  # Forward-compatible: pass any custom metric
 )
@@ -68,18 +74,25 @@ SAVE_MEASUREMENT_SCHEMA = vol.Schema(
 # No fields needed for reset — schema is intentionally empty.
 RESET_SIMULATION_SCHEMA = vol.Schema({})
 
-# ── Canonical 4-period definition ─────────────────────────────────────────────
+# ── Canonical default periods (expanded to 8 periods from March 2026 highlighting) ────────────────
 
+# The integration guarantees a set of default periods exist on first run.
+# Extended to eight periods matching the highlighted cardiac monitoring scenario for Mevrouw Goedheid.
+# Dates are from the markdown table in the Simulatie Goedheid dashboard.
 DEFAULT_PERIODS = [
-    {"period_id": "period_1", "label": "Meting 1 (start)",  "date": "2026-01-01"},
-    {"period_id": "period_2", "label": "Meting 2 (2 mnd)",  "date": "2026-03-01"},
-    {"period_id": "period_3", "label": "Meting 3 (4 mnd)",  "date": "2026-05-01"},
-    {"period_id": "period_4", "label": "Meting 4 (6 mnd)",  "date": "2026-07-01"},
+    {"period_id": "period_1", "label": "Meting 1 (01-03)", "date": "2026-03-01"},
+    {"period_id": "period_2", "label": "Meting 2 (04-03)", "date": "2026-03-04"},
+    {"period_id": "period_3", "label": "Meting 3 (08-03)", "date": "2026-03-08"},
+    {"period_id": "period_4", "label": "Meting 4 (11-03)", "date": "2026-03-11"},
+    {"period_id": "period_5", "label": "Meting 5 (15-03)", "date": "2026-03-15"},
+    {"period_id": "period_6", "label": "Meting 6 (18-03)", "date": "2026-03-18"},
+    {"period_id": "period_7", "label": "Meting 7 (22-03)", "date": "2026-03-22"},
+    {"period_id": "period_8", "label": "Meting 8 (25-03)", "date": "2026-03-25"},
 ]
 
 
 def _ensure_default_periods(state: SimulationState) -> None:
-    """Create the 4 canonical periods if any of them are missing."""
+    """Create the 8 canonical periods if any of them are missing."""
     for p in DEFAULT_PERIODS:
         if p["period_id"] not in state.periods:
             state.switch_period(

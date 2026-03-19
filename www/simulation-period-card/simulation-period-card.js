@@ -85,6 +85,13 @@ class SimulationPeriodCard extends HTMLElement {
         live_input_entities: null,
         // Set to false to use a table-first layout without the chart block.
         show_chart: true,
+           // Optional: limit how many most-recent periods the chart will show.
+           // When null/omitted the chart shows all available periods.
+           // Example: chart_limit: 8
+           chart_limit: null,
+           // Optional: radius of point markers (in px) drawn on each measurement.
+           // A value > 0 ensures visible markers on the line.
+           chart_point_radius: 6,
       },
       config
     );
@@ -215,10 +222,19 @@ class SimulationPeriodCard extends HTMLElement {
     };
 
     const data = {};
-    ["gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi"].forEach((field) => {
+    [
+      "gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi",
+      "bloeddruk_sys", "bloeddruk_dia", "hartfrequentie", "ademfrequentie", "saturatie"
+    ].forEach((field) => {
       const v = getValue(`input_${field}`);
       if (v !== undefined && !isNaN(v)) data[field] = v;
     });
+
+    // Handle opmerking as text
+    const opmerkingEl = root.getElementById("input_opmerking");
+    if (opmerkingEl && opmerkingEl.value && opmerkingEl.value.trim()) {
+      data.opmerking = opmerkingEl.value.trim();
+    }
 
     if (Object.keys(data).length === 0) {
       alert("Voer minimaal één waarde in voordat je opslaat.");
@@ -228,7 +244,10 @@ class SimulationPeriodCard extends HTMLElement {
     this._callService("save_measurement", data);
 
     // Clear form fields after submit.
-    ["gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi"].forEach((field) => {
+    [
+      "gewicht", "spiermassa", "vetmassa", "vochtbalans", "bmi",
+      "bloeddruk_sys", "bloeddruk_dia", "hartfrequentie", "ademfrequentie", "saturatie", "opmerking"
+    ].forEach((field) => {
       const el = root.getElementById(`input_${field}`);
       if (el) el.value = "";
     });
@@ -247,14 +266,17 @@ class SimulationPeriodCard extends HTMLElement {
 
   // ── SVG line chart ──────────────────────────────────────────────────────────
   _renderSvgChart() {
-    // Fixed metric definitions — the only non-dynamic part, and intentionally so:
-    // these are the tracked body-scan fields defined in the service schema.
+    // Metric definitions — the plotted values driven from saved measurement data
     const METRICS = [
-      { key: 'gewicht',    label: 'Gewicht',    unit: 'kg',           color: '#1976d2' },
-      { key: 'spiermassa', label: 'Spiermassa', unit: 'kg',           color: '#388e3c' },
-      { key: 'vetmassa',   label: 'Vetmassa',   unit: 'kg',           color: '#f57c00' },
-      { key: 'vochtbalans',label: 'Vochtbalans',unit: '%',            color: '#00BFFF' },
-      { key: 'bmi',        label: 'BMI',        unit: 'kg/m\u00b2',   color: '#7b1fa2' },
+      { key: 'gewicht',         label: 'Gewicht',       unit: 'kg',     color: '#1976d2' },
+      { key: 'spiermassa',      label: 'Spiermassa',    unit: 'kg',     color: '#388e3c' },
+      { key: 'vetmassa',        label: 'Vetmassa',      unit: 'kg',     color: '#f57c00' },
+      { key: 'vochtbalans',     label: 'Vochtbalans',   unit: '%',      color: '#00BFFF' },
+      { key: 'bmi',             label: 'BMI',           unit: 'kg/m²',  color: '#7b1fa2' },
+      { key: 'bloeddruk_sys',   label: 'Bloeddruk (sys)', unit: 'mmHg', color: '#d32f2f' },
+      { key: 'hartfrequentie',  label: 'Hartfrequentie', unit: 'bpm',   color: '#ff6f00' },
+      { key: 'ademfrequentie',  label: 'Ademfrequentie', unit: '/min',  color: '#00796b' },
+      { key: 'saturatie',       label: 'Saturatie',     unit: '%',      color: '#1565c0' },
     ];
 
     // Build period data dynamically from the already-sorted _periodOrder.
@@ -508,16 +530,25 @@ class SimulationPeriodCard extends HTMLElement {
         <summary>Meting toevoegen aan actieve periode</summary>
         <div class="form-grid">
           ${[
-            ["input_gewicht",    "Gewicht (kg)",    "70.0"],
-            ["input_spiermassa", "Spiermassa (kg)", "29.5"],
-            ["input_vetmassa",   "Vetmassa (kg)",   "24.0"],
-            ["input_vochtbalans", "Vochtbalans (%)", "51.0"],
-            ["input_bmi",        "BMI (kg/m²)",     "24.8"],
+            ["input_gewicht",         "Gewicht (kg)",               "70.0"],
+            ["input_spiermassa",      "Spiermassa (kg)",            "29.5"],
+            ["input_vetmassa",        "Vetmassa (kg)",              "24.0"],
+            ["input_vochtbalans",     "Vochtbalans (%)",            "51.0"],
+            ["input_bmi",             "BMI (kg/m²)",                "24.8"],
+            ["input_bloeddruk_sys",   "Bloeddruk Systolisch (mmHg)", "130"],
+            ["input_bloeddruk_dia",   "Bloeddruk Diastolisch (mmHg)", "80"],
+            ["input_hartfrequentie",  "Hartfrequentie (bpm)",       "72"],
+            ["input_ademfrequentie",  "Ademfrequentie (/min)",      "16"],
+            ["input_saturatie",       "Saturatie (%)",              "96"],
           ].map(([id, label, ph]) => `
             <div class="form-group">
               <label for="${id}">${label}</label>
               <input type="number" id="${id}" step="0.1" min="0" placeholder="${ph}" />
             </div>`).join("")}
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="input_opmerking">Opmerking</label>
+            <input type="text" id="input_opmerking" placeholder="Bijzonderheden..." />
+          </div>
         </div>
         <div class="form-actions">
           <button class="btn btn-primary" id="btn-save">Opslaan</button>

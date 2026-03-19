@@ -217,7 +217,7 @@ fi
 echo ""
 
 # =============================================================================
-# STEP 6 (optional) — Seed Mevrouw Goedheid simulation data
+# STEP 6 (optional) — Seed Mevrouw Goedheid simulation data (6 periods)
 # =============================================================================
 
 _svc() {
@@ -230,26 +230,42 @@ _svc() {
 }
 
 if [[ "$DO_SEED" == "true" ]]; then
-  echo -e "${BOLD}STEP 6 — Seeding Mevrouw Goedheid simulation data${NC}"
+  echo -e "${BOLD}STEP 6 — Seeding simulation data (match dashboard)${NC}"
 
   info "Resetting existing simulation state..."
   _svc "reset_simulation" "{}"
 
-  _svc "switch_period"    '{"period_id":"period_1","label":"Meting 1 (start)","date":"2026-01-01"}'
-  _svc "save_measurement" '{"gewicht":70.0,"spiermassa":29.5,"vetmassa":24.0,"bmi":24.8,"timestamp":"2026-01-01T09:00:00+00:00"}'
-  success "Meting 1 (start) — 2026-01-01 — seeded."
+  _svc "switch_period"    '{"period_id":"period_1","label":"Meting 1 (start)","date":"2026-03-01"}'
+  _svc "save_measurement" '{"gewicht":68.0,"bloeddruk":"130/80 mmHg","hartfrequentie":72,"ademfrequentie":16,"saturatie":96,"opmerking":"Stabiele situatie na ontslag","timestamp":"2026-03-01T09:00:00+00:00"}'
+  success "Meting 1 (start) — 2026-03-01 — seeded."
 
-  _svc "switch_period"    '{"period_id":"period_2","label":"Meting 2 (2 mnd)","date":"2026-03-01"}'
-  _svc "save_measurement" '{"gewicht":72.0,"spiermassa":29.3,"vetmassa":25.5,"bmi":25.5,"timestamp":"2026-03-01T09:00:00+00:00"}'
-  success "Meting 2 (2 mnd) — 2026-03-01 — seeded."
+  _svc "switch_period"    '{"period_id":"period_2","label":"Meting 2 (2 mnd)","date":"2026-03-04"}'
+  _svc "save_measurement" '{"gewicht":68.2,"bloeddruk":"132/82 mmHg","hartfrequentie":74,"ademfrequentie":16,"saturatie":96,"opmerking":"Geen klachten","timestamp":"2026-03-04T09:00:00+00:00"}'
+  success "Meting 2 (2 mnd) — 2026-03-04 — seeded."
 
-  _svc "switch_period"    '{"period_id":"period_3","label":"Meting 3 (4 mnd)","date":"2026-05-01"}'
-  _svc "save_measurement" '{"gewicht":74.5,"spiermassa":29.0,"vetmassa":27.0,"bmi":26.4,"timestamp":"2026-05-01T09:00:00+00:00"}'
-  success "Meting 3 (4 mnd) — 2026-05-01 — seeded."
+  _svc "switch_period"    '{"period_id":"period_3","label":"Meting 3 (4 mnd)","date":"2026-03-08"}'
+  _svc "save_measurement" '{"gewicht":68.7,"bloeddruk":"135/85 mmHg","hartfrequentie":78,"ademfrequentie":17,"saturatie":95,"opmerking":"Licht vermoeid","timestamp":"2026-03-08T09:00:00+00:00"}'
+  success "Meting 3 (4 mnd) — 2026-03-08 — seeded."
 
-  _svc "switch_period"    '{"period_id":"period_4","label":"Meting 4 (6 mnd)","date":"2026-07-01"}'
-  _svc "save_measurement" '{"gewicht":77.0,"spiermassa":28.8,"vetmassa":28.5,"bmi":27.3,"timestamp":"2026-07-01T09:00:00+00:00"}'
-  success "Meting 4 (6 mnd) — 2026-07-01 — seeded."
+  _svc "switch_period"    '{"period_id":"period_4","label":"Meting 4 (6 mnd)","date":"2026-03-11"}'
+  _svc "save_measurement" '{"gewicht":69.3,"bloeddruk":"138/86 mmHg","hartfrequentie":80,"ademfrequentie":18,"saturatie":95,"opmerking":"Enkels licht gezwollen","timestamp":"2026-03-11T09:00:00+00:00"}'
+  success "Meting 4 (6 mnd) — 2026-03-11 — seeded."
+
+  _svc "switch_period"    '{"period_id":"period_5","label":"Meting 5 (8 mnd)","date":"2026-03-15"}'
+  _svc "save_measurement" '{"gewicht":70.1,"bloeddruk":"142/88 mmHg","hartfrequentie":86,"ademfrequentie":19,"saturatie":94,"opmerking":"Kortademig bij inspanning","timestamp":"2026-03-15T09:00:00+00:00"}'
+  success "Meting 5 (8 mnd) — 2026-03-15 — seeded."
+
+  _svc "switch_period"    '{"period_id":"period_6","label":"Meting 6 (10 mnd)","date":"2026-03-18"}'
+  _svc "save_measurement" '{"gewicht":70.8,"bloeddruk":"145/90 mmHg","hartfrequentie":90,"ademfrequentie":20,"saturatie":94,"opmerking":"Meer oedeem in onderbenen","timestamp":"2026-03-18T09:00:00+00:00"}'
+  success "Meting 6 (10 mnd) — 2026-03-18 — seeded."
+
+  _svc "switch_period"    '{"period_id":"period_7","label":"Meting 7","date":"2026-03-22"}'
+  _svc "save_measurement" '{"gewicht":71.5,"bloeddruk":"150/92 mmHg","hartfrequentie":96,"ademfrequentie":21,"saturatie":93,"opmerking":"Gewicht stijgt snel","timestamp":"2026-03-22T09:00:00+00:00"}'
+  success "Meting 7 — 2026-03-22 — seeded."
+
+  _svc "switch_period"    '{"period_id":"period_8","label":"Meting 8","date":"2026-03-25"}'
+  _svc "save_measurement" '{"gewicht":72.2,"bloeddruk":"155/95 mmHg","hartfrequentie":102,"ademfrequentie":22,"saturatie":92,"opmerking":"Duidelijke verslechtering","timestamp":"2026-03-25T09:00:00+00:00"}'
+  success "Meting 8 — 2026-03-25 — seeded."
 
   _svc "switch_period" '{"period_id":"period_1"}'
   success "Active period set to Meting 1 (start)."
