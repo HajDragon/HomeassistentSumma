@@ -54,10 +54,15 @@ async def async_setup(hass: HomeAssistant, config: dict):
             blocking=True,
         )
 
-        hass.components.persistent_notification.create(
-            f"Directory: {photos_dir}\nFound {len(files)} image(s): {files}",
-            title="Scan Photos (photo_scanner)",
-            notification_id="scan_photos_notification",
+        await hass.services.async_call(
+            "persistent_notification",
+            "create",
+            {
+                "title": "Scan Photos (photo_scanner)",
+                "message": f"Directory: {photos_dir}\nFound {len(files)} image(s): {files}",
+                "notification_id": "scan_photos_notification",
+            },
+            blocking=True,
         )
 
     hass.services.async_register(DOMAIN, SERVICE_SCAN, async_scan)
