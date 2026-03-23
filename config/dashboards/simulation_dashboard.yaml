@@ -31,6 +31,8 @@ views:
                 entities:
                   - entity: input_select.available_photos
                     name: Selecteer foto
+              - type: 'custom:photo-uploader'
+                
               - type: markdown
                 title: Geselecteerde Foto
                 content: >

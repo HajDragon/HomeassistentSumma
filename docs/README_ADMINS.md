@@ -12,17 +12,17 @@ De primaire interface voor de simulatie is de **Simulation Period Card**. Dit aa
 
 Als u het simulatiebedieningspaneel aan een nieuwe dashboardweergave moet toevoegen:
 
-1.  Navigeer naar het gewenste Dashboard.
-2.  Klik op het **Dashboard bewerken** (potloodpictogram) in de rechterbovenhoek.
-3.  Klik op de knop **+ Kaart toevoegen**.
-4.  Scrol naar de onderkant van de lijst en selecteer **Handmatig**.
-5.  Voer de volgende configuratie-YAML in:
+1. Navigeer naar het gewenste Dashboard.
+2. Klik op het **Dashboard bewerken** (potloodpictogram) in de rechterbovenhoek.
+3. Klik op de knop **+ Kaart toevoegen**.
+4. Scrol naar de onderkant van de lijst en selecteer **Handmatig**.
+5. Voer de volgende configuratie-YAML in:
 
 ```yaml
 type: custom:simulation-period-card
 ```
 
-6.  Klik op **Opslaan**. De kaart zal proberen de simulatiemanager-entiteit automatisch te ontdekken.
+6. Klik op **Opslaan**. De kaart zal proberen de simulatiemanager-entiteit automatisch te ontdekken.
 
 ## Apparaten Beheren
 
@@ -30,18 +30,18 @@ Wanneer nieuwe hardware aan de kamer wordt toegevoegd (bijv. slimme stekkers, se
 
 ### Een Nieuw Apparaat Toevoegen
 
-1.  Ga naar **Instellingen** > **Apparaten & Diensten**.
-2.  Als het apparaat automatisch wordt ontdekt, klik op **Configureren**. Zo niet, klik op **+ Integratie toevoegen** en zoek naar het merk van het apparaat (bijv. Withings, Philips Hue).
-3.  Volg de instructies op het scherm om het apparaat te koppelen.
+1. Ga naar **Instellingen** > **Apparaten & Diensten**.
+2. Als het apparaat automatisch wordt ontdekt, klik op **Configureren**. Zo niet, klik op **+ Integratie toevoegen** en zoek naar het merk van het apparaat (bijv. Withings, Philips Hue).
+3. Volg de instructies op het scherm om het apparaat te koppelen.
 
 ### Toewijzen aan een Ruimte
 
 De geautomatiseerde logica vertrouwt er vaak op dat apparaten zich in de juiste "Ruimte" bevinden.
 
-1.  Zoek na het toevoegen van het apparaat deze in de apparaatlijst.
-2.  Klik op het **potloodpictogram** (Bewerken) naast de naam van het apparaat.
-3.  Selecteer in het vervolgkeuzemenu **Ruimte** de juiste kamer (bijv. "Klaslokaal" of "Lab").
-4.  Klik op **Bijwerken**.
+1. Zoek na het toevoegen van het apparaat deze in de apparaatlijst.
+2. Klik op het **potloodpictogram** (Bewerken) naast de naam van het apparaat.
+3. Selecteer in het vervolgkeuzemenu **Ruimte** de juiste kamer (bijv. "Klaslokaal" of "Lab").
+4. Klik op **Bijwerken**.
 
 ## Probleemoplossing
 
@@ -49,49 +49,41 @@ De geautomatiseerde logica vertrouwt er vaak op dat apparaten zich in de juiste 
 
 **Probleem:** Het dashboard toont "Custom Element doesn't exist: simulation-period-card".
 **Oplossing:**
-1.  Dit is vaak een browsercache-probleem. Voer een harde verversing van de browserpagina uit (Ctrl + F5 op Windows/Linux, Cmd + Shift + R op macOS).
-2.  Controleer of het bestand `simulation-period-card.js` bestaat in de map `www/simulation-period-card/` met behulp van de File Editor add-on indien beschikbaar.
+
+1. Dit is vaak een browsercache-probleem. Voer een harde verversing van de browserpagina uit (Ctrl + F5 op Windows/Linux, Cmd + Shift + R op macOS).
+2. Controleer of het bestand `simulation-period-card.js` bestaat in de map `www/simulation-period-card/` met behulp van de File Editor add-on indien beschikbaar.
 
 ### Simulatiemanager Niet Beschikbaar
 
 **Probleem:** De kaart toont een fout of knoppen reageren niet.
 **Oplossing:**
-1.  Ga naar **Ontwikkelhulpmiddelen** > **Staten**.
-2.  Zoek naar `sensor.simulation_manager`.
-3.  Controleer de kolom **Staat**.
-    -   Als de staat `unavailable` of `unknown` is, is de integratie mogelijk niet geladen.
-    -   Herstart Home Assistant door naar **Instellingen** > **Systeem** > **Herstarten** te gaan.
+
+1. Ga naar **Ontwikkelhulpmiddelen** > **Staten**.
+2. Zoek naar `sensor.simulation_manager`.
+3. Controleer de kolom **Staat**.
+   - Als de staat `unavailable` of `unknown` is, is de integratie mogelijk niet geladen.
+   - Herstart Home Assistant door naar **Instellingen** > **Systeem** > **Herstarten** te gaan.
 
 ### Gegevens Worden Niet Opgeslagen
 
 **Probleem:** Klikken op "Meting Opslaan" werkt de tabel niet bij.
 **Oplossing:**
-1.  Zorg ervoor dat Home Assistant draait en verbonden is met het netwerk.
-2.  Controleer of er momenteel een periode actief is. Het systeem vereist een actieve periode (bijv. "Periode 1") om metingen aan te koppelen.
 
-## PESDIE Workflow Beheren
+1. Zorg ervoor dat Home Assistant draait en verbonden is met het netwerk.
+2. Controleer of er momenteel een periode actief is. Het systeem vereist een actieve periode (bijv. "Periode 1") om metingen aan te koppelen.
 
-Deze les gebruikt een verplichte PESDIE-inlevering per student binnen hetzelfde simulatiescherm.
+## Foto Uploader (Dashboard upload)
 
-1.  Open het simulatiedashboard en controleer of de sectie **PESDIE Workflow (Per Student)** zichtbaar is.
-2.  Controleer in **PESDIE Invoer** of de velden **Student ID** en **PESDIE Output** aanwezig zijn.
-3.  Controleer dat het veld **Laatste PESDIE Nummer** niet meer wordt getoond (dit is bewust verwijderd).
-3.  Controleer of de knop **Submit PESDIE** zichtbaar is.
-4.  Laat de docent/student eerst beide velden invullen en daarna op **Submit PESDIE** drukken.
-5.  Controleer de kaart **PESDIE Inzendingen per Periode** op een nieuwe regel met **PESDIE #** en **Student ID**.
-6.  Controleer dat deze kaart nu direct met de tabel start (geen grafiek of metric-knoppen).
-7.  Bij een nieuwe les: gebruik **Reset Simulatie** zodat oude PESDIE-tekst en Student ID worden gewist.
+Beheerders kunnen een eenvoudige uploader toevoegen zodat leraren/leerlingen afbeeldingen direct vanaf het dashboard kunnen uploaden.
 
-### Nummering van PESDIE #
+- Plaats `photo_uploader.js` in de Home Assistant `www` map onder `photo_uploader/photo_uploader.js` (zie onder).
+- Voeg de resource toe via **Configuratie → Dashboards → Resources**:
+  - URL: `/local/photo_uploader/photo_uploader.js`
+  - Type: `module`
+- Voeg in het gewenste dashboard een kaart toe met:
 
-De nummering wordt automatisch per periode opgebouwd.
+```yaml
+type: 'custom:photo-uploader'
+```
 
-1.  Bij de eerste inzending in een periode is **PESDIE # = 1**.
-2.  Volgende inzendingen in dezelfde periode tellen op (**2, 3, 4, ...**).
-3.  In een andere periode start de telling opnieuw vanaf **1**.
-
-### Als PESDIE velden niet zichtbaar zijn
-
-1.  Herlaad het dashboard in de browser.
-2.  Controleer in **Instellingen > Apparaten & Diensten > Helpers** of de helpers **Student ID** en **PESDIE Output** bestaan.
-3.  Als ze ontbreken, open het juiste dashboard opnieuw en controleer of de laatste dashboardversie actief is.
+Bestandslocatie (server): `config/www/photo_uploader/photo_uploader.js` — toegankelijk in de browser als `/local/photo_uploader/photo_uploader.js`.
