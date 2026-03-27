@@ -71,13 +71,13 @@ views:
                 entities:
                   - entity: sensor.gewicht
                     name: Gewicht
-                  - entity: sensor.bloeddruk
+                  - entity: sensor.display_bloeddruk
                     name: Bloeddruk
-                  - entity: sensor.hartfrequentie
+                  - entity: sensor.display_hartfrequentie
                     name: Hartfrequentie
-                  - entity: sensor.ademfrequentie
+                  - entity: sensor.display_ademfrequentie
                     name: Ademfrequentie
-                  - entity: sensor.saturatie
+                  - entity: sensor.display_saturatie
                     name: Saturatie
                   - entity: binary_sensor.goedheid_alert_lage_saturatie
                     name: Alert lage saturatie (<93)
