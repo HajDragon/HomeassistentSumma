@@ -1,50 +1,65 @@
-# Ontwikkelaarsdocumentatie: Home Assistant Educatieve Slimme Kamer
+# Ontwikkelaarsdocumentatie: Cardiac Monitoring Refresh (2026-03)
 
-## Overzicht
+## Doel van deze wijziging
 
-Dit document biedt technische details voor softwareontwikkelaars die het Home Assistant Educational Smart Room-project onderhouden of uitbreiden. Het systeem is gebouwd op Home Assistant OS (HAOS) en maakt gebruik van een aangepaste integratie voor staatbeheer en een aangepaste Lovelace-kaart voor de gebruikersinterface.
+Deze release vervangt de oude lichaamssamenstelling/PESDIE-flow door een cardio-monitoring scenario voor Mevrouw Goedheid.
 
-## Architectuur
+- Patiëntprofiel: 70 jaar, voorgeschiedenis van myocardinfarct (MI) en artrose.
+- Datareeks: 8 vaste meetpunten van 01-03-2026 t/m 25-03-2026.
+- Vitals: gewicht, bloeddruk, hartfrequentie, ademfrequentie, saturatie, opmerkingen.
 
-De kern van de simulatielogica bevindt zich in de map `custom_components/simulation_manager`. In tegenstelling tot standaard Home Assistant-sensoren die typisch staatloos of polling-gebaseerd zijn, vereist dit project gestructureerde, persistente staten om simulatieperioden en metingen over herstarts heen bij te houden.
+## Architectuurwijzigingen
 
-### 1. Staatbeheer (Het Brein)
+1. Datahelpers en templates zijn herbouwd in config/packages/mevrouw_goedheid_simulation.yaml.
+2. Canonieke dashboard-entiteiten zijn beschikbaar als:
+   - sensor.gewicht
+   - sensor.bloeddruk
+   - sensor.hartfrequentie
+   - sensor.ademfrequentie
+   - sensor.saturatie
+3. Alertlogica is toegevoegd:
+   - Lage saturatie: sensor.saturatie < 93
+   - Hoge pols: sensor.hartfrequentie > 100
+4. De simulation_manager blijft de periodedata dragen; extra velden worden opgeslagen via ALLOW_EXTRA.
 
-Alle bedrijfslogica is ingekapseld in `models.py`. Deze module is puur Python en heeft geen afhankelijkheden van de Home Assistant-kern.
+## Data refresh flow
 
 - **Klasse:** `SimulationState`
 - **Verantwoordelijkheid:** Beheert de lijst met simulatieperioden en hun bijbehorende metingen.
 - **Opslag:** Gegevens worden geserialiseerd naar een JSON-compatibel woordenboekformaat (`to_dict`) en opnieuw samengesteld (`from_dict`).
 
-### 2. Integratielaag (De Lijm)
+## Influx configuratie
 
-Het bestand `__init__.py` dient als de brug tussen Home Assistant en de `SimulationState`.
+Vereiste environment variabelen voor scripts/refresh_cardiac_history_influx.py:
 
 - **Service Registratie:** Het registreert services zoals `simulation_manager.switch_period`, `simulation_manager.save_measurement`, en `simulation_manager.reset_simulation`.
 - **Staat Mutatie:** Wanneer een service wordt aangeroepen, roept deze laag de overeenkomstige methode op het `SimulationState`-object aan.
 - **Persistentie:** Wijzigingen worden opgeslagen in `.storage/simulation_manager` met behulp van `homeassistant.helpers.storage.Store`.
 
-### 3. Reactieve Frontend Updates (De Megafoon)
+## Dashboard wijzigingen
 
-Om ervoor te zorgen dat de frontend direct wordt bijgewerkt zonder polling, pusht de integratie de volledige staat naar één sensor-entiteit: `sensor.simulation_manager`.
+- PESDIE kaarten en stappenplan zijn verwijderd uit het simulatiedashboard.
+- Nieuwe kernblokken:
+  - Databron + simulatiefase
+  - Patiëntprofiel
+  - Huidige meetwaarden + alerts
+  - Simulatie invoer
+  - Metingentabel met opmerkingen
+  - 6-maanden trendkaart (geschaald op maartdata)
+  - Observatielog progressie
 
 - **Mechanisme:** Na elke staatmutatie verwerkt de integratie de volledige staat en stelt deze in als de `attributes` van `sensor.simulation_manager`.
 - **Voordeel:** De Lovelace frontend-kaart abonneert zich op wijzigingen in deze enkele entiteit via de Home Assistant WebSocket API. Dit zorgt voor onmiddellijke UI-updates wanneer gegevens wijzigen.
 
-```python
-# Integratie update patroon in __init__.py
-def _push_update(self):
-    """Notify frontend of new state."""
-    self.hass.states.async_set(
-        ENTITY_ID, 
-        self.state.active_period_id or NO_ACTIVE_PERIOD,
-        attributes=self.state.to_dict()
-    )
-    # Asynchronous save to disk
-    self._store.async_delay_save(self._data_to_save, 1.0)
-```
+- config/packages/mevrouw_goedheid_simulation.yaml
+- config/dashboards/simulation_dashboard.yaml
+- config/dashboards/simulation/row1_controls.yaml
+- config/dashboards/simulation/row2_meetwaarden.yaml
+- config/dashboards/simulation/row3_period_card.yaml
+- scripts/seed_periods.py
+- scripts/refresh_cardiac_history_influx.py
 
-## Schaalbaarheid en Dynamische Configuratie
+## Verificatiechecklist
 
 Het project houdt zich aan een "Nul Hardcoding" filosofie. Entiteit-ID's (bijv. specifieke sensoren zoals `sensor.temperature_123`) mogen niet hardcoded zijn in de broncode.
 

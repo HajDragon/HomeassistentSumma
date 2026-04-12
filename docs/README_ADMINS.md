@@ -1,6 +1,6 @@
-# Systeembeheerdershandleiding: Home Assistant Educatieve Slimme Kamer
+# Beheerdershandleiding: Cardiac Monitoring Dashboard
 
-## Overzicht
+## Doel
 
 Deze handleiding is bedoeld voor mensen die de slimme kamer gebruiken en helpen beheren, maar geen technische ervaring hebben. De uitleg is kort, eenvoudig en gericht op wat u in de praktijk moet doen in Home Assistant.
 

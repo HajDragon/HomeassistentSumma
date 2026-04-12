@@ -1,6 +1,6 @@
 # Zorgkamer - Docentenhandleiding
 
-## Inleiding
+## Lescontext
 
 Welkom bij dit project. Het zorgkamer-project simuleert hoe een verpleegkundige voor een patient (in ons geval een oudere) kan zorgen met behulp van apparaten en sensoren die in de kamer zijn geinstalleerd.
 

@@ -1,0 +1,54 @@
+type: markdown
+title: "Cardiale Meetreeks — Maart 2026"
+card_mod:
+  style:
+    .: |
+      :host { position: relative; z-index: 1; }
+      :host(:hover) { z-index: 100; }
+      ha-card { overflow: visible !important; }
+    ha-card$: |
+      .card-header {
+        pointer-events: none;
+        padding-right: 44px !important;
+        position: relative;
+        overflow: visible !important;
+      }
+      .card-header::after {
+        content: "?";
+        pointer-events: auto;
+        position: absolute;
+        top: 50%; right: 12px;
+        transform: translateY(-50%);
+        width: 24px; height: 24px;
+        background: var(--primary-color, #03a9f4);
+        color: white; border-radius: 50%;
+        font-size: 12px; font-weight: bold; font-family: sans-serif;
+        line-height: 24px; text-align: center;
+        cursor: help; opacity: 0.8; z-index: 10;
+      }
+      .card-header::before {
+        content: "Overzicht van alle 8 vastgelegde meetmomenten in maart 2026 met gewicht, bloeddruk, hartfrequentie, ademfrequentie en saturatie.";
+        position: absolute; top: 80%; right: 12px;
+        background: rgba(20,20,20,0.95); color: #fff;
+        padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; line-height: 1.6;
+        text-transform: none; letter-spacing: normal;
+        min-width: 200px; max-width: 260px; text-align: left;
+        opacity: 0; transition: opacity 0.15s ease;
+        z-index: 999; pointer-events: none; white-space: normal;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      }
+      .card-header:hover::after { opacity: 1; }
+      .card-header:hover::before { opacity: 1; }
+content: |
+  | Datum | Gewicht | Bloeddruk | Hartfrequentie | Ademfrequentie | Saturatie | Opmerkingen |
+  |---|---:|---|---:|---:|---:|---|
+  | 01-03-2026 | 68.0 kg | 130/80 mmHg | 72 bpm | 16/min | 96% | Stabiele situatie na ontslag |
+  | 04-03-2026 | 68.2 kg | 132/82 mmHg | 74 bpm | 16/min | 96% | Geen klachten |
+  | 08-03-2026 | 68.7 kg | 135/85 mmHg | 78 bpm | 17/min | 95% | Licht vermoeid |
+  | 11-03-2026 | 69.3 kg | 138/86 mmHg | 80 bpm | 18/min | 95% | Enkels licht gezwollen |
+  | 15-03-2026 | 70.1 kg | 142/88 mmHg | 86 bpm | 19/min | 94% | Kortademig bij inspanning |
+  | 18-03-2026 | 70.8 kg | 145/90 mmHg | 90 bpm | 20/min | 94% | Meer oedeem in onderbenen |
+  | 22-03-2026 | 71.5 kg | 150/92 mmHg | 96 bpm | 21/min | 93% | Gewicht stijgt snel |
+  | 25-03-2026 | 72.2 kg | 155/95 mmHg | 102 bpm | 22/min | 92% | Duidelijke verslechtering |
+
+  **Trend:** Gewicht stijgt geleidelijk (68.0 → 72.2), bloeddruk en pols nemen toe, ademfrequentie neemt toe, saturatie daalt (96% → 92%).

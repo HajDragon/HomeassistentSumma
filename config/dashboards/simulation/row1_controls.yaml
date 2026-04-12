@@ -1,0 +1,20 @@
+type: vertical-stack
+cards:
+  - type: entities
+    title: Databron en Simulatiefase
+    entities:
+      - entity: input_select.data_bron_weegschaal
+        name: Databron
+      - entity: input_select.simulatiefase_goedheid
+        name: Simulatiefase
+      - entity: input_datetime.goedheid_meetdatum
+        name: Datum van meting
+
+  - type: markdown
+    title: Patiëntprofiel
+    content: |
+      **Mevrouw Goedheid**
+      - Leeftijd: **70 jaar**
+      - Anamnese: **Myocardinfarct (MI), artrose**
+      - Monitoring focus: **Body Scan en BPM Connect**
+      - Huidig gewicht (laatste meetpunt): **72.2 kg op 25-03-2026**
