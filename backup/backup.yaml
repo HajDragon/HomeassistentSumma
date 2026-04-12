@@ -13,7 +13,6 @@ views:
           - entity: input_boolean.goedheid_weegschaal_gereserveerd
           - entity: input_boolean.goedheid_kennis_vochtbalans_bmi
           - entity: input_boolean.goedheid_kennis_spijsvertering
-          - entity: input_boolean.goedheid_kennis_pesdie
           - entity: sensor.goedheid_les_klaar
             name: "Les klaar om te starten?"
 

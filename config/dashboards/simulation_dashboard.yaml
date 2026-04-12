@@ -31,58 +31,47 @@ views:
                 entities:
                   - entity: input_select.available_photos
                     name: Selecteer foto
-              - type: 'custom:photo-uploader'
-                
+              - type: custom:photo-uploader
               - type: markdown
                 title: Geselecteerde Foto
                 content: >
-                  <img src="/local/photos/{{ states('input_select.available_photos') }}"
-                  style="width:100%; border-radius:8px;"
-                  onerror="this.style.display='none'">
+                  <img src="/local/photos/{{
+                  states('input_select.available_photos') }}" style="width:100%;
+                  border-radius:8px;" onerror="this.style.display='none'">
               - type: button
                 name: Vernieuw Fotogalerij
                 icon: mdi:camera-sync
                 tap_action:
                   action: call-service
                   service: script.scan_photos_directory
-          - type: vertical-stack
-            cards:
-              - type: markdown
-                title: Observatielog Progressie
-                content: |
-                  <div style="text-align: center">
-
-                  | Datum | Opmerkingen |
-                  |---|---|
-                  | 01-03-2026 | **Stabiele situatie na ontslag** |
-                  | 04-03-2026 | Geen klachten |
-                  | 08-03-2026 | Licht vermoeid |
-                  | 11-03-2026 | Enkels licht gezwollen |
-                  | 15-03-2026 | Kortademig bij inspanning |
-                  | 18-03-2026 | **Meer oedeem in onderbenen** |
-                  | 22-03-2026 | **Gewicht stijgt snel** |
-                  | 25-03-2026 | Duidelijke verslechtering |
       - type: grid
         cards:
           - type: horizontal-stack
             cards:
               - type: entities
-                title: Huidige Meetwaarden
+                title: Huidige Meetwaarden (Databron-afhankelijk)
                 entities:
-                  - entity: sensor.gewicht
-                    name: Gewicht
-                  - entity: sensor.display_bloeddruk
-                    name: Bloeddruk
+                  - entity: sensor.display_gewicht
+                    name: Gewicht (kg)
+                  - entity: sensor.display_bloeddruk_systolisch
+                    name: Bloeddruk systolisch (mmHg)
+                    icon: mdi:heart-pulse
+                  - entity: sensor.display_bloeddruk_diastolisch
+                    name: Bloeddruk diastolisch (mmHg)
+                    icon: mdi:heart-pulse
                   - entity: sensor.display_hartfrequentie
-                    name: Hartfrequentie
+                    name: Hartfrequentie (bpm)
+                    icon: mdi:pulse
                   - entity: sensor.display_ademfrequentie
-                    name: Ademfrequentie
+                    name: Ademfrequentie (/min)
                   - entity: sensor.display_saturatie
                     name: Saturatie
-                  - entity: binary_sensor.goedheid_alert_lage_saturatie
+                  - entity: binary_sensor.config_alert_low_saturation
                     name: Alert lage saturatie (<93)
-                  - entity: binary_sensor.goedheid_alert_hoge_pols
-                    name: Alert hoge pols (>100)
+              - type: markdown
+                content: >
+                  Databron = **Simulatie** gebruikt simulatie-invoer.
+                  Databron = **Live Data** gebruikt **Withings**-entiteiten.
               - type: entities
                 title: Simulatie Invoer
                 entities:
@@ -98,6 +87,7 @@ views:
                     name: Ademfrequentie (/min)
                   - entity: input_number.goedheid_saturatie
                     name: Saturatie (%)
+                    icon: mdi:hand-water
                   - entity: input_text.goedheid_opmerking
                     name: Opmerking
                   - type: divider
@@ -185,6 +175,23 @@ views:
               92%).
             grid_options:
               columns: full
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                title: Observatielog Progressie
+                content: |
+                  <div style="text-align: center">
+
+                  | Datum | Opmerkingen |
+                  |---|---|
+                  | 01-03-2026 | **Stabiele situatie na ontslag** |
+                  | 04-03-2026 | Geen klachten |
+                  | 08-03-2026 | Licht vermoeid |
+                  | 11-03-2026 | Enkels licht gezwollen |
+                  | 15-03-2026 | Kortademig bij inspanning |
+                  | 18-03-2026 | **Meer oedeem in onderbenen** |
+                  | 22-03-2026 | **Gewicht stijgt snel** |
+                  | 25-03-2026 | Duidelijke verslechtering |
         column_span: 2
       - type: grid
         cards:
@@ -192,10 +199,9 @@ views:
             cards:
               - type: custom:simulation-period-card
                 title: Cardiale Monitoring - Meetreeks (8 perioden)
-                show_chart: true            # 1) Chart enabled
-                chart_limit: 8             # 3) Show exactly the last 8 measurement periods on the X-axis
-                chart_point_radius: 6      # 2) Visible point markers (radius in px) for every measurement
-
+                show_chart: true
+                chart_limit: 8
+                chart_point_radius: 6
                 columns:
                   - timestamp
                   - gewicht
@@ -205,7 +211,6 @@ views:
                   - ademfrequentie
                   - saturatie
                   - opmerking
-
                 column_labels:
                   timestamp: Datum
                   gewicht: Gewicht (kg)
@@ -215,7 +220,6 @@ views:
                   ademfrequentie: Ademfreq. (/min)
                   saturatie: Saturatie (%)
                   opmerking: Opmerkingen
-
                 live_input_entities:
                   gewicht: input_number.goedheid_gewicht
                   spiermassa: input_number.goedheid_spiermassa
@@ -227,7 +231,6 @@ views:
                   hartfrequentie: input_number.goedheid_hartfrequentie
                   ademfrequentie: input_number.goedheid_ademfrequentie
                   saturatie: input_number.goedheid_saturatie
-
                 grid_options:
                   columns: 18
                   rows: 8

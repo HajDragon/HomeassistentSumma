@@ -14,7 +14,7 @@
 ## Lesdoelen
 
 1. De student past de body scan slimme weegschaal toe om de vochtbalans, spiermassa, vetmassa en het gewicht in kaart te brengen.
-2. De student signaleert een trend van metingen en maakt 1 PESDIE voor Mevrouw Goedheid.
+2. De student signaleert een trend van metingen voor Mevrouw Goedheid.
 
 ---
 
@@ -42,8 +42,8 @@ Laat een mindmap maken in subgroepen. Wat weet de student over vochtbalans, spie
 - De subgroepen gaan om en om aan de slag met de body scan slimme weegschaal.
 - De studenten krijgen kennis over het gebruik van de slimme weegschaal door het te proberen.
 - De studenten krijgen een casus met de waardes van vochtbalans, spiermassa, vetmassa, gewicht en BMI.
-- De student interpreteert de waardes en schrijft een PESDIE op basis van het geformuleerde doel.
-- De docent bespreekt de casus & PESDIE. Alle subgroepen komen aan bod.
+- De student interpreteert de waardes op basis van het geformuleerde doel.
+- De docent bespreekt de casus. Alle subgroepen komen aan bod.
 
 ### Afronding
 
@@ -58,7 +58,6 @@ Laat een mindmap maken in subgroepen. Wat weet de student over vochtbalans, spie
 - De docent reserveert de body scan slimme weegschaal via Xerte (zie link bovenstaand).
 - De student heeft kennis van de vochtbalans en het BMI.
 - De student heeft kennis van de voedingsstoffen en de werking van het spijsverteringskanaal.
-- De student heeft kennis van de PESDIE-methode en kan deze toepassen om Mevrouw Goedheid te helpen naar een gezond gewicht.
 
 ---
 

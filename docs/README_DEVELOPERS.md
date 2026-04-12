@@ -155,10 +155,3 @@ type: 'custom:photo-uploader'
     - De backend-service is`photo_scanner.upload` (service data: `filename`, `content` (base64), `overwrite`). De service slaat bestanden op in `config/www/photos` en triggert `photo_scanner.scan`.
 4.  **Geen OS-wijzigingen:** Vertrouw niet op het installeren van systeempakketten via `apt` of `pip` op de HA-host. Alles moet draaien binnen de standaard Home Assistant-omgeving.
 
-### Nummeringslogica zonder teller-helper
-
-De helper `input_number.goedheid_pesdie_teller` is verwijderd uit de bronpackage.
-
-- `script.submit_pesdie` berekent `pesdie_submission_number` nu dynamisch per actieve periode.
-- Formule: aantal bestaande metingen in die periode met een bestaand `pesdie_submission_number` + 1.
-- Resultaat: elke periode start lokaal bij `1`, zonder globale teller-state.

@@ -150,12 +150,6 @@ input_text:
     max: 50
     icon: mdi:account-badge
 
-  goedheid_pesdie_output:
-    name: "PESDIE Output"
-    min: 1
-    max: 255
-    icon: mdi:text-box-edit-outline
-
   goedheid_opmerking:
     name: "Opmerking"
     min: 1
@@ -175,10 +169,6 @@ input_boolean:
     name: "Studenten kennen spijsvertering"
     icon: mdi:stomach
 
-  goedheid_kennis_pesdie:
-    name: "Studenten kunnen PESDIE toepassen"
-    icon: mdi:clipboard-text-outline
-
 template:
   - sensor:
       - name: "display_gewicht"
@@ -187,10 +177,12 @@ template:
         device_class: weight
         state_class: measurement
         state: >
-          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+          {%- set bron = states("input_select.data_bron_weegschaal") | lower | replace(" ", "") -%}
+          {%- if bron == "simulatie" %}
             {{ states("input_number.goedheid_gewicht") }}
           {%- else %}
-            {{ states("sensor.withings_gewicht") }}
+            {%- set gewicht_primary = states("sensor.withings_gewicht") %}
+            {{ gewicht_primary if gewicht_primary not in ["unknown","unavailable","none",""] else states("sensor.withings_weight") }}
           {%- endif %}
         icon: mdi:scale-bathroom
 
@@ -252,8 +244,7 @@ template:
         state: >
           {{ is_state('input_boolean.goedheid_weegschaal_gereserveerd', 'on')
              and is_state('input_boolean.goedheid_kennis_vochtbalans_bmi', 'on')
-             and is_state('input_boolean.goedheid_kennis_spijsvertering', 'on')
-             and is_state('input_boolean.goedheid_kennis_pesdie', 'on') }}
+             and is_state('input_boolean.goedheid_kennis_spijsvertering', 'on') }}
         icon: >
           {% if is_state('sensor.goedheid_les_klaar', 'True') %}
             mdi:check-circle
@@ -266,11 +257,14 @@ template:
         unique_id: display_bloeddruk
         unit_of_measurement: "mmHg"
         state: >
-          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+          {%- set bron = states("input_select.data_bron_weegschaal") | lower | replace(" ", "") -%}
+          {%- if bron == "simulatie" %}
             {{ (states("input_number.goedheid_bloeddruk_sys") | int(0)) ~ "/" ~ (states("input_number.goedheid_bloeddruk_dia") | int(0)) }}
           {%- else %}
-            {%- set sys = states("sensor.withings_bloeddruk_sys") %}
-            {%- set dia = states("sensor.withings_bloeddruk_dia") %}
+            {%- set sys_primary = states("sensor.withings_systolische_bloeddruk") %}
+            {%- set sys = sys_primary if sys_primary not in ["unknown","unavailable","none",""] else states("sensor.withings_bloeddruk_sys") %}
+            {%- set dia_primary = states("sensor.withings_diastolische_bloeddruk") %}
+            {%- set dia = dia_primary if dia_primary not in ["unknown","unavailable","none",""] else states("sensor.withings_bloeddruk_dia") %}
             {{ (sys if sys not in ["unknown","unavailable","none",""] else "unknown") ~ "/" ~ (dia if dia not in ["unknown","unavailable","none",""] else "unknown") }}
           {%- endif %}
         icon: mdi:heart-pulse
@@ -280,10 +274,12 @@ template:
         unit_of_measurement: "mmHg"
         state_class: measurement
         state: >
-          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+          {%- set bron = states("input_select.data_bron_weegschaal") | lower | replace(" ", "") -%}
+          {%- if bron == "simulatie" %}
             {{ states("input_number.goedheid_bloeddruk_sys") }}
           {%- else %}
-            {{ states("sensor.withings_bloeddruk_sys") }}
+            {%- set sys_primary = states("sensor.withings_systolische_bloeddruk") %}
+            {{ sys_primary if sys_primary not in ["unknown","unavailable","none",""] else states("sensor.withings_bloeddruk_sys") }}
           {%- endif %}
         icon: mdi:arrow-up-bold-hexagon-outline
 
@@ -292,10 +288,12 @@ template:
         unit_of_measurement: "mmHg"
         state_class: measurement
         state: >
-          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+          {%- set bron = states("input_select.data_bron_weegschaal") | lower | replace(" ", "") -%}
+          {%- if bron == "simulatie" %}
             {{ states("input_number.goedheid_bloeddruk_dia") }}
           {%- else %}
-            {{ states("sensor.withings_bloeddruk_dia") }}
+            {%- set dia_primary = states("sensor.withings_diastolische_bloeddruk") %}
+            {{ dia_primary if dia_primary not in ["unknown","unavailable","none",""] else states("sensor.withings_bloeddruk_dia") }}
           {%- endif %}
         icon: mdi:arrow-down-bold-hexagon-outline
 
@@ -304,10 +302,12 @@ template:
         unit_of_measurement: "bpm"
         state_class: measurement
         state: >
-          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+          {%- set bron = states("input_select.data_bron_weegschaal") | lower | replace(" ", "") -%}
+          {%- if bron == "simulatie" %}
             {{ states("input_number.goedheid_hartfrequentie") }}
           {%- else %}
-            {{ states("sensor.withings_hartfrequentie") }}
+            {%- set hart_primary = states("sensor.withings_hartfrequentie") %}
+            {{ hart_primary if hart_primary not in ["unknown","unavailable","none",""] else states("sensor.withings_hartslag") }}
           {%- endif %}
         icon: mdi:heart
 
@@ -316,10 +316,12 @@ template:
         unit_of_measurement: "/min"
         state_class: measurement
         state: >
-          {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
+          {%- set bron = states("input_select.data_bron_weegschaal") | lower | replace(" ", "") -%}
+          {%- if bron == "simulatie" %}
             {{ states("input_number.goedheid_ademfrequentie") }}
           {%- else %}
-            {{ states("sensor.withings_ademfrequentie") }}
+            {%- set adem_primary = states("sensor.withings_ademhalingsfrequentie") %}
+            {{ adem_primary if adem_primary not in ["unknown","unavailable","none",""] else states("sensor.withings_ademfrequentie") }}
           {%- endif %}
         icon: mdi:lungs
 
@@ -331,7 +333,8 @@ template:
           {%- if is_state("input_select.data_bron_weegschaal", "Simulatie") %}
             {{ states("input_number.goedheid_saturatie") }}
           {%- else %}
-            {%- set live = states("sensor.withings_saturatie") %}
+            {%- set live_primary = states("sensor.withings_zuurstofsaturatie") %}
+            {%- set live = live_primary if live_primary not in ["unknown", "unavailable", "none", ""] else states("sensor.withings_saturatie") %}
             {{ live if live not in ["unknown", "unavailable", "none", ""] else states("input_number.goedheid_saturatie") }}
           {%- endif %}
         icon: mdi:oxygen
@@ -389,11 +392,6 @@ script:
           entity_id: input_text.goedheid_student_id
         data:
           value: ""
-      - service: input_text.set_value
-        target:
-          entity_id: input_text.goedheid_pesdie_output
-        data:
-          value: ""
 
   sync_display_naar_simulatie_invoer:
     alias: "Sync Meetwaarden naar Simulatie Invoer"
@@ -424,6 +422,31 @@ script:
           entity_id: input_number.goedheid_vochtbalans
         data:
           value: "{{ states('sensor.display_vochtbalans') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_bloeddruk_sys
+        data:
+          value: "{{ states('sensor.display_bloeddruk_systolisch') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_bloeddruk_dia
+        data:
+          value: "{{ states('sensor.display_bloeddruk_diastolisch') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_hartfrequentie
+        data:
+          value: "{{ states('sensor.display_hartfrequentie') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_ademfrequentie
+        data:
+          value: "{{ states('sensor.display_ademfrequentie') | float(0) }}"
+      - service: input_number.set_value
+        target:
+          entity_id: input_number.goedheid_saturatie
+        data:
+          value: "{{ states('sensor.display_saturatie') | float(0) }}"
 
   goedheid_sla_meting_op:
     alias: "Sla Huidige Meting Op"
@@ -443,37 +466,12 @@ script:
           saturatie:      "{{ states('input_number.goedheid_saturatie')      | float(0) }}"
           opmerking:      "{{ states('input_text.goedheid_opmerking')        | trim }}"
           timestamp:      "{{ states('input_datetime.goedheid_meetdatum')    }}"
-          pesdie_student_id: "{{ states('input_text.goedheid_student_id') | trim }}"
-          pesdie_output:  "{{ states('input_text.goedheid_pesdie_output')    | trim }}"
-          pesdie_phase:   "{{ states('input_select.simulatiefase_goedheid') }}"
-          pesdie_saved_at: "{{ now().isoformat() }}"
 
   scan_photos_directory:
     alias: "Scan Photos Directory"
     icon: mdi:folder-refresh
     sequence:
       - service: photo_scanner.scan
-
-  goedheid_submit_pesdie:
-    alias: "Submit PESDIE"
-    icon: mdi:clipboard-check-outline
-    sequence:
-      - variables:
-          pesdie_output_value: >
-            {% set raw = states('input_text.goedheid_pesdie_output') | trim %}
-            {{ '' if raw in ['unknown', 'unavailable', 'none'] else raw }}
-      - service: simulation_manager.switch_period
-        data:
-          period_id: "{{ states('sensor.simulation_manager') }}"
-          date: "{{ states('input_datetime.goedheid_meetdatum') }}"
-      - service: simulation_manager.save_measurement
-        data:
-          timestamp: "{{ states('input_datetime.goedheid_meetdatum') }}"
-          pesdie_submission_number: "{{ pesdie_output_value }}"
-          pesdie_student_id: "{{ states('input_text.goedheid_student_id') | trim }}"
-          pesdie_output: "{{ pesdie_output_value }}"
-          pesdie_phase: "{{ states('input_select.simulatiefase_goedheid') }}"
-          pesdie_saved_at: "{{ now().isoformat() }}"
 
 automation:
   - id: goedheid_simulatie_fase_wissel
@@ -677,5 +675,28 @@ automation:
     action:
       - service: script.scan_photos_directory
     mode: single
+
+  - id: goedheid_sync_livedata_naar_invoer
+    alias: "Goedheid - Sync Live Data naar Simulatie Invoer"
+    trigger:
+      - platform: state
+        entity_id: input_select.data_bron_weegschaal
+      - platform: state
+        entity_id:
+          - sensor.display_gewicht
+          - sensor.display_bloeddruk_systolisch
+          - sensor.display_bloeddruk_diastolisch
+          - sensor.display_hartfrequentie
+          - sensor.display_ademfrequentie
+          - sensor.display_saturatie
+      - platform: homeassistant
+        event: start
+    condition:
+      - condition: template
+        value_template: >
+          {{ states('input_select.data_bron_weegschaal') | lower | replace(' ', '') != 'simulatie' }}
+    action:
+      - service: script.sync_display_naar_simulatie_invoer
+    mode: queued
 
 

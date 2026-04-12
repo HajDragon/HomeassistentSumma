@@ -2,88 +2,143 @@
 
 ## Overzicht
 
-Deze handleiding is bedoeld voor systeembeheerders die de educatieve slimme kamer beheren met behulp van de Home Assistant-gebruikersinterface. Het behandelt configuratie, apparaatbeheer en stappen voor probleemoplossing. Er is geen programmeerkennis of terminaltoegang vereist voor deze taken.
+Deze handleiding is bedoeld voor mensen die de slimme kamer gebruiken en helpen beheren, maar geen technische ervaring hebben. De uitleg is kort, eenvoudig en gericht op wat u in de praktijk moet doen in Home Assistant.
 
-## Dashboardconfiguratie
+## Het dashboard gebruiken
 
-De primaire interface voor de simulatie is de **Simulation Period Card**. Dit aangepaste element stelt leraren in staat de simulatie te besturen en gegevens te loggen.
+Op het dashboard ziet u informatie over de kamer, camera’s, sensoren en metingen. Alles is gemaakt om snel te kunnen zien wat er aan de hand is.
 
-### De Simulatiekaart Toevoegen
+Belangrijk om te onthouden:
 
-Als u het simulatiebedieningspaneel aan een nieuwe dashboardweergave moet toevoegen:
+- Gebruik het dashboard rustig en klik alleen op wat u nodig heeft.
+- Als een scherm er vreemd uitziet, vernieuw dan eerst de pagina.
+- Wacht na een meting even totdat de gegevens zichtbaar worden.
+- Klik niet op het potloodje om het dashboard te bewerken, tenzij u echt iets wilt aanpassen.
+- Zorg dat de tablet of computer verbonden is met het juiste wifi-netwerk.
+- Laat het dashboard open staan tijdens de les, zodat metingen goed zichtbaar blijven.
 
-1. Navigeer naar het gewenste Dashboard.
-2. Klik op het **Dashboard bewerken** (potloodpictogram) in de rechterbovenhoek.
-3. Klik op de knop **+ Kaart toevoegen**.
-4. Scrol naar de onderkant van de lijst en selecteer **Handmatig**.
-5. Voer de volgende configuratie-YAML in:
+## Wat studenten moeten weten
 
-```yaml
-type: custom:simulation-period-card
-```
+Deze punten helpen studenten en begeleiders om rustig met het systeem te werken:
 
-6. Klik op **Opslaan**. De kaart zal proberen de simulatiemanager-entiteit automatisch te ontdekken.
+- Een camera of sensor kan even wachten op nieuwe informatie.
+- Als een waarde nog niet zichtbaar is, hoeft dat niet meteen een fout te zijn.
+- Na een meting kan het even duren voordat de cijfers op het scherm verschijnen.
+- Gebruik de knoppen op het scherm alleen als u zeker weet wat ze doen.
+- Meld problemen liever meteen, zodat iemand kan kijken of alles nog goed werkt.
 
-## Apparaten Beheren
+## Camera geeft geen beeld
 
-Wanneer nieuwe hardware aan de kamer wordt toegevoegd (bijv. slimme stekkers, sensoren of lampen), moet deze correct worden toegewezen in Home Assistant zodat het systeem deze herkent.
+Als een camera geen beeld laat zien, probeer dan eerst een harde verversing van de pagina:
 
-### Een Nieuw Apparaat Toevoegen
+1. Druk op Ctrl + F5.
+2. Kijk daarna opnieuw of het camerabeeld terug is.
 
-1. Ga naar **Instellingen** > **Apparaten & Diensten**.
-2. Als het apparaat automatisch wordt ontdekt, klik op **Configureren**. Zo niet, klik op **+ Integratie toevoegen** en zoek naar het merk van het apparaat (bijv. Withings, Philips Hue).
-3. Volg de instructies op het scherm om het apparaat te koppelen.
+Als er nog steeds geen beeld is, volg dan deze stappen:
 
-### Toewijzen aan een Ruimte
+1. Ga naar Instellingen.
+2. Kies Apparaten en diensten.
+3. Open Integraties.
+4. Kies Reolink.
+5. Zoek de camera Backside of front door.
+6. Klik rechts op de drie puntjes bij die camera.
+7. Kies Reload.
 
-De geautomatiseerde logica vertrouwt er vaak op dat apparaten zich in de juiste "Ruimte" bevinden.
+Daarna wordt de camera-informatie opnieuw geladen.
 
-1. Zoek na het toevoegen van het apparaat deze in de apparaatlijst.
-2. Klik op het **potloodpictogram** (Bewerken) naast de naam van het apparaat.
-3. Selecteer in het vervolgkeuzemenu **Ruimte** de juiste kamer (bijv. "Klaslokaal" of "Lab").
-4. Klik op **Bijwerken**.
+## Sensor zegt "Unavailable" of "Niet beschikbaar"
 
-## Probleemoplossing
+Als een sensor de tekst Unavailable of Niet beschikbaar toont, betekent dit niet meteen dat de sensor kapot is.
 
-### Fouten in Simulatiekaart
+Dit kan twee dingen betekenen:
 
-**Probleem:** Het dashboard toont "Custom Element doesn't exist: simulation-period-card".
-**Oplossing:**
+- De sensor heeft nog geen nieuwe meting ontvangen.
+- We hebben op dit moment geen apparaat dat precies die waarde doorgeeft, bijvoorbeeld huidtemperatuur.
 
-1. Dit is vaak een browsercache-probleem. Voer een harde verversing van de browserpagina uit (Ctrl + F5 op Windows/Linux, Cmd + Shift + R op macOS).
-2. Controleer of het bestand `simulation-period-card.js` bestaat in de map `www/simulation-period-card/` met behulp van de File Editor add-on indien beschikbaar.
+Zodra er een meting wordt gedaan, verandert de sensor meestal vanzelf van Niet beschikbaar naar een getal.
 
-### Simulatiemanager Niet Beschikbaar
+## Withings-metingen synchroniseren
 
-**Probleem:** De kaart toont een fout of knoppen reageren niet.
-**Oplossing:**
+Wanneer studenten een meting doen in de kamer, moet de gegevensstroom soms handmatig worden ververst zodat de waarden op het dashboard komen.
 
-1. Ga naar **Ontwikkelhulpmiddelen** > **Staten**.
-2. Zoek naar `sensor.simulation_manager`.
-3. Controleer de kolom **Staat**.
-   - Als de staat `unavailable` of `unknown` is, is de integratie mogelijk niet geladen.
-   - Herstart Home Assistant door naar **Instellingen** > **Systeem** > **Herstarten** te gaan.
+Doe dan het volgende:
 
-### Gegevens Worden Niet Opgeslagen
+1. Ga naar Instellingen.
+2. Kies Apparaten en diensten.
+3. Open Integraties.
+4. Kies Withings.
+5. Klik rechts op de drie puntjes bij de integratie.
+6. Kies Reload.
 
-**Probleem:** Klikken op "Meting Opslaan" werkt de tabel niet bij.
-**Oplossing:**
+Daarna worden de nieuwste metingen opnieuw ingeladen op het dashboard.
 
-1. Zorg ervoor dat Home Assistant draait en verbonden is met het netwerk.
-2. Controleer of er momenteel een periode actief is. Het systeem vereist een actieve periode (bijv. "Periode 1") om metingen aan te koppelen.
+## Belangrijke aandachtspunten
 
-## Foto Uploader (Dashboard upload)
+Deze punten helpen om problemen te voorkomen:
 
-Beheerders kunnen een eenvoudige uploader toevoegen zodat leraren/leerlingen afbeeldingen direct vanaf het dashboard kunnen uploaden.
+- Zet camera’s, sensoren en schermen niet zomaar uit of los, want dan kan informatie verdwijnen.
+- Controleer na een meting altijd even of de nieuwe waarde zichtbaar is.
+- Gebruik Reload bij Reolink of Withings als gegevens niet binnenkomen.
+- Vernieuw de pagina eerst als iets plotseling leeg lijkt of niet goed wordt weergegeven.
+- Gebruik geen instellingen die u niet nodig heeft.
 
-- Plaats `photo_uploader.js` in de Home Assistant `www` map onder `photo_uploader/photo_uploader.js` (zie onder).
-- Voeg de resource toe via **Configuratie → Dashboards → Resources**:
-  - URL: `/local/photo_uploader/photo_uploader.js`
-  - Type: `module`
-- Voeg in het gewenste dashboard een kaart toe met:
+## Veelgestelde vragen
 
-```yaml
-type: 'custom:photo-uploader'
-```
+### Waarom zie ik nog geen meting?
 
-Bestandslocatie (server): `config/www/photo_uploader/photo_uploader.js` — toegankelijk in de browser als `/local/photo_uploader/photo_uploader.js`.
+Soms is de meting nog niet doorgestuurd. Wacht even en vernieuw daarna de pagina. Bij Withings kan Reload helpen.
+
+### Waarom staat er Niet beschikbaar?
+
+Dat betekent meestal dat Home Assistant nog geen waarde heeft ontvangen, of dat er voor dat onderdeel geen apparaat is. Het is dus niet altijd een fout.
+
+### Waarom doet de camera het soms wel en soms niet?
+
+Soms moet het beeld even opnieuw worden geladen. Probeer eerst Ctrl + F5. Helpt dat niet, dan kan Reolink opnieuw worden ingeladen met Reload.
+
+### Mag ik op het potloodje klikken?
+
+Alleen als u het dashboard echt wilt aanpassen. Voor normaal gebruik is dat niet nodig.
+
+### Wat als de pagina raar blijft doen?
+
+Probeer eerst te vernieuwen. Als dat niet helpt, controleer of de tablet of computer op het juiste netwerk zit en vraag daarna hulp.
+
+## Algemene problemen en oplossingen
+
+### Het dashboard laadt niet goed
+
+1. Vernieuw de pagina.
+2. Controleer de wifi-verbinding.
+3. Sluit de browser en open het dashboard opnieuw.
+
+### Een custom kaart laat niets zien
+
+Soms moet de pagina opnieuw worden geladen voordat een speciale kaart goed werkt.
+
+1. Vernieuw de pagina.
+2. Kijk of de kaart terugkomt.
+3. Meld het als de kaart daarna nog steeds leeg blijft.
+
+### Waarden veranderen niet na een meting
+
+1. Wacht een kort moment.
+2. Vernieuw de pagina.
+3. Gebruik Reload bij Withings.
+
+### Camera of sensor blijft op hetzelfde scherm staan
+
+1. Vernieuw de pagina.
+2. Controleer of het juiste scherm openstaat.
+3. Gebruik Reload bij de juiste integratie.
+
+## Samenvatting voor dagelijks gebruik
+
+Als iets niet goed lijkt te werken, onthoud dan deze volgorde:
+
+1. Vernieuw de pagina.
+2. Controleer of u op het juiste scherm en netwerk zit.
+3. Gebruik Reload bij Reolink of Withings als de gegevens niet binnenkomen.
+4. Kijk of de sensor na een meting vanzelf bijwerkt.
+
+Met deze stappen kunt u de meeste problemen snel oplossen zonder technische kennis.

@@ -8,9 +8,6 @@
       goedheid_kennis_spijsvertering:
         name: "Studenten kennen spijsvertering"
         icon: mdi:stomach
-      goedheid_kennis_pesdie:
-        name: "Studenten kunnen PESDIE toepassen"
-        icon: mdi:clipboard-text-outline
 
     template:
       - sensor:
@@ -20,8 +17,7 @@
               {{
                 is_state('input_boolean.goedheid_weegschaal_gereserveerd', 'on') and
                 is_state('input_boolean.goedheid_kennis_vochtbalans_bmi', 'on') and
-                is_state('input_boolean.goedheid_kennis_spijsvertering', 'on') and
-                is_state('input_boolean.goedheid_kennis_pesdie', 'on')
+                is_state('input_boolean.goedheid_kennis_spijsvertering', 'on')
               }}
             icon: >
               {% if is_state('sensor.goedheid_les_klaar', 'True') %}

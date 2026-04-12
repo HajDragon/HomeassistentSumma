@@ -1,0 +1,234 @@
+title: Beveiliging & Gezondheid
+views:
+  - title: Overzicht
+    path: default_view
+    background: var(--background-image)
+    cards:
+      - type: custom:clock-weather-card
+        entity: weather.forecast_home
+        forecast_rows: 5
+        locale: nl
+        time_format: 24
+        hide_today_section: false
+        hide_forecast_section: false
+        show_humidity: true
+        show_wind: true
+      - type: markdown
+        content: >-
+          ## 🔴 Beveiligingsoverzicht
+
+          Deze rij toont de meest kritieke live-statussen in één oogopslag. Elke
+          badge die rood oplicht vereist onmiddellijke aandacht.
+        visibility:
+          - condition: state
+            entity: input_boolean.input_boolean_show_dashboard
+            state: 'on'
+      - type: glance
+        title: Live Beveiligingsstatus
+        show_name: true
+        show_icon: true
+        show_state: true
+        entities:
+          - entity: binary_sensor.front_door_beweging
+            name: Voordeur Beweging
+            icon: mdi:motion-sensor
+          - entity: binary_sensor.backside_beweging
+            name: Achterkant Beweging
+            icon: mdi:motion-sensor
+          - entity: binary_sensor.front_door_persoon
+            name: Persoon (Voor)
+            icon: mdi:account-alert
+          - entity: binary_sensor.backside_persoon
+            name: Persoon (Achter)
+            icon: mdi:account-alert
+          - entity: binary_sensor.rt_ax57_02b8_wan_status
+            name: Internet WAN
+            icon: mdi:wan
+          - entity: binary_sensor.deur_detection
+            name: Deursensor
+            icon: mdi:door-open
+          - entity: binary_sensor.rookmelder
+            name: Rookmelder
+            icon: mdi:smoke-detector
+          - entity: binary_sensor.sos_wall_button
+            name: SOS Wandknop
+            icon: mdi:alert-circle
+        visibility:
+          - condition: state
+            entity: input_boolean.input_boolean_show_dashboard
+            state: 'on'
+      - type: markdown
+        content: >-
+          ## 🚨 Beveiliging & Meldingen
+
+          Rookmelder, deursensor, SOS-knoppen en valdetectieradar. Apparaten met
+          de status NIET BESCHIKBAAR zijn Zigbee-gebaseerd — controleer of de
+          Home Assistant Connect ZBT-2 coördinator van stroom is voorzien en de
+          Zigbee-integratie actief is. De sirenes hieronder kunnen handmatig
+          worden geactiveerd in geval van nood.
+        visibility:
+          - condition: state
+            entity: input_boolean.input_boolean_show_dashboard
+            state: 'on'
+      - type: entities
+        title: Beveiligingsapparaten
+        entities:
+          - entity: binary_sensor.rookmelder
+            name: Rookmelder
+            icon: mdi:smoke-detector-alert
+          - entity: sensor.rookmelder_rookdichtheid
+            name: Rookdichtheid
+          - entity: sensor.rookmelder_batterij
+            name: Rookmelder Batterij
+            icon: mdi:battery
+          - type: divider
+          - entity: binary_sensor.deur_detection
+            name: Deursensor
+            icon: mdi:door-open
+          - entity: binary_sensor.deur_detection_sabotage
+            name: Deursensor Sabotage
+            icon: mdi:shield-alert
+          - entity: sensor.deur_detection_batterij
+            name: Deursensor Batterij
+            icon: mdi:battery
+          - type: divider
+          - entity: binary_sensor.sos_wall_button
+            name: SOS Wandknop
+            icon: mdi:alarm-light
+          - entity: sensor.sos_wall_button_batterij
+            name: SOS Wandknop Batterij
+            icon: mdi:battery
+          - entity: binary_sensor.tz3000_p3fph1go_ts0215a
+            name: SOS Draagknop
+            icon: mdi:alarm-light
+          - entity: sensor.tz3000_p3fph1go_ts0215a_batterij
+            name: SOS Draagknop Batterij
+            icon: mdi:battery
+          - type: divider
+          - entity: binary_sensor.seeed_studio_mr60fda2_kit_8f65d0_falling_information
+            name: Val Gedetecteerd
+            icon: mdi:human-cane
+          - entity: binary_sensor.seeed_studio_mr60fda2_kit_8f65d0_person_information
+            name: Persoon in Kamer
+            icon: mdi:account
+          - type: divider
+          - entity: siren.front_door_sirene
+            name: Voordeur Sirene (Handmatig)
+            icon: mdi:alarm-bell
+          - entity: siren.backside_sirene
+            name: Achterkant Sirene (Handmatig)
+            icon: mdi:alarm-bell
+          - type: divider
+          - entity: automation.siren_webhoek
+            name: Webhook → Sirene Automatisering
+            icon: mdi:webhook
+          - entity: binary_sensor.seeed_studio_xiao_c6_voltage_sensor
+        visibility:
+          - condition: state
+            entity: input_boolean.input_boolean_show_dashboard
+            state: 'on'
+      - type: markdown
+        content: >-
+          ## ❤️ Gezondheidsmonitor
+
+          Gegevens van uw Withings-apparaten: BeamO, BPM Connect, ScanWatch 2 en
+          Body Scan. Waarden worden bijgewerkt na elke meting — ze streamen niet
+          in realtime. Bloeddruk en SpO2 weerspiegelen de meest recent
+          opgeslagen meting.
+        visibility:
+          - condition: state
+            entity: input_boolean.show_meetingen
+            state: 'on'
+      - type: grid
+        columns: 2
+        square: false
+        cards:
+          - type: entities
+            title: Vitale waarden
+            entities:
+              - entity: sensor.withings_hartslag_2
+                name: 'Hartslag #2'
+              - entity: sensor.withings_systolische_bloeddruk
+                name: Bloeddruk (Systolisch)
+              - entity: sensor.withings_diastolische_bloeddruk
+                name: Bloeddruk (Diastolisch)
+              - entity: sensor.withings_spo2_2
+                name: 'SpO2 #2 (%)'
+              - entity: sensor.withings_lichaamstemperatuur
+                name: Lichaamstemperatuur (°C)
+              - entity: sensor.withings_huidtemperatuur
+                name: Huidtemperatuur (°C)
+              - entity: sensor.withings_temperatuur
+                name: Omgevingstemperatuur (°C)
+              - entity: sensor.withings_gewicht
+                name: Gewicht (kg)
+          - type: entities
+            title: Activiteit & Batterijen
+            entities:
+              - entity: sensor.withings_stappen_vandaag_2
+                name: Stappen Vandaag
+              - entity: sensor.withings_stap_doelstelling_2
+                name: Stappendoel
+              - entity: sensor.withings_vandaag_afgelegde_afstand_2
+                name: Afstand Vandaag
+              - entity: sensor.withings_actieve_calorieen_vandaag_verbrand_2
+                name: Actieve Calorieën
+              - entity: sensor.withings_totale_calorieen_vandaag_verbrand_2
+                name: Totale Calorieën
+              - type: divider
+              - entity: sensor.beamo_batterij
+                name: BeamO Batterij
+                icon: mdi:battery
+              - entity: sensor.body_scan_batterij
+                name: Body Scan Batterij
+                icon: mdi:battery
+              - entity: sensor.bpm_connect_batterij
+                name: BPM Connect Batterij
+                icon: mdi:battery
+              - entity: sensor.scanwatch_2_batterij
+                name: ScanWatch 2 Batterij
+                icon: mdi:battery
+        visibility:
+          - condition: state
+            entity: input_boolean.show_meetingen
+            state: 'on'
+      - type: markdown
+        content: >-
+          ## 🌐 Netwerkstatus
+
+          Live statistieken van uw ASUS RT-AX57 router. Download- en
+          uploadsnelheden worden automatisch bijgewerkt. Als WAN offline
+          weergeeft, is uw internetverbinding verbroken — camera's blijven
+          lokaal opnemen maar externe toegang en FTP-upload zullen mislukken.
+        visibility:
+          - condition: state
+            entity: input_boolean.show_router_instellingen
+            state: 'on'
+      - type: entities
+        title: ASUS RT-AX57 Router
+        entities:
+          - entity: binary_sensor.rt_ax57_02b8_wan_status
+            name: Internet (WAN)
+            icon: mdi:wan
+          - entity: sensor.rt_ax57_02b8_extern_ip
+            name: Extern IP
+            icon: mdi:ip-network
+          - entity: sensor.rt_ax57_02b8_downloadsnelheid
+            name: Downloadsnelheid
+            icon: mdi:download
+          - entity: sensor.rt_ax57_02b8_uploadsnelheid
+            name: Uploadsnelheid
+            icon: mdi:upload
+        visibility:
+          - condition: state
+            entity: input_boolean.show_router_instellingen
+            state: 'on'
+      - type: entities
+        entities:
+          - input_boolean.input_boolean_show_dashboard
+      - type: entities
+        entities:
+          - input_boolean.show_meetingen
+      - type: entities
+        entities:
+          - input_boolean.show_router_instellingen
