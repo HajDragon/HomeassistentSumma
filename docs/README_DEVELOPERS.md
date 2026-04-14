@@ -28,17 +28,8 @@ Deze release vervangt de oude lichaamssamenstelling/PESDIE-flow door een cardio-
 - **Verantwoordelijkheid:** Beheert de lijst met simulatieperioden en hun bijbehorende metingen.
 - **Opslag:** Gegevens worden geserialiseerd naar een JSON-compatibel woordenboekformaat (`to_dict`) en opnieuw samengesteld (`from_dict`).
 
-## Influx configuratie
-
-Vereiste environment variabelen voor scripts/refresh_cardiac_history_influx.py:
-
-- **Service Registratie:** Het registreert services zoals `simulation_manager.switch_period`, `simulation_manager.save_measurement`, en `simulation_manager.reset_simulation`.
-- **Staat Mutatie:** Wanneer een service wordt aangeroepen, roept deze laag de overeenkomstige methode op het `SimulationState`-object aan.
-- **Persistentie:** Wijzigingen worden opgeslagen in `.storage/simulation_manager` met behulp van `homeassistant.helpers.storage.Store`.
-
 ## Dashboard wijzigingen
 
-- PESDIE kaarten en stappenplan zijn verwijderd uit het simulatiedashboard.
 - Nieuwe kernblokken:
   - Databron + simulatiefase
   - Patiëntprofiel
@@ -170,3 +161,11 @@ type: 'custom:photo-uploader'
     - De backend-service is`photo_scanner.upload` (service data: `filename`, `content` (base64), `overwrite`). De service slaat bestanden op in `config/www/photos` en triggert `photo_scanner.scan`.
 4.  **Geen OS-wijzigingen:** Vertrouw niet op het installeren van systeempakketten via `apt` of `pip` op de HA-host. Alles moet draaien binnen de standaard Home Assistant-omgeving.
 
+# Belangrijke Opmerking
+
+## Push Scripts
+   - Pushen van de codebase moet met zorg gebueren, Ik heb deze push scripts toegevoegd om een base te kunnen hebben en verder uit de UI kunnen werken, Als alle benodigdheden zijn toegevoegd kunnen we meeste functionaliteiten toevoegen via de UI zonder dat we de codebase hoeven aan te passen, maar voor het geval dat er iets is dat niet via de UI kan worden toegevoegd kunnen we altijd deze scripts gebruiken om de codebase aan te passen en daarna verder te werken via de UI.
+
+## Commits 
+   - Ik heb geprobeerd om de commits zo duidelijk mogelijk te maken, maar als er iets is dat niet duidelijk is of als er vragen zijn over bepaalde commits, aarzel dan niet om het te vragen. Ik zal mijn best doen om alles zo duidelijk mogelijk uit te leggen.
+Arshia Azadia

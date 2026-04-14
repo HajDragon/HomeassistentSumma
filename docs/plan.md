@@ -1,66 +1,41 @@
-# eLesplan — Body Scan Slimme Weegschaal
+# eLesplan - Body Scan en BPM Connect (Cardiac Monitoring)
 
 ## Algemene informatie
 
-| Veld                           | Inhoud                                                                                                           |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| **Lesonderwerp**         | Body scan slimme weegschaal                                                                                      |
-| **Arrangement**          | Zorg en technologie — passend bij vochtbalans / spijsvertering                                                  |
-| **Opleidingen**          | VZ / VP                                                                                                          |
-| **Bronnen & materialen** | [Producten en mogelijkheden - Experience Lab - WdR](https://xerte.summacollege.nl/play.php?template_id=15893#page2) |
-
----
+| Veld | Inhoud |
+|---|---|
+| Lesonderwerp | Cardiale trendmonitoring met Body Scan en BPM Connect |
+| Arrangement | Zorg en technologie - klinisch redeneren op vitale functies |
+| Opleidingen | VZ / VP |
 
 ## Lesdoelen
 
-1. De student past de body scan slimme weegschaal toe om de vochtbalans, spiermassa, vetmassa en het gewicht in kaart te brengen.
-2. De student signaleert een trend van metingen voor Mevrouw Goedheid.
+1. De student interpreteert trends in gewicht, bloeddruk, hartfrequentie, ademfrequentie en saturatie.
+2. De student herkent klinische verslechtering over opeenvolgende meetmomenten.
 
----
+## Casuistiek - Mevrouw Goedheid
 
-## Casuistiek — Mevrouw Goedheid
+Mevrouw Goedheid is 70 jaar, met voorgeschiedenis van myocardinfarct (MI) en artrose.
+In maart 2026 worden 8 meetmomenten gevolgd.
 
-Mevrouw Goedheid (48 jaar) wordt gevolgd tijdens een leefstijltraject van zes maanden. Zij heeft moeite met het op peil houden van haar gewicht door een verminderde mobiliteit. Tijdens deze periode vinden vier metingen plaats: start, 2 maanden, 4 maanden en 6 maanden.
+| Datum | Gewicht | Bloeddruk | Hartfrequentie | Ademfrequentie | Saturatie | Opmerkingen |
+|---|---:|---|---:|---:|---:|---|
+| 01-03-2026 | 68.0 kg | 130/80 | 72 | 16/min | 96% | Stabiele situatie na ontslag |
+| 04-03-2026 | 68.2 kg | 132/82 | 74 | 16/min | 96% | Geen klachten |
+| 08-03-2026 | 68.7 kg | 135/85 | 78 | 17/min | 95% | Licht vermoeid |
+| 11-03-2026 | 69.3 kg | 138/86 | 80 | 18/min | 95% | Enkels licht gezwollen |
+| 15-03-2026 | 70.1 kg | 142/88 | 86 | 19/min | 94% | Kortademig bij inspanning |
+| 18-03-2026 | 70.8 kg | 145/90 | 90 | 20/min | 94% | Meer oedeem in onderbenen |
+| 22-03-2026 | 71.5 kg | 150/92 | 96 | 21/min | 93% | Gewicht stijgt snel |
+| 25-03-2026 | 72.2 kg | 155/95 | 102 | 22/min | 92% | Duidelijke verslechtering |
 
-| Meting           | Spiermassa | Vetmassa | Gewicht | Vochtbalans | BMI        |
-| ---------------- | ---------- | -------- | ------- | ----------- | ---------- |
-| Meting 1 (start) | 29,5 kg    | 24,0 kg  | 70,0 kg | 51,0 %      | 24,8 kg/m2 |
-| Meting 2 (2 mnd) | 29,3 kg    | 25,5 kg  | 72,0 kg | 51,2 %      | 25,5 kg/m2 |
-| Meting 3 (4 mnd) | 29,0 kg    | 27,0 kg  | 74,5 kg | 49,4 %      | 26,4 kg/m2 |
-| Meting 4 (6 mnd) | 28,8 kg    | 28,5 kg  | 77,0 kg | 48,6 %      | 27,3 kg/m2 |
+## Didactische focus
 
----
+- Correlatie tussen stijgend gewicht en stijgende bloeddruk.
+- Correlatie tussen stijgend gewicht en dalende saturatie.
+- Gebruik van alertdrempels voor klinische bespreking.
 
-## Lesactiviteiten & Didactische werkvormen
+## Alertdrempels
 
-### Inleiding
-
-Laat een mindmap maken in subgroepen. Wat weet de student over vochtbalans, spiermassa, vetmassa en een gezond gewicht?
-
-### Kern
-
-- De subgroepen gaan om en om aan de slag met de body scan slimme weegschaal.
-- De studenten krijgen kennis over het gebruik van de slimme weegschaal door het te proberen.
-- De studenten krijgen een casus met de waardes van vochtbalans, spiermassa, vetmassa, gewicht en BMI.
-- De student interpreteert de waardes op basis van het geformuleerde doel.
-- De docent bespreekt de casus. Alle subgroepen komen aan bod.
-
-### Afronding
-
-- Wat nemen we mee uit deze les?
-- Wat hebben we geleerd in deze les?
-- Wanneer kunnen we de body scan slimme weegschaal inzetten?
-
----
-
-## Didactische voorwaarden
-
-- De docent reserveert de body scan slimme weegschaal via Xerte (zie link bovenstaand).
-- De student heeft kennis van de vochtbalans en het BMI.
-- De student heeft kennis van de voedingsstoffen en de werking van het spijsverteringskanaal.
-
----
-
-## Beoordeling en reflectie
-
-*(In te vullen)*
+- Saturatie: alert bij < 93%
+- Hartfrequentie: alert bij > 100 bpm
