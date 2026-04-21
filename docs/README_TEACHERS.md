@@ -172,4 +172,4 @@ Het Home Assistant-dashboard is ontworpen voor gebruik zonder technische achterg
 	Dit kan tijdelijke verbindingsproblemen met Withings oplossen.
 
 ### Metingen worden niet gesynchroniseerd
-- Ga naar **Instellingen -> Apparaten & Diensten -> Integraties -> Withings** Druk op **Account Toevoegen** en volg de stappen om opnieuw in te loggen met de Withings-account. Gebruik Deze inloggegevens die het technische team heeft verstrekt. Na succesvolle herauthenticatie zouden de metingen weer moeten synchroniseren.
+- Ga naar **Instellingen -> Apparaten & Diensten -> Integraties -> Withings** Druk op **Account Toevoegen** en volg de stappen om opnieuw in te loggen met de Withings-account. Gebruik Deze inloggegevens die het technische team heeft verstrekt. Na succesvolle herauthenticatie zouden de metingen weer moeten synchroniseren.	
