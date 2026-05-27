@@ -52,7 +52,7 @@ Er zijn nog andere sensoren geinstalleerd, maar bovenstaande zijn het meest rele
 
 ## Hoe krijg ik toegang tot het dashboard?
 
-1. Open een webbrowser op je computer of tablet (gebruik geen Bing).
+1. Open een webbrowser op je computer of tablet (for the best compatibility, use Google Chrome or firefox).
 2. Ga naar: <https://homeassistant.local:8123>
 3. Log in met de inloggegevens van het technische team.
 4. Na inloggen zie je het dashboard met kaarten voor patientinformatie en sensorgegevens.

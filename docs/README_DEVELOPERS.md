@@ -202,6 +202,11 @@
  - Keep static assets in `www/` and register them as Home Assistant resources under `/local/`.
  - Do not add OS-level dependencies or host-level package installs. This project is designed to run within HAOS boundaries.
  
+## Light Automation
+- Light automation is handled by two main components, Light Calender entity and and the light automation, light automation takes the calender events (each day from 8-17) as a trigger and turns on the lights for the duration of each calender event.
+    
+
+
  ## Reference Files
  
  - [README.md](../README.md)
