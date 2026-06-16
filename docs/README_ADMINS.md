@@ -70,6 +70,7 @@ Doe dan het volgende:
 5. Klik rechts op de drie puntjes bij de integratie.
 6. Kies Reload.
 
+
 Daarna worden de nieuwste metingen opnieuw ingeladen op het dashboard.
 
 ## Belangrijke aandachtspunten
@@ -132,6 +133,8 @@ Soms moet de pagina opnieuw worden geladen voordat een speciale kaart goed werkt
 2. Controleer of het juiste scherm openstaat.
 3. Gebruik Reload bij de juiste integratie.
 
+### Verlichting of andere instellingen lijken weg
+1. Om de Lampjes te kunnen verbinden met de zigbee netwerk moet je de lamp 12 keers aan en uit te zetten, begin met de lamp aan, dan moet het blinken met een blauwe licht en  dan ga naar instellingen-> Apparaten en services -> Integraties -> Zigbee Home Automation -> Klik op de drie puntjes -> Kies "Zigbee Home Automation: Add Device" -> Klik op "Start Search" -> Zet de lamp uit en weer aan, dan zal de lamp automatisch worden toegevoegd aan het netwerk.
 ## Samenvatting voor dagelijks gebruik
 
 Als iets niet goed lijkt te werken, onthoud dan deze volgorde:

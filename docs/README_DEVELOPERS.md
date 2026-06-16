@@ -148,7 +148,7 @@ Met.no ondersteunt meerdere locaties door meerdere `config_entries` aan te maken
 1. **Wijzig Eerst Modellen:** Bij het toevoegen van functies, update eerst `models.py` om ervoor te zorgen dat de gegevensstructuur werkt.
 2. **Update Services:** Stel nieuwe functionaliteit bloot via services in `services.yaml` en handlers in `__init__.py`.
 3. **Frontend Synchronisatie:** Zorg ervoor dat de frontend-kaart de nieuwe staatstructuur die naar `sensor.simulation_manager` wordt gepusht correct afhandelt.
-4. **Photo Uploader Frontend:** Voor ontwikkelaars die de dashboard-uploader willen ondersteunen of uitbreiden:
+4. **Photo Uploader Frontend:** Voor ontwikkelaars die de dashboard-uploader willen ondeFrsteunen of uitbreiden:
 
    - De uploader frontend bestaat uit `photo_uploader.js` en wordt geplaatst onder `www/photo_uploader/photo_uploader.js` in de Home Assistant-config.
    - Resource-URL in Lovelace: `/local/photo_uploader/photo_uploader.js` (type `module`).
