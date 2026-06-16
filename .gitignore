@@ -97,6 +97,6 @@ htmlcov/
 # ── github ───────────────────────────────────────────────────────────────────
 .github
 
-
+esp32 kluisje.md
 todo.txt
 .playwright-mcp
