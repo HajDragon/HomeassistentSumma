@@ -47,11 +47,3 @@ resources:
 ## Useful links
 
 - Dynamic entity scanner: [docs/dynamic_entity_scanner.md](docs/dynamic_entity_scanner.md)
-
-## License
-
-This repository does not include a license file. Add a LICENSE if you want to publish under an open-source license.
-
----
-
-If you'd like, I can add a short `README_ADMINS.md` deploy checklist, a `Makefile` or a small `deploy` script to copy the card assets to Home Assistant automatically. Want me to add one now?
